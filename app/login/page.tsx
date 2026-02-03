@@ -121,7 +121,7 @@ export default function LoginPage() {
 
                 {/* Footer */}
                 <p className="text-center text-sm text-gray-600 mt-6">
-                    © 2024 EJO Africa. All rights reserved.
+                    © 2026 EJO Africa. All rights reserved.
                 </p>
             </div>
         </div>
