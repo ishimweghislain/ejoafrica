@@ -5,7 +5,8 @@
 :root {
   --background: #ffffff;
   --foreground: #111827;
-  --primary: #059669; /* Modern Green */
+  --primary: #059669;
+  /* Modern Green */
   --primary-foreground: #ffffff;
   --secondary: #f3f4f6;
   --muted: #6b7280;
@@ -31,7 +32,7 @@ body {
   .btn-primary {
     @apply bg-[var(--primary)] text-[var(--primary-foreground)] px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 active:scale-95 hover:bg-[var(--accent)] shadow-lg shadow-emerald-500/20;
   }
-  
+
   .glass {
     @apply bg-white/80 dark:bg-black/80 backdrop-blur-md border border-white/20 dark:border-white/10;
   }
@@ -42,6 +43,52 @@ body {
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bubbleUp {
+  0% {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-bubble {
+  animation: bubbleUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.text-reveal {
+  background: linear-gradient(to bottom, #fff 0%, #fff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: textReveal 1s ease-out forwards;
+}
+
+@keyframes textReveal {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

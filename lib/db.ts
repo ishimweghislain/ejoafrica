@@ -4,11 +4,12 @@ const globalForPrisma = global as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+// Prisma 7 requires either an adapter or accelerateUrl in the constructor
+// when not defined in the schema (which is now forbidden in schema.prisma)
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: ["error"],
-    // @ts-ignore - Prisma 7 property
+    // @ts-ignore
     accelerateUrl: process.env.PRISMA_DATABASE_URL || process.env.DATABASE_URL,
   });
 

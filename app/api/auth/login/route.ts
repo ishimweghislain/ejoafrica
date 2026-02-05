@@ -70,9 +70,13 @@ export async function POST(request: Request) {
       },
     });
   } catch (error: any) {
-    console.error("Login error:", error);
+    console.error("CRITICAL LOGIN ERROR:", {
+      message: error.message,
+      stack: error.stack,
+      cause: error.cause
+    });
     return NextResponse.json(
-      { error: "An unexpected error occurred" },
+      { error: `Login Error: ${error.message}` },
       { status: 500 }
     );
   }
