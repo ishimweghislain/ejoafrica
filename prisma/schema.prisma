@@ -4,13 +4,221 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  SCHOOL_ADMIN
+  DOS
+  DOD
+  TEACHER
+  STUDENT
+  PARENT
+}
 
 model User {
+  id                String   @id @default(uuid())
+  firstName         String
+  lastName          String
+  email             String   @unique
+  password          String
+  phone             String?
+  accountPin        String?
+  country           String?
+  city              String?
+  address           String?
+  school            String?
+  role              UserRole @default(STUDENT)
+  profileImage      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  courses           Course[] @relation("TeacherCourses")
+  exams             Exam[]   @relation("TeacherExams")
+  timetables        Timetable[] @relation("TeacherTimetables")
+  disciplinaryReports StudentDiscipline[] @relation("StudentDiscipline")
+  incidentReporter    StudentDiscipline[] @relation("IncidentReporter")
+  children          User[]   @relation("ParentStudent")
+  parents           User[]   @relation("ParentStudent")
+}
+
+model AcademicYear {
   id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  isAdmin   Boolean  @default(false)
-  createdAt DateTime @default(now())
+  title     String   @unique
+  startDate DateTime
+  endDate   DateTime
+  terms     AcademicTerm[]
+  courses   Course[]
+  timetables Timetable[]
+  schemes   SchemeOfWork[]
+  exams     Exam[]
+}
+
+model AcademicTerm {
+  id             String       @id @default(uuid())
+  academicYearId String
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  title          String
+  startDate      DateTime
+  endDate        DateTime
+  courses        Course[]
+  timetables     Timetable[]
+  schemes        SchemeOfWork[]
+  exams          Exam[]
+}
+
+model Class {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  courses    Course[]
+  timetables Timetable[]
+  schemes    SchemeOfWork[]
+  exams      Exam[]
+}
+
+model Course {
+  id              String       @id @default(uuid())
+  title           String
+  classId         String
+  class           Class        @relation(fields: [classId], references: [id])
+  teacherId       String
+  teacher         User         @relation("TeacherCourses", fields: [teacherId], references: [id])
+  notation        String?
+  academicYearId  String
+  academicYear    AcademicYear @relation(fields: [academicYearId], references: [id])
+  termId          String
+  term            AcademicTerm @relation(fields: [termId], references: [id])
+  
+  // Bloom's Taxonomy
+  remembering     Boolean      @default(false)
+  understanding   Boolean      @default(false)
+  applying        Boolean      @default(false)
+  analyzing       Boolean      @default(false)
+  evaluating      Boolean      @default(false)
+  creating        Boolean      @default(false)
+
+  hoursPerWeek    Int?
+  syllabusUrl     String?
+  
+  topics          Topic[]
+  timetables      Timetable[]
+  schemes         SchemeOfWork[]
+  exams           Exam[]
+}
+
+model Topic {
+  id        String      @id @default(uuid())
+  title     String
+  courseId  String
+  course    Course      @relation(fields: [courseId], references: [id])
+  subtopics Subtopic[]
+}
+
+model Subtopic {
+  id      String   @id @default(uuid())
+  title   String
+  topicId String
+  topic   Topic    @relation(fields: [topicId], references: [id])
+  units   Unit[]
+}
+
+model Unit {
+  id                 String   @id @default(uuid())
+  subtopicId         String
+  subtopic           Subtopic @relation(fields: [subtopicId], references: [id])
+  title              String
+  periods            Int
+  keyUnitCompetency  String?
+  knowledge          String?
+  skills             String?
+  attitudes          String?
+  content            String?
+  learningActivities String?
+  linksToOther       String?
+  assessmentCriteria String?
+  materials          String?
+  lessons            Lesson[]
+}
+
+model Timetable {
+  id             String       @id @default(uuid())
+  classId        String
+  class          Class        @relation(fields: [classId], references: [id])
+  day            String
+  startTime      String
+  endTime        String
+  academicYearId String
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  termId         String
+  term           AcademicTerm @relation(fields: [termId], references: [id])
+  courseId       String
+  course         Course       @relation(fields: [courseId], references: [id])
+  teacherId      String
+  teacher        User         @relation("TeacherTimetables", fields: [teacherId], references: [id])
+}
+
+model SchemeOfWork {
+  id             String       @id @default(uuid())
+  classId        String
+  class          Class        @relation(fields: [classId], references: [id])
+  academicYearId String
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  termId         String
+  term           AcademicTerm @relation(fields: [termId], references: [id])
+  courseId       String
+  course         Course       @relation(fields: [courseId], references: [id])
+  periodsPerWeek Int
+  reference      String?
+  lessons        Lesson[]
+}
+
+model Lesson {
+  id             String       @id @default(uuid())
+  schemeId       String
+  scheme         SchemeOfWork @relation(fields: [schemeId], references: [id])
+  startDate      DateTime
+  endDate        DateTime
+  unitId         String
+  unit           Unit         @relation(fields: [unitId], references: [id])
+  title          String
+  evaluation     String?
+  teachingMethod String?
+  resources      String?
+  observation    String?
+}
+
+model Exam {
+  id             String       @id @default(uuid())
+  title          String
+  description    String?
+  classId        String
+  class          Class        @relation(fields: [classId], references: [id])
+  courseId       String
+  course         Course       @relation(fields: [courseId], references: [id])
+  termId         String
+  term           AcademicTerm @relation(fields: [termId], references: [id])
+  academicYearId String
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  teacherId      String
+  teacher        User         @relation("TeacherExams", fields: [teacherId], references: [id])
+  
+  // Bloom's Taxonomy
+  remembering    Boolean      @default(false)
+  understanding  Boolean      @default(false)
+  applying       Boolean      @default(false)
+  analyzing      Boolean      @default(false)
+  evaluating     Boolean      @default(false)
+  creating       Boolean      @default(false)
+}
+
+model StudentDiscipline {
+  id          String   @id @default(uuid())
+  studentId   String
+  student     User     @relation("StudentDiscipline", fields: [studentId], references: [id])
+  reporterId  String
+  reporter    User     @relation("IncidentReporter", fields: [reporterId], references: [id])
+  description String
+  date        DateTime @default(now())
+  remarks     String?
 }
