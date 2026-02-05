@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const prisma = new PrismaClient();
 
 async function main() {
-    console.log("Seeding database...");
+    console.log("Seeding the database...");
 
     // Delete all existing users as requested
     await prisma.studentDiscipline.deleteMany({});
