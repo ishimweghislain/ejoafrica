@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Loader2, BookOpen, RefreshCcw } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -119,7 +120,15 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
     const inputClass = "w-full bg-slate-50/50 border border-slate-100 rounded-[2rem] px-8 py-5 text-sm font-bold text-slate-900 focus:ring-8 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all shadow-sm placeholder:text-slate-300 appearance-none";
     const labelClass = "text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] mb-3 block ml-4";
 
-    return (
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!isOpen || !mounted) return null;
+
+    return createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-slate-900/60" onClick={onClose} />
 
@@ -212,6 +221,7 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
                     </form>
                 )}
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
