@@ -58,7 +58,7 @@ export async function POST(request: Request) {
         const timetable = await prisma.timetable.create({
             data: {
                 classId,
-                day: parseInt(day),
+                day,
                 startTime,
                 endTime,
                 academicYearId,
