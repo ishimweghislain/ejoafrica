@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, Loader2, LayoutGrid, Edit2, Trash2 } from "lucide-react";
+import { Plus, Search, Loader2, LayoutGrid, Edit2, Trash2, AlertTriangle, X, RefreshCcw } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 interface ClassType {
     id: string;
@@ -13,7 +14,8 @@ export default function ClassesPage() {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [className, setClassName] = useState("");
-    const [error, setError] = useState("");
+    const [selectedClass, setSelectedClass] = useState<ClassType | null>(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
     async function fetchClasses() {
         try {
@@ -31,86 +33,198 @@ export default function ClassesPage() {
         fetchClasses();
     }, []);
 
-    async function handleAddClass(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        setError("");
+        const tid = toast.loading(`${selectedClass ? 'Updating' : 'Creating'} institutional class node...`);
         try {
-            const res = await fetch("/api/classes", {
-                method: "POST",
+            const url = selectedClass ? `/api/classes/${selectedClass.id}` : "/api/classes";
+            const method = selectedClass ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: className }),
             });
-            if (!res.ok) throw new Error("Failed to add class");
+
+            if (!res.ok) throw new Error("Operation failed");
+
+            toast.success(`Class Node ${selectedClass ? 'Synchronized' : 'Provisioned'}.`, { id: tid, icon: "🏫" });
             setClassName("");
+            setSelectedClass(null);
             setIsModalOpen(false);
             fetchClasses();
         } catch (err: any) {
-            setError(err.message);
+            toast.error(`Protocol Error: ${err.message}`, { id: tid });
         }
     }
 
+    const handleDelete = async (id: string) => {
+        toast.loading("Decommissioning class node...", { id: "delete-class" });
+        try {
+            const res = await fetch(`/api/classes/${id}`, { method: "DELETE" });
+            if (!res.ok) throw new Error("Deletion failed");
+
+            toast.success("Class Node Decommissioned.", { id: "delete-class", icon: "🗑️" });
+            fetchClasses();
+            setShowDeleteConfirm(null);
+        } catch (error) {
+            toast.error("Protocol Error: Deletion failed.", { id: "delete-class" });
+        }
+    };
+
+    const handleEdit = (cls: ClassType) => {
+        setSelectedClass(cls);
+        setClassName(cls.name);
+        setIsModalOpen(true);
+    };
+
+    const handleAddNew = () => {
+        setSelectedClass(null);
+        setClassName("");
+        setIsModalOpen(true);
+    };
+
     return (
         <div className="space-y-8 animate-fade-up">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900">Academic Classes</h1>
-                    <p className="text-gray-500 text-sm">Organize students into specific class levels.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-1">
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">Academic Classes</h1>
+                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Organize and segment students into institutional class nodes.</p>
                 </div>
                 <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="btn-primary flex items-center justify-center gap-2"
+                    onClick={handleAddNew}
+                    className="bg-emerald-600 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[10px] shadow-xl shadow-emerald-600/20 hover:bg-emerald-500 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                     <Plus className="w-5 h-5" />
-                    <span>New Class</span>
+                    <span>Provision New Class</span>
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
                 {loading ? (
-                    <div className="col-span-full py-20 flex justify-center">
-                        <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
+                    <div className="col-span-full py-20 flex flex-col items-center gap-4">
+                        <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Syncing Class Structure...</p>
                     </div>
                 ) : classes.length > 0 ? (
                     classes.map((cls) => (
-                        <div key={cls.id} className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col items-center text-center gap-4 group hover:shadow-xl transition-all">
-                            <div className="bg-emerald-50 w-16 h-16 rounded-2xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all">
-                                <LayoutGrid className="w-8 h-8" />
+                        <div key={cls.id} className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] flex flex-col items-center text-center gap-6 group hover:shadow-2xl hover:-translate-y-1 transition-all relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-12 -mt-12 group-hover:bg-emerald-500/10 transition-colors"></div>
+
+                            <div className="bg-slate-900 w-20 h-20 rounded-[2rem] flex items-center justify-center text-white shadow-2xl shadow-slate-900/20 group-hover:scale-110 transition-transform">
+                                <LayoutGrid className="w-10 h-10" />
                             </div>
-                            <div>
-                                <h3 className="text-xl font-bold">{cls.name}</h3>
-                                <p className="text-xs text-gray-400 mt-1 uppercase font-black tracking-widest text-[9px]">Class Level</p>
+
+                            <div className="space-y-2">
+                                <h3 className="text-2xl font-black text-slate-900 tracking-tighter group-hover:text-emerald-600 transition-colors">{cls.name}</h3>
+                                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Institutional Level</p>
                             </div>
-                            <div className="flex gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-emerald-600"><Edit2 className="w-4 h-4" /></button>
-                                <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+
+                            <div className="flex gap-3 pt-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0">
+                                <button
+                                    onClick={() => handleEdit(cls)}
+                                    className="p-4 bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 rounded-2xl transition-all"
+                                >
+                                    <Edit2 className="w-5 h-5" />
+                                </button>
+                                <button
+                                    onClick={() => setShowDeleteConfirm(cls.id)}
+                                    className="p-4 bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 rounded-2xl transition-all"
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <div className="col-span-full py-32 text-center text-gray-400 border-2 border-dashed rounded-[3rem]">
-                        <p className="font-bold">No classes defined yet.</p>
+                    <div className="col-span-full bg-white p-20 rounded-[4rem] border border-slate-100 border-dashed flex flex-col items-center justify-center text-center space-y-6">
+                        <div className="bg-slate-50 p-8 rounded-[3rem]">
+                            <LayoutGrid className="w-16 h-16 text-slate-200" />
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-xl font-black text-slate-900 uppercase">No Classes Defined</p>
+                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Start by provisioning institutional class nodes.</p>
+                        </div>
                     </div>
                 )}
             </div>
 
+            {/* Modal for Add/Edit */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-                    <form onSubmit={handleAddClass} className="relative bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl animate-fade-up space-y-6">
-                        <h3 className="text-xl font-bold">Add New Class</h3>
-                        {error && <p className="text-red-500 text-xs">{error}</p>}
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Class Name</label>
+                    <div className="absolute inset-0 bg-white/40 backdrop-blur-md" onClick={() => setIsModalOpen(false)} />
+                    <form onSubmit={handleSubmit} className="relative bg-white w-full max-w-md rounded-[3rem] p-10 shadow-2xl animate-fade-up border border-slate-100 space-y-10">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-emerald-500 p-3 rounded-2xl text-white">
+                                {selectedClass ? <RefreshCcw className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-slate-900 leading-tight">
+                                    {selectedClass ? "Update Class" : "New Class Node"}
+                                </h3>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500">
+                                    {selectedClass ? "Modify Identifier" : "Provision New Access Point"}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] ml-2 block">Class Identifier</label>
                             <input
                                 required
-                                className="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                                className="w-full bg-slate-50/50 border border-slate-100 rounded-[2rem] px-8 py-6 text-sm font-bold text-slate-900 focus:ring-8 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all placeholder:text-slate-300"
                                 placeholder="e.g. Senior 1A"
                                 value={className}
                                 onChange={(e) => setClassName(e.target.value)}
                             />
                         </div>
-                        <button type="submit" className="w-full btn-primary py-4">Create Class</button>
+
+                        <button
+                            type="submit"
+                            className="w-full bg-slate-900 text-white py-6 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200"
+                        >
+                            {selectedClass ? "Finalize Synchronization" : "Create Institutional Node"}
+                        </button>
                     </form>
+                </div>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+                        onClick={() => setShowDeleteConfirm(null)}
+                    />
+                    <div className="relative bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl animate-fade-up border border-slate-100">
+                        <div className="flex flex-col items-center text-center space-y-6">
+                            <div className="bg-red-50 p-6 rounded-[2.5rem] text-red-500 shadow-xl shadow-red-500/10">
+                                <AlertTriangle className="w-10 h-10" />
+                            </div>
+                            <div className="space-y-3">
+                                <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-tight">Wipe Record?</h3>
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+                                    This will permanently decommission this class node and all associated student pointers.
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 w-full pt-6">
+                                <button
+                                    onClick={() => setShowDeleteConfirm(null)}
+                                    className="bg-slate-50 text-slate-400 py-5 rounded-3xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-100 transition-all flex items-center justify-center gap-2"
+                                >
+                                    <X className="w-4 h-4" />
+                                    Abort
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(showDeleteConfirm)}
+                                    className="bg-red-500 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-red-500/20 hover:bg-red-600 transition-all flex items-center justify-center gap-2"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    Confirm
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

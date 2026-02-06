@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, Loader2, CalendarRange, Trash2, Edit2, X } from "lucide-react";
+import { Plus, Search, Loader2, CalendarRange, Trash2, Edit2, X, AlertTriangle, RefreshCcw, Check } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 interface AcademicYear {
     id: string;
@@ -14,6 +15,7 @@ interface AcademicTerm {
     startDate: string;
     endDate: string;
     academicYear: AcademicYear;
+    academicYearId: string;
 }
 
 export default function AcademicTermsPage() {
@@ -21,8 +23,9 @@ export default function AcademicTermsPage() {
     const [years, setYears] = useState<AcademicYear[]>([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedTerm, setSelectedTerm] = useState<AcademicTerm | null>(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState("");
 
     const [formData, setFormData] = useState({
         title: "",
@@ -57,94 +60,148 @@ export default function AcademicTermsPage() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setSubmitting(true);
-        setError("");
+        const tid = toast.loading(`${selectedTerm ? 'Syncing' : 'Deploying'} academic term node...`);
         try {
-            const res = await fetch("/api/academic-terms", {
-                method: "POST",
+            const url = selectedTerm ? `/api/academic-terms/${selectedTerm.id}` : "/api/academic-terms";
+            const method = selectedTerm ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
-            if (!res.ok) throw new Error("Failed to create term");
-            setFormData({ title: "", startDate: "", endDate: "", academicYearId: "" });
-            setIsModalOpen(false);
+            if (!res.ok) throw new Error("Synchronization protocol failed.");
+
+            toast.success(`Term Node ${selectedTerm ? 'Updated' : 'Deployed'}.`, { id: tid, icon: "🗓️" });
+            handleCloseModal();
             fetchData();
         } catch (err: any) {
-            setError(err.message);
+            toast.error(`PROTOCOL ERROR: ${err.message}`, { id: tid });
         } finally {
             setSubmitting(false);
         }
     }
 
-    const inputClass = "w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:ring-4 focus:ring-emerald-500/10 focus:bg-white outline-none transition-all";
-    const labelClass = "text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-2 block ml-1";
+    const handleDelete = async (id: string) => {
+        toast.loading("Decommissioning term node...", { id: "delete-term" });
+        try {
+            const res = await fetch(`/api/academic-terms/${id}`, { method: "DELETE" });
+            if (!res.ok) throw new Error("Deletion refused.");
+
+            toast.success("Term Decommissioned.", { id: "delete-term", icon: "🗑️" });
+            fetchData();
+            setShowDeleteConfirm(null);
+        } catch (err) {
+            toast.error("Deletion failed.", { id: "delete-term" });
+        }
+    };
+
+    const handleEdit = (term: AcademicTerm) => {
+        setSelectedTerm(term);
+        setFormData({
+            title: term.title,
+            startDate: new Date(term.startDate).toISOString().split('T')[0],
+            endDate: new Date(term.endDate).toISOString().split('T')[0],
+            academicYearId: term.academicYearId,
+        });
+        setIsModalOpen(true);
+    };
+
+    const handleAddNew = () => {
+        setSelectedTerm(null);
+        setFormData({ title: "", startDate: "", endDate: "", academicYearId: "" });
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedTerm(null);
+        setFormData({ title: "", startDate: "", endDate: "", academicYearId: "" });
+    };
+
+    const inputClass = "w-full bg-slate-50/50 border border-slate-100 rounded-[2rem] px-8 py-5 text-sm font-bold text-slate-900 focus:ring-8 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all shadow-sm placeholder:text-slate-300 appearance-none";
+    const labelClass = "text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] mb-3 block ml-4";
 
     return (
         <div className="space-y-8 animate-fade-up">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-black tracking-tight text-gray-900 uppercase">Academic Terms</h1>
-                    <p className="text-gray-500 text-sm font-bold opacity-60">Define grading periods within academic years.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-1">
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Academic Terms</h1>
+                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Define and synchronize grading segments within academic cycles.</p>
                 </div>
                 <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="btn-primary flex items-center justify-center gap-2"
+                    onClick={handleAddNew}
+                    className="bg-emerald-600 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[10px] shadow-xl shadow-emerald-600/20 hover:bg-emerald-500 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                     <Plus className="w-5 h-5" />
-                    <span>New Term</span>
+                    <span>Provision New Term</span>
                 </button>
             </div>
 
-            <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-[3rem] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-gray-50/50">
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Term Title</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Academic Year</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Duration</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Actions</th>
+                            <tr className="bg-slate-50/50">
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Term Identifier</th>
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Parent Cycle</th>
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Duration Range</th>
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">Synchronization</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50">
+                        <tbody className="divide-y divide-slate-50">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={4} className="px-8 py-20 text-center">
-                                        <div className="flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-emerald-600" /></div>
+                                    <td colSpan={4} className="px-10 py-24 text-center">
+                                        <div className="flex flex-col items-center gap-4">
+                                            <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 animate-pulse">Syncing Academic Terms...</p>
+                                        </div>
                                     </td>
                                 </tr>
                             ) : terms.length > 0 ? (
                                 terms.map((term) => (
-                                    <tr key={term.id} className="hover:bg-gray-50/50 transition-colors group">
-                                        <td className="px-8 py-6">
-                                            <div className="flex items-center gap-3">
-                                                <div className="bg-blue-50 p-3 rounded-2xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                                    <tr key={term.id} className="hover:bg-slate-50/50 transition-colors group">
+                                        <td className="px-10 py-8">
+                                            <div className="flex items-center gap-4">
+                                                <div className="bg-emerald-600 p-3 rounded-2xl text-white shadow-xl shadow-emerald-600/10 group-hover:scale-110 transition-transform">
                                                     <CalendarRange className="w-5 h-5" />
                                                 </div>
-                                                <span className="font-black text-gray-900 uppercase tracking-tight">{term.title}</span>
+                                                <span className="font-black text-slate-900 tracking-tight uppercase">{term.title}</span>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-100">
-                                                {term.academicYear.title}
+                                        <td className="px-10 py-8">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-5 py-2 rounded-full border border-blue-100">
+                                                {term.academicYear?.title || "Legacy Cycle"}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-6 text-xs font-bold text-gray-500">
-                                            {new Date(term.startDate).toLocaleDateString()} — {new Date(term.endDate).toLocaleDateString()}
+                                        <td className="px-10 py-8 text-xs font-bold text-slate-500 tracking-wider">
+                                            {new Date(term.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })} — {new Date(term.endDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                         </td>
-                                        <td className="px-8 py-6">
-                                            <div className="flex items-center gap-2">
-                                                <button className="p-3 hover:bg-white rounded-2xl text-gray-400 hover:text-emerald-600 border border-transparent hover:border-gray-100 transition-all"><Edit2 className="w-4 h-4" /></button>
-                                                <button className="p-3 hover:bg-white rounded-2xl text-gray-400 hover:text-red-500 border border-transparent hover:border-gray-100 transition-all"><Trash2 className="w-4 h-4" /></button>
+                                        <td className="px-10 py-8">
+                                            <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button
+                                                    onClick={() => handleEdit(term)}
+                                                    className="p-3 bg-white hover:bg-emerald-50 rounded-2xl text-slate-400 hover:text-emerald-600 transition-all border border-slate-100"
+                                                >
+                                                    <Edit2 className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => setShowDeleteConfirm(term.id)}
+                                                    className="p-3 bg-white hover:bg-red-50 rounded-2xl text-slate-400 hover:text-red-500 transition-all border border-slate-100"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={4} className="px-8 py-32 text-center">
-                                        <div className="flex flex-col items-center gap-4 text-gray-300">
+                                    <td colSpan={4} className="px-10 py-32 text-center text-slate-300">
+                                        <div className="flex flex-col items-center gap-6">
                                             <CalendarRange className="w-16 h-16 opacity-10" />
-                                            <p className="font-black uppercase tracking-widest text-xs">No terms defined for this cycle</p>
+                                            <p className="font-black uppercase tracking-widest text-[10px]">Registry Empty: No Terms Defined</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -154,23 +211,26 @@ export default function AcademicTermsPage() {
                 </div>
             </div>
 
+            {/* Modal for Add/Edit */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-white/40 backdrop-blur-md" onClick={() => setIsModalOpen(false)} />
-                    <form onSubmit={handleSubmit} className="relative glass-modal w-full max-w-md rounded-[3rem] p-10 animate-fade-up space-y-8">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-emerald-600 p-3 rounded-2xl text-white">
-                                    <Plus className="w-5 h-5" />
-                                </div>
-                                <h3 className="text-xl font-black text-gray-900 uppercase">Deploy Term</h3>
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-white/40 backdrop-blur-md" onClick={handleCloseModal} />
+                    <form onSubmit={handleSubmit} className="relative bg-white w-full max-w-md rounded-[3rem] p-10 animate-fade-up shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] border border-slate-100 space-y-10">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-slate-900 p-4 rounded-[2rem] text-white shadow-2xl">
+                                {selectedTerm ? <RefreshCcw className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
                             </div>
-                            <button onClick={() => setIsModalOpen(false)} type="button" className="p-2 hover:bg-gray-100 rounded-xl transition-all"><X className="w-5 h-5 text-gray-400" /></button>
+                            <div>
+                                <h3 className="text-2xl font-black text-slate-900 leading-tight uppercase tracking-tighter">
+                                    {selectedTerm ? "Update Term" : "Deploy Term"}
+                                </h3>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">
+                                    {selectedTerm ? "Synchronize Parameters" : "Provision Grading Period"}
+                                </p>
+                            </div>
                         </div>
 
-                        {error && <p className="text-red-500 text-[10px] font-black uppercase bg-red-50 p-4 rounded-2xl border border-red-100">{error}</p>}
-
-                        <div className="space-y-6">
+                        <div className="space-y-8">
                             <div>
                                 <label className={labelClass}>Parent Academic Cycle</label>
                                 <select
@@ -179,13 +239,13 @@ export default function AcademicTermsPage() {
                                     value={formData.academicYearId}
                                     onChange={(e) => setFormData({ ...formData, academicYearId: e.target.value })}
                                 >
-                                    <option value="">Select Cycle</option>
+                                    <option value="">Select Target Cycle</option>
                                     {years.map(y => <option key={y.id} value={y.id}>{y.title}</option>)}
                                 </select>
                             </div>
 
                             <div>
-                                <label className={labelClass}>Institutional Title</label>
+                                <label className={labelClass}>Term Identifier</label>
                                 <input
                                     required
                                     className={inputClass}
@@ -195,7 +255,7 @@ export default function AcademicTermsPage() {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-6">
                                 <div>
                                     <label className={labelClass}>Commencement</label>
                                     <input
@@ -219,15 +279,58 @@ export default function AcademicTermsPage() {
                             </div>
                         </div>
 
-                        <button type="submit" disabled={submitting} className="w-full btn-primary py-6 flex items-center justify-center gap-3">
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className="w-full bg-slate-900 text-white py-6 rounded-[2rem] flex items-center justify-center gap-4 text-xs font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200"
+                        >
                             {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                                 <>
-                                    <CalendarRange className="w-5 h-5" />
-                                    <span>Finalize Deployment</span>
+                                    {selectedTerm ? <RefreshCcw className="w-5 h-5" /> : <Check className="w-5 h-5" />}
+                                    <span>{selectedTerm ? "Finalize Synchronization" : "Deploy Term Node"}</span>
                                 </>
                             )}
                         </button>
                     </form>
+                </div>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm && (
+                <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+                    <div
+                        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+                        onClick={() => setShowDeleteConfirm(null)}
+                    />
+                    <div className="relative bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl animate-fade-up border border-slate-100">
+                        <div className="flex flex-col items-center text-center space-y-6">
+                            <div className="bg-red-50 p-6 rounded-[2.5rem] text-red-500 shadow-xl shadow-red-500/10">
+                                <AlertTriangle className="w-10 h-10" />
+                            </div>
+                            <div className="space-y-3">
+                                <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-tight">Wipe Term?</h3>
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+                                    All marks, attendance and reports associated with this term node will be permanently decommissioned.
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 w-full pt-6">
+                                <button
+                                    onClick={() => setShowDeleteConfirm(null)}
+                                    className="bg-slate-50 text-slate-400 py-5 rounded-3xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-100 transition-all flex items-center justify-center gap-2"
+                                >
+                                    <X className="w-4 h-4" />
+                                    Abort
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(showDeleteConfirm)}
+                                    className="bg-red-500 text-white py-5 rounded-3xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-red-500/20 hover:bg-red-600 transition-all flex items-center justify-center gap-2"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    Confirm
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

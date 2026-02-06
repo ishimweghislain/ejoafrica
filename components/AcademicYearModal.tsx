@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Loader2, Calendar } from "lucide-react";
+import { X, Loader2, Calendar, RefreshCcw, Check } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 interface AcademicYear {
     id?: string;
@@ -24,7 +25,6 @@ export default function AcademicYearModal({
     editingYear
 }: AcademicYearModalProps) {
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
     const [formData, setFormData] = useState<AcademicYear>({
         title: "",
         startDate: "",
@@ -45,14 +45,14 @@ export default function AcademicYearModal({
                 endDate: "",
             });
         }
-    }, [editingYear]);
+    }, [editingYear, isOpen]);
 
     if (!isOpen) return null;
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
-        setError("");
+        const tid = toast.loading(`${editingYear ? 'Synchronizing' : 'Deploying'} academic cycle...`);
 
         try {
             const url = editingYear
@@ -69,46 +69,43 @@ export default function AcademicYearModal({
 
             if (!res.ok) throw new Error("Synchronization protocol failed.");
 
+            toast.success(`Academic Cycle ${editingYear ? 'Updated' : 'Deployed'}.`, { id: tid, icon: "📅" });
             onSuccess();
             onClose();
         } catch (err: any) {
-            setError(err.message);
+            toast.error(`PROTOCOL ERROR: ${err.message}`, { id: tid });
         } finally {
             setLoading(false);
         }
     }
 
-    const inputClass = "w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-4 focus:ring-emerald-500/10 focus:bg-white outline-none transition-all shadow-sm";
-    const labelClass = "text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-3 block ml-2";
+    const inputClass = "w-full bg-slate-50/50 border border-slate-100 rounded-[2rem] px-8 py-5 text-sm font-bold text-slate-900 focus:ring-8 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all shadow-sm placeholder:text-slate-300";
+    const labelClass = "text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] mb-3 block ml-4";
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-white/40 backdrop-blur-md" onClick={onClose} />
 
-            <div className="relative glass-modal w-full max-w-md rounded-[3rem] p-10 animate-fade-up">
+            <div className="relative bg-white border border-slate-100 w-full max-w-md rounded-[3rem] p-10 animate-fade-up shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)]">
                 <div className="flex items-center justify-between mb-10">
                     <div className="flex items-center gap-4">
-                        <div className="bg-blue-600 p-3 rounded-2xl text-white shadow-lg shadow-blue-500/20">
-                            <Calendar className="w-6 h-6" />
+                        <div className="bg-slate-900 p-4 rounded-[2rem] text-white shadow-2xl">
+                            {editingYear ? <RefreshCcw className="w-6 h-6" /> : <Calendar className="w-6 h-6" />}
                         </div>
                         <div>
-                            <h3 className="text-xl font-black text-gray-900 leading-tight">Year Setup</h3>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">Calendar Module</p>
+                            <h3 className="text-2xl font-black text-slate-900 leading-tight uppercase tracking-tighter">
+                                {editingYear ? "Update Cycle" : "Year Setup"}
+                            </h3>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Calendar Module</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-2xl transition-all">
-                        <X className="w-5 h-5 text-gray-400" />
+                    <button onClick={onClose} className="p-3 hover:bg-slate-50 rounded-2xl transition-all">
+                        <X className="w-6 h-6 text-slate-400" />
                     </button>
                 </div>
 
-                {error && (
-                    <div className="mb-8 p-6 bg-red-50 text-red-600 rounded-3xl text-xs font-bold border border-red-100 italic">
-                        {error}
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-8">
-                    <div className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-10">
+                    <div className="space-y-8">
                         <div>
                             <label className={labelClass}>Calendar Title</label>
                             <input
@@ -121,7 +118,7 @@ export default function AcademicYearModal({
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className={labelClass}>Start Key</label>
                                 <input
@@ -148,9 +145,14 @@ export default function AcademicYearModal({
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full btn-primary py-6 flex items-center justify-center gap-2"
+                        className="w-full bg-slate-900 text-white py-6 rounded-[2rem] flex items-center justify-center gap-4 text-xs font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200"
                     >
-                        {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : editingYear ? "Update Protocol" : "Deploy Year"}
+                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                            <>
+                                {editingYear ? <RefreshCcw className="w-5 h-5" /> : <Check className="w-5 h-5" />}
+                                {editingYear ? "Sync Cycle" : "Initialize Cycle"}
+                            </>
+                        )}
                     </button>
                 </form>
             </div>

@@ -45,6 +45,8 @@ async function getSession(): Promise<SessionPayload | null> {
     }
 }
 
+import LogoutButton from "@/components/LogoutButton";
+
 export default async function DashboardLayout({
     children,
 }: {
@@ -148,12 +150,7 @@ export default async function DashboardLayout({
                 </nav>
 
                 <div className="p-4 border-t px-6 bg-gray-50/50">
-                    <form action="/api/auth/logout" method="POST">
-                        <button className="flex items-center gap-3 w-full text-xs font-black uppercase tracking-widest text-red-500 hover:bg-red-50 p-3 rounded-2xl transition-all">
-                            <LogOut className="w-4 h-4" />
-                            Logout Session
-                        </button>
-                    </form>
+                    <LogoutButton />
                 </div>
             </aside>
 
