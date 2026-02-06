@@ -209,6 +209,8 @@ model Exam {
   analyzing      Boolean      @default(false)
   evaluating     Boolean      @default(false)
   creating       Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model StudentDiscipline {

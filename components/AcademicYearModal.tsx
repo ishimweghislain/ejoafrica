@@ -83,7 +83,7 @@ export default function AcademicYearModal({
     const labelClass = "text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] mb-3 block ml-4";
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-white/40 backdrop-blur-md" onClick={onClose} />
 
             <div className="relative bg-white border border-slate-100 w-full max-w-md rounded-[3rem] p-10 animate-fade-up shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)]">

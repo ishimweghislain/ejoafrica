@@ -107,7 +107,7 @@ export default function UserModal({
     const labelClass = "text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-3 block ml-2";
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-white/40 backdrop-blur-md" onClick={onClose} />
 
             <div className="relative bg-white border border-slate-100 w-full max-w-2xl rounded-[3rem] p-10 animate-fade-up overflow-y-auto max-h-[90vh] shadow-2xl">

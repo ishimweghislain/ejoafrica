@@ -171,9 +171,9 @@ export default function CoursesPage() {
 
             {/* Delete Confirmation Modal */}
             {showDeleteConfirm && (
-                <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
                     <div
-                        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+                        className="absolute inset-0 bg-white/40 backdrop-blur-md"
                         onClick={() => setShowDeleteConfirm(null)}
                     />
                     <div className="relative bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl animate-fade-up border border-slate-100">
