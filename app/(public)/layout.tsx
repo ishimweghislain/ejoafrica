@@ -15,17 +15,29 @@ export default function PublicLayout({
                         <span className="hidden sm:inline">EjoAfrica</span>
                     </Link>
 
-                    <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
-                        <Link href="/" className="hover:text-emerald-600 transition-colors">Home</Link>
-                        <Link href="/features" className="hover:text-emerald-600 transition-colors">Features</Link>
-                        <Link href="/partners" className="hover:text-emerald-600 transition-colors">Partners</Link>
-                        <Link href="/contact" className="hover:text-emerald-600 transition-colors">Contact</Link>
+                    <nav className="hidden md:flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+                        <Link href="/" className="flex items-center gap-2 hover:text-emerald-600 transition-all hover:scale-105 active:scale-95">
+                            <Home className="w-4 h-4 text-emerald-500" />
+                            <span>Home</span>
+                        </Link>
+                        <Link href="/features" className="flex items-center gap-2 hover:text-emerald-600 transition-all hover:scale-105 active:scale-95">
+                            <Sparkles className="w-4 h-4 text-emerald-500" />
+                            <span>Features</span>
+                        </Link>
+                        <Link href="/partners" className="flex items-center gap-2 hover:text-emerald-600 transition-all hover:scale-105 active:scale-95">
+                            <Users className="w-4 h-4 text-emerald-500" />
+                            <span>Partners</span>
+                        </Link>
+                        <Link href="/contact" className="flex items-center gap-2 hover:text-emerald-600 transition-all hover:scale-105 active:scale-95">
+                            <MessageCircle className="w-4 h-4 text-emerald-500" />
+                            <span>Contact</span>
+                        </Link>
                     </nav>
 
                     <div className="flex items-center gap-4">
-                        <Link href="/login" className="btn-primary py-2 px-6 text-sm flex items-center gap-2 transition-transform hover:scale-105 active:scale-95">
-                            <LogIn className="w-4 h-4 md:hidden" />
-                            <span>Login</span>
+                        <Link href="/login" className="bg-gray-900 text-white px-8 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all hover:bg-emerald-600 hover:scale-105 active:scale-95 shadow-xl shadow-gray-200">
+                            <LogIn className="w-4 h-4" />
+                            <span>Portal Login</span>
                         </Link>
                     </div>
                 </div>
@@ -37,21 +49,21 @@ export default function PublicLayout({
 
             {/* Mobile Bottom Navigation (Insta Style) */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 glass border-t px-6 py-3 flex items-center justify-between pb-safe">
-                <Link href="/" className="flex flex-col items-center gap-1 text-gray-400 hover:text-emerald-600 transition-colors">
+                <Link href="/" className="flex flex-col items-center gap-1 text-gray-500 hover:text-emerald-600 transition-colors">
                     <Home className="w-6 h-6" />
-                    <span className="text-[10px] font-bold uppercase">Home</span>
+                    <span className="text-[10px] font-black uppercase">Home</span>
                 </Link>
-                <Link href="/features" className="flex flex-col items-center gap-1 text-gray-400 hover:text-emerald-600 transition-colors">
+                <Link href="/features" className="flex flex-col items-center gap-1 text-gray-500 hover:text-emerald-600 transition-colors">
                     <Sparkles className="w-6 h-6" />
-                    <span className="text-[10px] font-bold uppercase">Features</span>
+                    <span className="text-[10px] font-black uppercase">Features</span>
                 </Link>
-                <Link href="/partners" className="flex flex-col items-center gap-1 text-gray-400 hover:text-emerald-600 transition-colors">
+                <Link href="/partners" className="flex flex-col items-center gap-1 text-gray-500 hover:text-emerald-600 transition-colors">
                     <Users className="w-6 h-6" />
-                    <span className="text-[10px] font-bold uppercase">Partners</span>
+                    <span className="text-[10px] font-black uppercase">Partners</span>
                 </Link>
-                <Link href="/contact" className="flex flex-col items-center gap-1 text-gray-400 hover:text-emerald-600 transition-colors">
+                <Link href="/contact" className="flex flex-col items-center gap-1 text-gray-500 hover:text-emerald-600 transition-colors">
                     <MessageCircle className="w-6 h-6" />
-                    <span className="text-[10px] font-bold uppercase">Contact</span>
+                    <span className="text-[10px] font-black uppercase">Contact</span>
                 </Link>
             </nav>
 

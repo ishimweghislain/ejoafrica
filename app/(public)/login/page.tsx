@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { GraduationCap, Mail, Lock, Loader2, AlertCircle } from "lucide-react";
+import { GraduationCap, Mail, Lock, Loader2, AlertCircle, LogIn } from "lucide-react";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -42,73 +42,86 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-            <div className="max-w-md w-full space-y-8 glass p-8 rounded-[2.5rem] shadow-2xl animate-fade-up">
-                <div className="text-center space-y-2">
+        <div className="min-h-[85vh] flex items-center justify-center px-4 py-20 relative overflow-hidden">
+            {/* Background elements */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-50 rounded-full blur-[100px] -mr-48 -mt-48 opacity-50"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-50 rounded-full blur-[100px] -ml-48 -mb-48 opacity-50"></div>
+
+            <div className="max-w-md w-full space-y-10 glass-modal p-12 rounded-[4rem] animate-fade-up relative z-10">
+                <div className="text-center space-y-6">
                     <div className="flex justify-center">
-                        <div className="bg-emerald-100 p-3 rounded-2xl text-emerald-600">
-                            <GraduationCap className="w-10 h-10" />
+                        <div className="bg-emerald-600 p-4 rounded-3xl text-white shadow-xl shadow-emerald-500/20">
+                            <GraduationCap className="w-12 h-12" />
                         </div>
                     </div>
-                    <h2 className="text-3xl font-bold tracking-tight">Welcome Back</h2>
-                    <p className="text-gray-500 text-sm">
-                        Sign in to access your administrative dashboard
-                    </p>
+                    <div className="space-y-2">
+                        <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tight">Access Node</h2>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600">Institutional Gateway</p>
+                    </div>
                 </div>
 
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                <form className="space-y-8" onSubmit={handleSubmit}>
                     {error && (
-                        <div className="bg-red-50 text-red-600 p-4 rounded-xl flex items-center gap-3 text-sm border border-red-100 animate-shake">
+                        <div className="bg-red-50 text-red-600 p-5 rounded-2xl flex items-center gap-4 text-xs font-bold border border-red-100 animate-shake italic">
                             <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                            <p>{error}</p>
+                            <p>PROTOCOL ERROR: {error}</p>
                         </div>
                     )}
 
-                    <div className="space-y-4">
-                        <div className="relative group">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                required
-                                placeholder="Email address"
-                                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-12 py-4 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                            />
+                    <div className="space-y-6">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] ml-2 block">System Identifier</label>
+                            <div className="relative group">
+                                <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    required
+                                    placeholder="Email address"
+                                    className="w-full bg-gray-50/50 border border-gray-100 rounded-3xl px-14 py-5 text-sm font-bold text-gray-900 outline-none ring-4 ring-transparent focus:ring-emerald-500/10 focus:bg-white focus:border-emerald-500 transition-all"
+                                />
+                            </div>
                         </div>
 
-                        <div className="relative group">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                required
-                                placeholder="Password"
-                                className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-12 py-4 text-sm outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                            />
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] ml-2 block">Security Token</label>
+                            <div className="relative group">
+                                <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    required
+                                    placeholder="Master Password"
+                                    className="w-full bg-gray-50/50 border border-gray-100 rounded-3xl px-14 py-5 text-sm font-bold text-gray-900 outline-none ring-4 ring-transparent focus:ring-emerald-500/10 focus:bg-white focus:border-emerald-500 transition-all"
+                                />
+                            </div>
                         </div>
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full btn-primary py-4 flex items-center justify-center gap-2"
+                        className="w-full bg-gray-900 text-white py-6 rounded-3xl flex items-center justify-center gap-4 font-black uppercase tracking-[0.3em] shadow-2xl shadow-gray-200 hover:bg-emerald-600 hover:scale-[1.02] active:scale-95 transition-all text-xs"
                     >
                         {loading ? (
                             <>
                                 <Loader2 className="w-5 h-5 animate-spin" />
-                                Signing in...
+                                Synchronizing...
                             </>
                         ) : (
-                            "Sign In"
+                            <>
+                                <LogIn className="w-5 h-5" />
+                                Initialize Access
+                            </>
                         )}
                     </button>
                 </form>
 
-                <div className="text-center pt-4">
-                    <p className="text-xs text-gray-400 leading-relaxed px-4">
-                        No public registration. If your email is not registered, please contact your school administrator to get your user account created.
+                <div className="text-center">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 leading-relaxed px-6">
+                        Provisioned accounts only. Contact System Root for credentials.
                     </p>
                 </div>
             </div>
