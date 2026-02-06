@@ -91,11 +91,11 @@ export default function TeachersPage() {
                     </div>
                 ) : teachers.length > 0 ? (
                     teachers.map((t) => (
-                        <div key={t.id} className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] transition-all hover:shadow-2xl hover:-translate-y-2 group relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -mr-16 -mt-16 group-hover:bg-emerald-500/10 transition-colors"></div>
+                        <div key={t.id} className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-[0_10px_30px_rgba(0,0,0,0.02)] transition-all hover:shadow-xl hover:-translate-y-1 group relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full -mr-12 -mt-12 group-hover:bg-emerald-500/10 transition-colors"></div>
 
-                            <div className="flex justify-between items-start mb-8 relative z-10">
-                                <div className="w-20 h-20 rounded-[2rem] bg-slate-900 flex items-center justify-center text-white text-2xl font-black shadow-2xl shadow-slate-900/20 overflow-hidden ring-4 ring-white">
+                            <div className="flex justify-between items-start mb-6 relative z-10">
+                                <div className="w-16 h-16 rounded-[1.5rem] bg-slate-900 flex items-center justify-center text-white text-xl font-black shadow-2xl shadow-slate-900/10 overflow-hidden ring-4 ring-white">
                                     {t.profileImage ? (
                                         <img src={t.profileImage} alt="" className="w-full h-full object-cover" />
                                     ) : (
@@ -105,39 +105,39 @@ export default function TeachersPage() {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => handleEdit(t)}
-                                        className="p-3 bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 rounded-2xl transition-all"
+                                        className="p-2.5 bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all"
                                     >
-                                        <Edit2 className="w-4 h-4" />
+                                        <Edit2 className="w-3.5 h-3.5" />
                                     </button>
                                     <button
                                         onClick={() => setShowDeleteConfirm(t.id)}
-                                        className="p-3 bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 rounded-2xl transition-all"
+                                        className="p-2.5 bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all"
                                     >
-                                        <Trash2 className="w-4 h-4" />
+                                        <Trash2 className="w-3.5 h-3.5" />
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="space-y-2 relative z-10">
-                                <h3 className="font-black text-xl text-slate-900 tracking-tighter group-hover:text-emerald-600 transition-colors">
+                            <div className="space-y-1 relative z-10">
+                                <h3 className="font-black text-lg text-slate-900 tracking-tighter group-hover:text-emerald-600 transition-colors">
                                     {t.firstName} {t.lastName}
                                 </h3>
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
-                                    <Shield className="w-3 h-3" />
-                                    <span className="text-[9px] font-black uppercase tracking-widest">{t.school || "Lycée de Kigali"}</span>
+                                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/50">
+                                    <Shield className="w-2.5 h-2.5" />
+                                    <span className="text-[8px] font-black uppercase tracking-widest">{t.school || "Lycée de Kigali"}</span>
                                 </div>
                             </div>
 
-                            <div className="mt-8 space-y-4 pt-8 border-t border-slate-50 relative z-10">
-                                <div className="flex items-center gap-4 text-[11px] font-bold text-slate-500">
-                                    <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center">
-                                        <Mail className="w-4 h-4 text-slate-300" />
+                            <div className="mt-6 space-y-3 pt-6 border-t border-slate-50 relative z-10">
+                                <div className="flex items-center gap-3 text-[10px] font-bold text-slate-500">
+                                    <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center">
+                                        <Mail className="w-3.5 h-3.5 text-slate-300" />
                                     </div>
                                     <span className="truncate">{t.email}</span>
                                 </div>
-                                <div className="flex items-center gap-4 text-[11px] font-bold text-slate-500">
-                                    <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center">
-                                        <Phone className="w-4 h-4 text-slate-300" />
+                                <div className="flex items-center gap-3 text-[10px] font-bold text-slate-500">
+                                    <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center">
+                                        <Phone className="w-3.5 h-3.5 text-slate-300" />
                                     </div>
                                     <span>{t.phone || "Signal Unavailable"}</span>
                                 </div>
@@ -161,7 +161,7 @@ export default function TeachersPage() {
             {showDeleteConfirm && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
                     <div
-                        className="absolute inset-0 bg-white/40 backdrop-blur-md"
+                        className="absolute inset-0 bg-slate-900/60"
                         onClick={() => setShowDeleteConfirm(null)}
                     />
                     <div className="relative bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl animate-fade-up border border-slate-100">

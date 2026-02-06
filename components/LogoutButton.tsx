@@ -35,7 +35,7 @@ export default function LogoutButton() {
             {showConfirm && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
                     <div
-                        className="absolute inset-0 bg-white/40 backdrop-blur-md"
+                        className="absolute inset-0 bg-slate-900/60"
                         onClick={() => setShowConfirm(false)}
                     />
                     <div className="relative bg-white rounded-[2.5rem] p-8 max-w-sm w-full shadow-2xl animate-fade-up border border-slate-100">

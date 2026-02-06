@@ -47,6 +47,9 @@ model AcademicYear {
   title     String   @unique
   startDate DateTime
   endDate   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
   terms     AcademicTerm[]
   courses   Course[]
   timetables Timetable[]
@@ -61,6 +64,9 @@ model AcademicTerm {
   title          String
   startDate      DateTime
   endDate        DateTime
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  
   courses        Course[]
   timetables     Timetable[]
   schemes        SchemeOfWork[]
@@ -70,6 +76,9 @@ model AcademicTerm {
 model Class {
   id         String   @id @default(uuid())
   name       String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
   courses    Course[]
   timetables Timetable[]
   schemes    SchemeOfWork[]
@@ -88,6 +97,8 @@ model Course {
   academicYear    AcademicYear @relation(fields: [academicYearId], references: [id])
   termId          String
   term            AcademicTerm @relation(fields: [termId], references: [id])
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
   
   // Bloom's Taxonomy
   remembering     Boolean      @default(false)
@@ -111,15 +122,21 @@ model Topic {
   title     String
   courseId  String
   course    Course      @relation(fields: [courseId], references: [id])
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  
   subtopics Subtopic[]
 }
 
 model Subtopic {
-  id      String   @id @default(uuid())
-  title   String
-  topicId String
-  topic   Topic    @relation(fields: [topicId], references: [id])
-  units   Unit[]
+  id        String   @id @default(uuid())
+  title     String
+  topicId   String
+  topic     Topic    @relation(fields: [topicId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  units     Unit[]
 }
 
 model Unit {
@@ -137,6 +154,9 @@ model Unit {
   linksToOther       String?
   assessmentCriteria String?
   materials          String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  
   lessons            Lesson[]
 }
 
@@ -155,6 +175,8 @@ model Timetable {
   course         Course       @relation(fields: [courseId], references: [id])
   teacherId      String
   teacher        User         @relation("TeacherTimetables", fields: [teacherId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model SchemeOfWork {
@@ -169,6 +191,9 @@ model SchemeOfWork {
   course         Course       @relation(fields: [courseId], references: [id])
   periodsPerWeek Int
   reference      String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  
   lessons        Lesson[]
 }
 
@@ -185,6 +210,8 @@ model Lesson {
   teachingMethod String?
   resources      String?
   observation    String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }
 
 model Exam {
@@ -201,6 +228,8 @@ model Exam {
   academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
   teacherId      String
   teacher        User         @relation("TeacherExams", fields: [teacherId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   
   // Bloom's Taxonomy
   remembering    Boolean      @default(false)
@@ -209,8 +238,6 @@ model Exam {
   analyzing      Boolean      @default(false)
   evaluating     Boolean      @default(false)
   creating       Boolean      @default(false)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
 }
 
 model StudentDiscipline {
@@ -222,4 +249,6 @@ model StudentDiscipline {
   description String
   date        DateTime @default(now())
   remarks     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

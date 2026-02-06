@@ -108,7 +108,7 @@ export default function UserModal({
 
     return (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-white/40 backdrop-blur-md" onClick={onClose} />
+            <div className="absolute inset-0 bg-slate-900/60" onClick={onClose} />
 
             <div className="relative bg-white border border-slate-100 w-full max-w-2xl rounded-[3rem] p-10 animate-fade-up overflow-y-auto max-h-[90vh] shadow-2xl">
                 <div className="flex items-center justify-between mb-10">
@@ -162,6 +162,16 @@ export default function UserModal({
                                     <option value="STUDENT">Student</option>
                                     <option value="PARENT">Parent / Tutor</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className={labelClass}>Phone Number</label>
+                                <input className={inputClass} placeholder="e.g. +250..." value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
+                            </div>
+                            <div>
+                                <label className={labelClass}>Institutional Node (School)</label>
+                                <input className={inputClass} value={formData.school} onChange={(e) => setFormData({ ...formData, school: e.target.value })} />
                             </div>
                         </div>
                     </div>

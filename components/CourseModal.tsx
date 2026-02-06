@@ -121,7 +121,7 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
 
     return (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-white/40 backdrop-blur-md" onClick={onClose} />
+            <div className="absolute inset-0 bg-slate-900/60" onClick={onClose} />
 
             <div className="relative bg-white border border-slate-100 w-full max-w-xl rounded-[3rem] p-10 animate-fade-up shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)]">
                 <div className="flex items-center justify-between mb-10">
