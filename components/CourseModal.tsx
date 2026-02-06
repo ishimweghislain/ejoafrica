@@ -13,6 +13,12 @@ interface CourseModalProps {
 }
 
 export default function CourseModal({ isOpen, onClose, onSuccess, initialData }: CourseModalProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const [loading, setLoading] = useState(false);
     const [fetchingData, setFetchingData] = useState(true);
     const [classes, setClasses] = useState<any[]>([]);
@@ -78,8 +84,6 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
         }
     }, [isOpen, initialData]);
 
-    if (!isOpen) return null;
-
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
@@ -119,12 +123,6 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
 
     const inputClass = "w-full bg-slate-50/50 border border-slate-100 rounded-[2rem] px-8 py-5 text-sm font-bold text-slate-900 focus:ring-8 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all shadow-sm placeholder:text-slate-300 appearance-none";
     const labelClass = "text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] mb-3 block ml-4";
-
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     if (!isOpen || !mounted) return null;
 

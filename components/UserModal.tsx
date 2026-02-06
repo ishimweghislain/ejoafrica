@@ -20,6 +20,12 @@ export default function UserModal({
     defaultRole = "STUDENT",
     initialData
 }: UserModalProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         firstName: "",
@@ -61,9 +67,6 @@ export default function UserModal({
             });
         }
     }, [initialData, isOpen]);
-
-    if (!isOpen) return null;
-
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
@@ -106,12 +109,6 @@ export default function UserModal({
 
     const inputClass = "w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-4 focus:ring-emerald-500/10 focus:bg-white outline-none transition-all shadow-sm";
     const labelClass = "text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-3 block ml-2";
-
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     if (!isOpen || !mounted) return null;
 

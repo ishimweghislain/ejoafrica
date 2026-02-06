@@ -25,6 +25,12 @@ export default function AcademicYearModal({
     onSuccess,
     editingYear
 }: AcademicYearModalProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<AcademicYear>({
         title: "",
@@ -47,8 +53,6 @@ export default function AcademicYearModal({
             });
         }
     }, [editingYear, isOpen]);
-
-    if (!isOpen) return null;
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -82,12 +86,6 @@ export default function AcademicYearModal({
 
     const inputClass = "w-full bg-slate-50/50 border border-slate-100 rounded-[2rem] px-8 py-5 text-sm font-bold text-slate-900 focus:ring-8 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all shadow-sm placeholder:text-slate-300";
     const labelClass = "text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] mb-3 block ml-4";
-
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     if (!isOpen || !mounted) return null;
 
