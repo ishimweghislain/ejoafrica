@@ -66,7 +66,7 @@ export default function RegistrationPage() {
         }
     }
 
-    const inputClass = "w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 text-sm focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all shadow-sm";
+    const inputClass = "w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-4 focus:ring-emerald-500/10 focus:bg-white outline-none transition-all shadow-sm";
     const labelClass = "text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-3 block ml-2";
 
     return (
@@ -77,7 +77,7 @@ export default function RegistrationPage() {
                     <span className="text-[10px] font-black uppercase tracking-widest">Biometric Identity Node</span>
                 </div>
                 <h1 className="text-4xl font-black tracking-tight text-gray-900">User Enrollment</h1>
-                <p className="text-gray-500 max-w-lg mx-auto font-medium">Provision unique institutional access for staff, students, and parents.</p>
+                <p className="text-gray-500 max-w-lg mx-auto font-bold uppercase tracking-widest text-[10px]">Provision unique institutional access for staff, students, and parents.</p>
             </div>
 
             <div className="bg-white rounded-[3.5rem] shadow-2xl shadow-emerald-950/5 border border-gray-100 overflow-hidden">
@@ -87,8 +87,8 @@ export default function RegistrationPage() {
                             <UserPlus className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="font-black tracking-tight">Access Provisioning</h3>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Protocol Version 2.0</p>
+                            <h3 className="font-black tracking-tight uppercase">Access Provisioning</h3>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none mt-1">Protocol Version 2.0</p>
                         </div>
                     </div>
                     {success && (
@@ -99,15 +99,15 @@ export default function RegistrationPage() {
                     )}
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-10 md:p-16 space-y-12">
+                <form onSubmit={handleSubmit} className="p-10 md:p-16 space-y-12 bg-white">
                     {error && (
-                        <div className="p-6 bg-red-50 border border-red-100 text-red-600 rounded-3xl text-xs font-bold leading-relaxed">
+                        <div className="p-6 bg-red-50 border border-red-100 text-red-600 rounded-3xl text-sm font-bold leading-relaxed italic">
                             SECURITY WARNING: {error}
                         </div>
                     )}
 
                     <section className="space-y-8">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 pb-4 border-b border-gray-50">Identity Credentials</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 pb-4 border-b border-gray-50">Identity Credentials</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <label className={labelClass}>Legal First Name</label>
@@ -125,7 +125,7 @@ export default function RegistrationPage() {
                     </section>
 
                     <section className="space-y-8">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 pb-4 border-b border-gray-50">Role & Security</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 pb-4 border-b border-gray-50">Role & Security</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <label className={labelClass}>Assigned System Role</label>
@@ -154,7 +154,7 @@ export default function RegistrationPage() {
                     </section>
 
                     <section className="space-y-8">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-500 pb-4 border-b border-gray-50">Geographic Routing</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 pb-4 border-b border-gray-50">Geographic Routing</h4>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <div>
                                 <label className={labelClass}>Mobile Contact</label>
@@ -175,10 +175,10 @@ export default function RegistrationPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-emerald-600 text-white rounded-[2rem] py-6 font-black uppercase tracking-[0.2em] shadow-2xl shadow-emerald-600/20 hover:bg-emerald-500 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4 text-sm"
+                            className="w-full bg-emerald-600 text-white rounded-[2rem] py-8 font-black uppercase tracking-[0.3em] shadow-2xl shadow-emerald-600/20 hover:bg-emerald-500 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4 text-xs"
                         >
                             {loading ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
+                                <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                             ) : (
                                 <>
                                     <Shield className="w-5 h-5" />
@@ -186,8 +186,8 @@ export default function RegistrationPage() {
                                 </>
                             )}
                         </button>
-                        <p className="text-center text-[9px] font-bold text-gray-300 mt-6 uppercase tracking-widest leading-relaxed">
-                            By clicking finalize, you acknowledge this user will have immediate access <br /> toinstitutional data based on their assigned system role.
+                        <p className="text-center text-[9px] font-black text-gray-300 mt-8 uppercase tracking-[0.3em] leading-relaxed">
+                            By finalizing, you acknowledge immediate access creation <br /> for institutional nodes based on assigned role.
                         </p>
                     </div>
                 </form>

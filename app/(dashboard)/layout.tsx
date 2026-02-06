@@ -27,12 +27,18 @@ const JWT_SECRET = new TextEncoder().encode(
     process.env.JWT_SECRET || "default_secret_for_dev_only"
 );
 
-async function getSession() {
+interface SessionPayload {
+    email: string;
+    role: string;
+    userId: string;
+}
+
+async function getSession(): Promise<SessionPayload | null> {
     const token = (await cookies()).get("token")?.value;
     if (!token) return null;
     try {
         const { payload } = await jwtVerify(token, JWT_SECRET);
-        return payload;
+        return payload as unknown as SessionPayload;
     } catch (err) {
         return null;
     }
@@ -137,7 +143,7 @@ export default async function DashboardLayout({
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="hidden sm:block text-right">
-                            <p className="text-sm font-bold text-gray-900">{session.email}</p>
+                            <p className="text-sm font-bold text-gray-900">{(session.email as string)}</p>
                             <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Online</p>
                         </div>
                         <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold border-2 border-white shadow-xl">

@@ -28,13 +28,26 @@ body {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
+@layer base {
+
+  input,
+  select,
+  textarea {
+    @apply text-gray-900 font-medium;
+  }
+}
+
 @layer components {
   .btn-primary {
-    @apply bg-[var(--primary)] text-[var(--primary-foreground)] px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 active:scale-95 hover:bg-[var(--accent)] shadow-lg shadow-emerald-500/20;
+    @apply bg-[var(--primary)] text-[var(--primary-foreground)] px-6 py-3 rounded-xl font-bold uppercase tracking-widest text-[11px] transition-all hover:scale-105 active:scale-95 hover:bg-[var(--accent)] shadow-xl shadow-emerald-500/20;
   }
 
   .glass {
-    @apply bg-white/80 dark:bg-black/80 backdrop-blur-md border border-white/20 dark:border-white/10;
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+
+  .glass-modal {
+    @apply bg-white/95 backdrop-blur-xl border border-gray-100 shadow-[0_32px_128px_-16px_rgba(0, 0, 0, 0.1)];
   }
 }
 
