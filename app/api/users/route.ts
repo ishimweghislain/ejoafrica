@@ -70,7 +70,7 @@ export async function POST(request: Request) {
                 country,
                 city,
                 address,
-                school,
+                school: school || "Lycée de Kigali",
             },
         });
 

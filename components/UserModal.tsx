@@ -30,7 +30,7 @@ export default function UserModal({
         country: "Rwanda",
         city: "Kigali",
         address: "",
-        school: "EjoAfrica Academy",
+        school: "Lycée de Kigali",
     });
 
     if (!isOpen) return null;

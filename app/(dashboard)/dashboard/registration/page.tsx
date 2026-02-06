@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { UserPlus, Shield, Fingerprint, Loader2, CheckCircle2 } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export default function RegistrationPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [success, setSuccess] = useState(false);
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -19,17 +19,16 @@ export default function RegistrationPage() {
         country: "Rwanda",
         city: "Kigali",
         address: "",
-        school: "EjoAfrica Academy",
+        school: "Lycée de Kigali",
     });
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
         setError("");
-        setSuccess(false);
 
         if (formData.password !== formData.confirmPassword) {
-            setError("Security check failed: Passwords do not match.");
+            toast.error("Security check failed: Passwords do not match.");
             setLoading(false);
             return;
         }
@@ -44,7 +43,7 @@ export default function RegistrationPage() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Failed to register user");
 
-            setSuccess(true);
+            toast.success("Security Provisioning Successful: User node created.");
             setFormData({
                 firstName: "",
                 lastName: "",
@@ -57,10 +56,10 @@ export default function RegistrationPage() {
                 country: "Rwanda",
                 city: "Kigali",
                 address: "",
-                school: "EjoAfrica Academy",
+                school: "Lycée de Kigali",
             });
         } catch (err: any) {
-            setError(err.message);
+            toast.error(`PROTOCOL ERROR: ${err.message}`);
         } finally {
             setLoading(false);
         }
@@ -119,7 +118,7 @@ export default function RegistrationPage() {
                             </div>
                             <div className="md:col-span-2">
                                 <label className={labelClass}>Institutional Email Address</label>
-                                <input type="email" required className={inputClass} placeholder="user@ejoafrica.edu" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
+                                <input type="email" required className={inputClass} placeholder="user@ldk.edu.rw" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
                             </div>
                         </div>
                     </section>

@@ -37,7 +37,7 @@ async function main() {
                 firstName: "School",
                 lastName: "Administrator",
                 role: "SCHOOL_ADMIN" as any,
-                school: "EjoAfrica Academy",
+                school: "Lycée de Kigali",
             },
             {
                 email: "prodirectorstudies@programage.net",
@@ -45,7 +45,7 @@ async function main() {
                 firstName: "Director",
                 lastName: "of Studies",
                 role: "DOS" as any,
-                school: "EjoAfrica Academy",
+                school: "Lycée de Kigali",
             },
             {
                 email: "prodiscpline@programage.net",
@@ -53,7 +53,7 @@ async function main() {
                 firstName: "Director",
                 lastName: "of Discipline",
                 role: "DOD" as any,
-                school: "EjoAfrica Academy",
+                school: "Lycée de Kigali",
             },
             {
                 email: "proteacher@programage.net",
@@ -61,7 +61,7 @@ async function main() {
                 firstName: "Pro",
                 lastName: "Teacher",
                 role: "TEACHER" as any,
-                school: "EjoAfrica Academy",
+                school: "Lycée de Kigali",
             },
             {
                 email: "proparent@programage.net",
@@ -69,7 +69,7 @@ async function main() {
                 firstName: "Pro",
                 lastName: "Parent",
                 role: "PARENT" as any,
-                school: "EjoAfrica Academy",
+                school: "Lycée de Kigali",
             },
         ];
 

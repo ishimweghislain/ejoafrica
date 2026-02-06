@@ -3,17 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { GraduationCap, Mail, Lock, Loader2, AlertCircle, LogIn } from "lucide-react";
+import { GraduationCap, Mail, Lock, Loader2, LogIn } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export default function LoginPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setLoading(true);
-        setError("");
 
         const formData = new FormData(e.currentTarget);
         const email = formData.get("email");
@@ -32,10 +31,10 @@ export default function LoginPage() {
                 throw new Error(data.error || "Login failed");
             }
 
-            // Successful login - redirect to dashboard base on role
+            toast.success("Authentication Successful: Mapping institutional node...");
             router.push("/dashboard");
         } catch (err: any) {
-            setError(err.message);
+            toast.error(`ACCESS DENIED: ${err.message}`);
         } finally {
             setLoading(false);
         }
@@ -61,12 +60,6 @@ export default function LoginPage() {
                 </div>
 
                 <form className="space-y-8" onSubmit={handleSubmit}>
-                    {error && (
-                        <div className="bg-red-50 text-red-600 p-5 rounded-2xl flex items-center gap-4 text-xs font-bold border border-red-100 animate-shake italic">
-                            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                            <p>PROTOCOL ERROR: {error}</p>
-                        </div>
-                    )}
 
                     <div className="space-y-6">
                         <div className="space-y-2">
