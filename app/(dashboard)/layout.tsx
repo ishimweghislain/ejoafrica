@@ -13,7 +13,14 @@ import {
     GraduationCap,
     ClipboardList,
     ShieldAlert,
-    Menu
+    Menu,
+    CalendarCheck,
+    Briefcase,
+    FileSpreadsheet,
+    BookMarked,
+    Users2,
+    MessageCircle,
+    Fingerprint
 } from "lucide-react";
 
 const JWT_SECRET = new TextEncoder().encode(
@@ -49,19 +56,29 @@ export default async function DashboardLayout({
 
         // School Admin
         { icon: <Calendar className="w-5 h-5" />, label: "Academic Years", href: "/dashboard/academic-years", roles: ["SCHOOL_ADMIN"] },
-        { icon: <Users className="w-5 h-5" />, label: "Students", href: "/dashboard/students", roles: ["SCHOOL_ADMIN", "DOS", "DOD", "TEACHER"] },
-        { icon: <Users className="w-5 h-5" />, label: "Teachers", href: "/dashboard/teachers", roles: ["SCHOOL_ADMIN", "DOS"] },
+        { icon: <CalendarCheck className="w-5 h-5" />, label: "Academic Terms", href: "/dashboard/academic-terms", roles: ["SCHOOL_ADMIN"] },
+        { icon: <Briefcase className="w-5 h-5" />, label: "Classes", href: "/dashboard/classes", roles: ["SCHOOL_ADMIN", "DOS"] },
+        { icon: <GraduationCap className="w-5 h-5" />, label: "Students", href: "/dashboard/students", roles: ["SCHOOL_ADMIN", "DOS", "DOD", "TEACHER"] },
+        { icon: <Fingerprint className="w-5 h-5" />, label: "Registration", href: "/dashboard/registration", roles: ["SCHOOL_ADMIN"] },
+        { icon: <Users2 className="w-5 h-5" />, label: "Teachers", href: "/dashboard/teachers", roles: ["SCHOOL_ADMIN", "DOS"] },
+        { icon: <ShieldAlert className="w-5 h-5" />, label: "Disciplinary Reports", href: "/dashboard/discipline", roles: ["SCHOOL_ADMIN", "DOD"] },
 
-        // DOS
+        // DOS specific
         { icon: <BookOpen className="w-5 h-5" />, label: "Courses", href: "/dashboard/courses", roles: ["DOS", "TEACHER"] },
-        { icon: <ClipboardList className="w-5 h-5" />, label: "Reports", href: "/dashboard/reports", roles: ["DOS", "DOD"] },
+        { icon: <ClipboardList className="w-5 h-5" />, label: "Reports", href: "/dashboard/reports", roles: ["DOS"] },
 
-        // Teacher
+        // DOD specific
+        { icon: <ShieldAlert className="w-5 h-5" />, label: "Discipline Marks", href: "/dashboard/discipline-marks", roles: ["DOD"] },
+        { icon: <MessageCircle className="w-5 h-5" />, label: "Parent Communication", href: "/dashboard/parent-comm", roles: ["DOD"] },
+
+        // Teacher specific
         { icon: <Calendar className="w-5 h-5" />, label: "Timetable", href: "/dashboard/timetable", roles: ["TEACHER"] },
+        { icon: <FileSpreadsheet className="w-5 h-5" />, label: "Scheme of Work", href: "/dashboard/scheme-of-work", roles: ["TEACHER"] },
+        { icon: <BookMarked className="w-5 h-5" />, label: "Lesson Plan", href: "/dashboard/lesson-plan", roles: ["TEACHER"] },
         { icon: <FileText className="w-5 h-5" />, label: "Exams", href: "/dashboard/exams", roles: ["TEACHER"] },
 
-        // DOD
-        { icon: <ShieldAlert className="w-5 h-5" />, label: "Discipline", href: "/dashboard/discipline", roles: ["DOD", "SCHOOL_ADMIN"] },
+        // Parent specific
+        { icon: <Users className="w-5 h-5" />, label: "My Children", href: "/dashboard/children", roles: ["PARENT"] },
 
         { icon: <Settings className="w-5 h-5" />, label: "Settings", href: "/dashboard/settings", roles: ["ALL"] },
     ];
@@ -73,32 +90,33 @@ export default async function DashboardLayout({
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
             {/* Sidebar - Desktop */}
-            <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0">
+            <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0 overflow-y-auto">
                 <div className="p-6">
-                    <Link href="/dashboard" className="flex items-center gap-2 font-bold text-xl text-emerald-600">
+                    <Link href="/dashboard" className="flex items-center gap-2 font-black text-2xl tracking-tight text-emerald-600">
                         <GraduationCap className="w-8 h-8" />
                         <span>EjoAfrica</span>
                     </Link>
                 </div>
 
-                <nav className="flex-grow px-4 space-y-1">
+                <nav className="flex-grow px-4 space-y-1 pb-10">
+                    <p className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-gray-400">Main Menu</p>
                     {filteredItems.map((item, idx) => (
                         <Link
                             key={idx}
                             href={item.href}
-                            className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 rounded-xl transition-all"
+                            className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-500 hover:bg-emerald-50 hover:text-emerald-600 rounded-2xl transition-all group"
                         >
-                            {item.icon}
+                            <span className="group-hover:scale-110 transition-transform">{item.icon}</span>
                             {item.label}
                         </Link>
                     ))}
                 </nav>
 
-                <div className="p-4 border-t px-6">
+                <div className="p-4 border-t px-6 bg-gray-50/50">
                     <form action="/api/auth/logout" method="POST">
-                        <button className="flex items-center gap-3 w-full text-sm font-medium text-red-500 hover:bg-red-50 p-3 rounded-xl transition-all">
-                            <LogOut className="w-5 h-5" />
-                            Logout
+                        <button className="flex items-center gap-3 w-full text-xs font-black uppercase tracking-widest text-red-500 hover:bg-red-50 p-3 rounded-2xl transition-all">
+                            <LogOut className="w-4 h-4" />
+                            Logout Session
                         </button>
                     </form>
                 </div>
@@ -107,41 +125,43 @@ export default async function DashboardLayout({
             {/* Main Content */}
             <main className="flex-grow pb-24 md:pb-8">
                 {/* Header - Desktop & Mobile */}
-                <header className="bg-white border-b px-6 h-16 flex items-center justify-between sticky top-0 z-30">
-                    <div className="md:hidden flex items-center gap-2 font-bold text-emerald-600">
+                <header className="bg-white/80 backdrop-blur-md border-b px-6 h-16 flex items-center justify-between sticky top-0 z-30">
+                    <div className="md:hidden flex items-center gap-2 font-black text-emerald-600">
                         <GraduationCap className="w-6 h-6" />
                         <span>EjoAfrica</span>
                     </div>
                     <div className="hidden md:block">
-                        <h2 className="text-lg font-bold capitalize">{role.toLowerCase().replace('_', ' ')} Dashboard</h2>
+                        <h2 className="text-sm font-black uppercase tracking-widest text-gray-400">
+                            {role.replace('_', ' ')} <span className="text-emerald-500">Node</span>
+                        </h2>
                     </div>
-                    <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-4">
                         <div className="hidden sm:block text-right">
-                            <p className="font-bold">{session.email}</p>
-                            <p className="text-xs text-gray-400 capitalize">{role.toLowerCase()}</p>
+                            <p className="text-sm font-bold text-gray-900">{session.email}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Online</p>
                         </div>
-                        <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold border-2 border-white shadow-sm">
+                        <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold border-2 border-white shadow-xl">
                             {(session.email as string)[0].toUpperCase()}
                         </div>
                     </div>
                 </header>
 
-                <div className="p-4 md:p-8">
+                <div className="p-6 md:p-10 max-w-7xl mx-auto">
                     {children}
                 </div>
             </main>
 
-            {/* Bottom Nav - Mobile */}
-            <nav className="md:hidden fixed bottom-0 w-full bg-white border-t px-6 h-20 flex items-center justify-between z-40 pb-safe">
+            {/* Bottom Nav - Mobile (Instagram Style) */}
+            <nav className="md:hidden fixed bottom-0 w-full bg-white border-t px-6 h-20 flex items-center justify-between z-40 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
                 {filteredItems.slice(0, 4).map((item, idx) => (
-                    <Link key={idx} href={item.href} className="flex flex-col items-center gap-1 text-gray-400 hover:text-emerald-600">
+                    <Link key={idx} href={item.href} className="flex flex-col items-center gap-1 text-gray-400 hover:text-emerald-600 transition-colors">
                         {item.icon}
-                        <span className="text-[10px] font-bold uppercase">{item.label.split(' ')[0]}</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.05em]">{item.label.split(' ')[0]}</span>
                     </Link>
                 ))}
-                <Link href="/dashboard/more" className="flex flex-col items-center gap-1 text-gray-400">
+                <Link href="/dashboard" className="flex flex-col items-center gap-1 text-gray-400">
                     <Menu className="w-5 h-5" />
-                    <span className="text-[10px] font-bold uppercase">More</span>
+                    <span className="text-[9px] font-black uppercase tracking-[0.05em]">Portal</span>
                 </Link>
             </nav>
         </div>
