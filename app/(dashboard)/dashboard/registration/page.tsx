@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { UserPlus, Shield, Fingerprint, Loader2, CheckCircle2 } from "lucide-react";
+import { UserPlus, Shield, Fingerprint, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 export default function RegistrationPage() {
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -25,10 +24,16 @@ export default function RegistrationPage() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
-        setError("");
 
         if (formData.password !== formData.confirmPassword) {
-            toast.error("Security check failed: Passwords do not match.");
+            toast.error("Security check failed: Passwords do not match.", {
+                icon: "🔒",
+                style: {
+                    borderRadius: '20px',
+                    background: '#333',
+                    color: '#fff',
+                },
+            });
             setLoading(false);
             return;
         }
@@ -43,7 +48,16 @@ export default function RegistrationPage() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Failed to register user");
 
-            toast.success("Security Provisioning Successful: User node created.");
+            toast.success("Security Provisioning Successful: User node created.", {
+                icon: "✅",
+                duration: 5000,
+                style: {
+                    borderRadius: '20px',
+                    background: '#10b981',
+                    color: '#fff',
+                },
+            });
+
             setFormData({
                 firstName: "",
                 lastName: "",
@@ -59,7 +73,14 @@ export default function RegistrationPage() {
                 school: "Lycée de Kigali",
             });
         } catch (err: any) {
-            toast.error(`PROTOCOL ERROR: ${err.message}`);
+            toast.error(`PROTOCOL ERROR: ${err.message}`, {
+                icon: "❌",
+                style: {
+                    borderRadius: '20px',
+                    background: '#ef4444',
+                    color: '#fff',
+                },
+            });
         } finally {
             setLoading(false);
         }
@@ -90,21 +111,9 @@ export default function RegistrationPage() {
                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none mt-1">Protocol Version 2.0</p>
                         </div>
                     </div>
-                    {success && (
-                        <div className="flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest animate-bubble">
-                            <CheckCircle2 className="w-4 h-4" />
-                            Registered
-                        </div>
-                    )}
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-10 md:p-16 space-y-12 bg-white">
-                    {error && (
-                        <div className="p-6 bg-red-50 border border-red-100 text-red-600 rounded-3xl text-sm font-bold leading-relaxed italic">
-                            SECURITY WARNING: {error}
-                        </div>
-                    )}
-
                     <section className="space-y-8">
                         <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 pb-4 border-b border-gray-50">Identity Credentials</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

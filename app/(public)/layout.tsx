@@ -9,7 +9,34 @@ export default function PublicLayout({
 }) {
     return (
         <div className="min-h-screen flex flex-col bg-slate-50">
-            <Toaster position="top-right" />
+            <Toaster
+                position="top-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: '#0f172a',
+                        color: '#fff',
+                        borderRadius: '1.5rem',
+                        padding: '1rem 1.5rem',
+                        fontWeight: 'bold',
+                        fontSize: '13px',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                    },
+                    success: {
+                        iconTheme: {
+                            primary: '#10b981',
+                            secondary: '#fff',
+                        },
+                    },
+                    error: {
+                        iconTheme: {
+                            primary: '#ef4444',
+                            secondary: '#fff',
+                        },
+                    },
+                }}
+            />
             <header className="fixed top-0 w-full z-50 bg-slate-900/95 backdrop-blur-xl border-b border-white/10">
                 <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-3 font-black text-2xl tracking-tighter text-white group">

@@ -22,6 +22,7 @@ import {
     MessageCircle,
     Fingerprint
 } from "lucide-react";
+import { Toaster } from "react-hot-toast";
 
 const JWT_SECRET = new TextEncoder().encode(
     process.env.JWT_SECRET || "default_secret_for_dev_only"
@@ -95,6 +96,34 @@ export default async function DashboardLayout({
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
+            <Toaster
+                position="top-right"
+                toastOptions={{
+                    duration: 4000,
+                    style: {
+                        background: '#0f172a',
+                        color: '#fff',
+                        borderRadius: '1.5rem',
+                        padding: '1rem 1.5rem',
+                        fontWeight: 'bold',
+                        fontSize: '13px',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                    },
+                    success: {
+                        iconTheme: {
+                            primary: '#10b981',
+                            secondary: '#fff',
+                        },
+                    },
+                    error: {
+                        iconTheme: {
+                            primary: '#ef4444',
+                            secondary: '#fff',
+                        },
+                    },
+                }}
+            />
             {/* Sidebar - Desktop */}
             <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0 overflow-y-auto">
                 <div className="p-6">

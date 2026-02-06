@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X, Loader2, ShieldCheck } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 interface UserModalProps {
     isOpen: boolean;
@@ -17,7 +18,6 @@ export default function UserModal({
     defaultRole = "STUDENT"
 }: UserModalProps) {
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -38,10 +38,11 @@ export default function UserModal({
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
-        setError("");
 
         if (formData.password !== formData.confirmPassword) {
-            setError("Security Validation Failed: Passwords do not match");
+            toast.error("Security Validation Failed: Passwords do not match", {
+                icon: "🔒",
+            });
             setLoading(false);
             return;
         }
@@ -56,10 +57,15 @@ export default function UserModal({
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Failed to create user");
 
+            toast.success("Identity Provisioning Successful: Node created.", {
+                icon: "👤",
+            });
             onSuccess();
             onClose();
         } catch (err: any) {
-            setError(err.message);
+            toast.error(`PROTOCOL ERROR: ${err.message}`, {
+                icon: "⚠️",
+            });
         } finally {
             setLoading(false);
         }
@@ -88,12 +94,6 @@ export default function UserModal({
                         <X className="w-6 h-6 text-gray-400" />
                     </button>
                 </div>
-
-                {error && (
-                    <div className="mb-8 p-6 bg-red-50 text-red-600 rounded-3xl text-sm font-bold border border-red-100 animate-bubble">
-                        PROTOCOL ERROR: {error}
-                    </div>
-                )}
 
                 <form onSubmit={handleSubmit} className="space-y-10">
                     <div className="space-y-6">

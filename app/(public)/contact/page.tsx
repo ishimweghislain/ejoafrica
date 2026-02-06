@@ -6,7 +6,7 @@ import { toast } from "react-hot-toast";
 export default function ContactPage() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        toast.success("Transmission Received: Our support nodes have been notified.");
+        toast.success("Transmission Received: Our support nodes have been notified.", { icon: "🚀" });
         (e.target as HTMLFormElement).reset();
     }
 

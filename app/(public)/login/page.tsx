@@ -31,10 +31,10 @@ export default function LoginPage() {
                 throw new Error(data.error || "Login failed");
             }
 
-            toast.success("Authentication Successful: Mapping institutional node...");
+            toast.success("Authentication Successful: Mapping institutional node...", { icon: "🔓" });
             router.push("/dashboard");
         } catch (err: any) {
-            toast.error(`ACCESS DENIED: ${err.message}`);
+            toast.error(`ACCESS DENIED: ${err.message}`, { icon: "🚫" });
         } finally {
             setLoading(false);
         }
