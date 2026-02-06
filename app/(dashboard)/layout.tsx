@@ -137,7 +137,7 @@ export default async function DashboardLayout({
                         <span>EjoAfrica</span>
                     </div>
                     <div className="hidden md:block">
-                        <h2 className="text-sm font-black uppercase tracking-widest text-gray-400">
+                        <h2 className="text-sm font-black uppercase tracking-widest text-gray-500">
                             {role.replace('_', ' ')} <span className="text-emerald-500">Node</span>
                         </h2>
                     </div>
@@ -160,12 +160,12 @@ export default async function DashboardLayout({
             {/* Bottom Nav - Mobile (Instagram Style) */}
             <nav className="md:hidden fixed bottom-0 w-full bg-white border-t px-6 h-20 flex items-center justify-between z-40 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
                 {filteredItems.slice(0, 4).map((item, idx) => (
-                    <Link key={idx} href={item.href} className="flex flex-col items-center gap-1 text-gray-400 hover:text-emerald-600 transition-colors">
+                    <Link key={idx} href={item.href} className="flex flex-col items-center gap-1 text-gray-500 hover:text-emerald-600 transition-colors">
                         {item.icon}
                         <span className="text-[9px] font-black uppercase tracking-[0.05em]">{item.label.split(' ')[0]}</span>
                     </Link>
                 ))}
-                <Link href="/dashboard" className="flex flex-col items-center gap-1 text-gray-400">
+                <Link href="/dashboard" className="flex flex-col items-center gap-1 text-gray-500">
                     <Menu className="w-5 h-5" />
                     <span className="text-[9px] font-black uppercase tracking-[0.05em]">Portal</span>
                 </Link>

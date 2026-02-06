@@ -47,7 +47,8 @@ body {
   }
 
   .glass-modal {
-    @apply bg-white/95 backdrop-blur-xl border border-gray-100 shadow-[0_32px_128px_-16px_rgba(0, 0, 0, 0.1)];
+    @apply bg-white/95 backdrop-blur-xl border border-gray-100;
+    box-shadow: 0 32px 128px -16px rgba(0, 0, 0, 0.1);
   }
 }
 

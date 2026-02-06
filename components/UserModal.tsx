@@ -66,7 +66,7 @@ export default function UserModal({
     }
 
     const inputClass = "w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-4 focus:ring-emerald-500/10 focus:bg-white outline-none transition-all shadow-sm";
-    const labelClass = "text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-3 block ml-2";
+    const labelClass = "text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-3 block ml-2";
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -97,7 +97,7 @@ export default function UserModal({
 
                 <form onSubmit={handleSubmit} className="space-y-10">
                     <div className="space-y-6">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300 pb-4 border-b border-gray-50">Personal Credentials</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 pb-4 border-b border-gray-50">Personal Credentials</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className={labelClass}>First Name</label>
@@ -111,7 +111,7 @@ export default function UserModal({
                     </div>
 
                     <div className="space-y-6">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300 pb-4 border-b border-gray-50">System Parameters</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 pb-4 border-b border-gray-50">System Parameters</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className={labelClass}>Institutional Email</label>
@@ -132,7 +132,7 @@ export default function UserModal({
                     </div>
 
                     <div className="space-y-6">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-300 pb-4 border-b border-gray-50">Security Access</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 pb-4 border-b border-gray-50">Security Access</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className={labelClass}>Master Password</label>

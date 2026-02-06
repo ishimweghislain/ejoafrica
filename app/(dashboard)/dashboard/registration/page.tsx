@@ -67,7 +67,7 @@ export default function RegistrationPage() {
     }
 
     const inputClass = "w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-4 focus:ring-emerald-500/10 focus:bg-white outline-none transition-all shadow-sm";
-    const labelClass = "text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-3 block ml-2";
+    const labelClass = "text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-3 block ml-2";
 
     return (
         <div className="max-w-4xl mx-auto space-y-12 animate-fade-up">
@@ -186,7 +186,7 @@ export default function RegistrationPage() {
                                 </>
                             )}
                         </button>
-                        <p className="text-center text-[9px] font-black text-gray-300 mt-8 uppercase tracking-[0.3em] leading-relaxed">
+                        <p className="text-center text-[9px] font-black text-gray-400 mt-8 uppercase tracking-[0.3em] leading-relaxed">
                             By finalizing, you acknowledge immediate access creation <br /> for institutional nodes based on assigned role.
                         </p>
                     </div>

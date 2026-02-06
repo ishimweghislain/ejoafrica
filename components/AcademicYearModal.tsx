@@ -79,7 +79,7 @@ export default function AcademicYearModal({
     }
 
     const inputClass = "w-full bg-gray-50/50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold text-gray-900 focus:ring-4 focus:ring-emerald-500/10 focus:bg-white outline-none transition-all shadow-sm";
-    const labelClass = "text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-3 block ml-2";
+    const labelClass = "text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-3 block ml-2";
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
