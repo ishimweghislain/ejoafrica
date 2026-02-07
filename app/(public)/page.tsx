@@ -50,15 +50,15 @@ export default function HomePage() {
             <section className="max-w-7xl mx-auto px-6 w-full text-center space-y-8">
                 <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 opacity-60">Trusted Educational Partners</h2>
                 <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
-                    <div className="flex items-center gap-3 text-lg md:text-xl font-black text-gray-400">
+                    <div className="flex items-center gap-3 text-lg md:text-xl font-black text-gray-600">
                         <GraduationCap className="w-6 h-6" />
                         <span>LYCÉE DE KIGALI</span>
                     </div>
-                    <div className="flex items-center gap-3 text-lg md:text-xl font-black text-gray-400">
+                    <div className="flex items-center gap-3 text-lg md:text-xl font-black text-gray-600">
                         <BookOpen className="w-6 h-6" />
                         <span>GREEN HILLS</span>
                     </div>
-                    <div className="flex items-center gap-3 text-lg md:text-xl font-black text-gray-400">
+                    <div className="flex items-center gap-3 text-lg md:text-xl font-black text-gray-600">
                         <Users className="w-6 h-6" />
                         <span>RIVIERA HS</span>
                     </div>

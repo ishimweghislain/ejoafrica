@@ -10,7 +10,12 @@ export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
     // @ts-ignore
-    accelerateUrl: process.env.PRISMA_DATABASE_URL || process.env.DATABASE_URL,
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL,
+      },
+    },
+    // log: ['query', 'info', 'warn', 'error'],
   });
 
 if (process.env.NODE_ENV !== "production") {

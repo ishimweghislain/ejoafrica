@@ -45,7 +45,8 @@ async function getSession(): Promise<SessionPayload | null> {
     }
 }
 
-import LogoutButton from "@/components/LogoutButton";
+import DashboardSidebar from "@/components/DashboardSidebar";
+import DashboardMobileNav from "@/components/DashboardMobileNav";
 
 export default async function DashboardLayout({
     children,
@@ -60,41 +61,6 @@ export default async function DashboardLayout({
 
     const role = session.role as string;
 
-    const menuItems = [
-        { icon: <Home className="w-5 h-5" />, label: "Dashboard", href: "/dashboard", roles: ["ALL"] },
-
-        // School Admin
-        { icon: <Calendar className="w-5 h-5" />, label: "Academic Years", href: "/dashboard/academic-years", roles: ["SCHOOL_ADMIN"] },
-        { icon: <CalendarCheck className="w-5 h-5" />, label: "Academic Terms", href: "/dashboard/academic-terms", roles: ["SCHOOL_ADMIN"] },
-        { icon: <Briefcase className="w-5 h-5" />, label: "Classes", href: "/dashboard/classes", roles: ["SCHOOL_ADMIN", "DOS"] },
-        { icon: <GraduationCap className="w-5 h-5" />, label: "Students", href: "/dashboard/students", roles: ["SCHOOL_ADMIN", "DOS", "DOD", "TEACHER"] },
-        { icon: <Fingerprint className="w-5 h-5" />, label: "Registration", href: "/dashboard/registration", roles: ["SCHOOL_ADMIN"] },
-        { icon: <Users2 className="w-5 h-5" />, label: "Teachers", href: "/dashboard/teachers", roles: ["SCHOOL_ADMIN", "DOS"] },
-        { icon: <ShieldAlert className="w-5 h-5" />, label: "Disciplinary Reports", href: "/dashboard/discipline", roles: ["SCHOOL_ADMIN", "DOD"] },
-
-        // DOS specific
-        { icon: <BookOpen className="w-5 h-5" />, label: "Courses", href: "/dashboard/courses", roles: ["DOS", "TEACHER"] },
-        { icon: <ClipboardList className="w-5 h-5" />, label: "Reports", href: "/dashboard/reports", roles: ["DOS"] },
-
-        // DOD specific
-        { icon: <ShieldAlert className="w-5 h-5" />, label: "Discipline Marks", href: "/dashboard/discipline-marks", roles: ["DOD"] },
-        { icon: <MessageCircle className="w-5 h-5" />, label: "Parent Communication", href: "/dashboard/parent-comm", roles: ["DOD"] },
-
-        // Teacher specific
-        { icon: <Calendar className="w-5 h-5" />, label: "Timetable", href: "/dashboard/timetable", roles: ["TEACHER"] },
-        { icon: <FileSpreadsheet className="w-5 h-5" />, label: "Scheme of Work", href: "/dashboard/scheme-of-work", roles: ["TEACHER"] },
-        { icon: <BookMarked className="w-5 h-5" />, label: "Lesson Plan", href: "/dashboard/lesson-plan", roles: ["TEACHER"] },
-        { icon: <FileText className="w-5 h-5" />, label: "Exams", href: "/dashboard/exams", roles: ["TEACHER"] },
-
-        // Parent specific
-        { icon: <Users className="w-5 h-5" />, label: "My Children", href: "/dashboard/children", roles: ["PARENT"] },
-
-        { icon: <Settings className="w-5 h-5" />, label: "Settings", href: "/dashboard/settings", roles: ["ALL"] },
-    ];
-
-    const filteredItems = menuItems.filter(item =>
-        item.roles.includes("ALL") || item.roles.includes(role)
-    );
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
@@ -126,33 +92,9 @@ export default async function DashboardLayout({
                     },
                 }}
             />
-            {/* Sidebar - Desktop */}
-            <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0 overflow-y-auto">
-                <div className="p-6">
-                    <Link href="/dashboard" className="flex items-center gap-2 font-black text-2xl tracking-tight text-emerald-600">
-                        <GraduationCap className="w-8 h-8" />
-                        <span>EjoAfrica</span>
-                    </Link>
-                </div>
 
-                <nav className="flex-grow px-4 space-y-1 pb-10">
-                    <p className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-gray-400">Main Menu</p>
-                    {filteredItems.map((item, idx) => (
-                        <Link
-                            key={idx}
-                            href={item.href}
-                            className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-500 hover:bg-emerald-50 hover:text-emerald-600 rounded-2xl transition-all group"
-                        >
-                            <span className="group-hover:scale-110 transition-transform">{item.icon}</span>
-                            {item.label}
-                        </Link>
-                    ))}
-                </nav>
+            <DashboardSidebar role={role} />
 
-                <div className="p-4 border-t px-6 bg-gray-50/50">
-                    <LogoutButton />
-                </div>
-            </aside>
 
             {/* Main Content */}
             <main className="flex-grow pb-24 md:pb-8">
@@ -184,18 +126,7 @@ export default async function DashboardLayout({
             </main>
 
             {/* Bottom Nav - Mobile (Instagram Style) */}
-            <nav className="md:hidden fixed bottom-0 w-full bg-white border-t px-6 h-20 flex items-center justify-between z-40 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
-                {filteredItems.slice(0, 4).map((item, idx) => (
-                    <Link key={idx} href={item.href} className="flex flex-col items-center gap-1 text-gray-500 hover:text-emerald-600 transition-colors">
-                        {item.icon}
-                        <span className="text-[9px] font-black uppercase tracking-[0.05em]">{item.label.split(' ')[0]}</span>
-                    </Link>
-                ))}
-                <Link href="/dashboard" className="flex flex-col items-center gap-1 text-gray-500">
-                    <Menu className="w-5 h-5" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.05em]">Portal</span>
-                </Link>
-            </nav>
+            <DashboardMobileNav role={role} />
         </div>
     );
 }

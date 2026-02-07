@@ -44,7 +44,8 @@ export async function POST(request: Request) {
         });
 
         return NextResponse.json(newClass);
-    } catch (error) {
+    } catch (error: any) {
+        console.error("CLASS CREATE ERROR:", error);
         return NextResponse.json({ error: "Failed to create class" }, { status: 500 });
     }
 }
