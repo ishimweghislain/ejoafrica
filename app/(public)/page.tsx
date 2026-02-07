@@ -117,7 +117,7 @@ export default function HomePage() {
                     <div className="space-y-8">
                         <div className="space-y-4">
                             <span className="text-emerald-600 font-black text-xs uppercase tracking-widest">Partner Spotlight</span>
-                            <h2 className="text-4xl font-black leading-tight">Elevating Standards at <span className="text-emerald-600">Lycée De Kigali</span></h2>
+                            <h2 className="text-4xl font-black leading-tight text-gray-900">Elevating Standards at <span className="text-emerald-600">Lycée De Kigali</span></h2>
                             <p className="text-gray-500 leading-relaxed font-medium">
                                 As one of Rwanda's top-performing schools, Lycée De Kigali needed a system that could match their rigorous academic standards. EjoAfrica provided the perfect solution for managing complex course hierarchies and detailed student disciplinary tracking.
                             </p>

@@ -39,6 +39,10 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { name } = body;
 
+        if (!name) {
+            return NextResponse.json({ error: "Class name is required" }, { status: 400 });
+        }
+
         const newClass = await prisma.class.create({
             data: { name },
         });
@@ -46,6 +50,9 @@ export async function POST(request: Request) {
         return NextResponse.json(newClass);
     } catch (error: any) {
         console.error("CLASS CREATE ERROR:", error);
-        return NextResponse.json({ error: "Failed to create class" }, { status: 500 });
+        return NextResponse.json({
+            error: "Failed to create class",
+            details: error.message || "Unknown error"
+        }, { status: 500 });
     }
 }

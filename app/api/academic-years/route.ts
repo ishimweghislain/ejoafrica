@@ -40,6 +40,10 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { title, startDate, endDate } = body;
 
+        if (!title || !startDate || !endDate) {
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
         const year = await prisma.academicYear.create({
             data: {
                 title,
@@ -51,6 +55,9 @@ export async function POST(request: Request) {
         return NextResponse.json(year);
     } catch (error: any) {
         console.error("ACADEMIC YEAR CREATE ERROR:", error);
-        return NextResponse.json({ error: "Failed to create academic year" }, { status: 500 });
+        return NextResponse.json({
+            error: "Failed to create academic year",
+            details: error.message || "Unknown error"
+        }, { status: 500 });
     }
 }
