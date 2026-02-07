@@ -8,7 +8,13 @@ const globalForPrisma = global as unknown as {
 // when not defined in the schema (which is now forbidden in schema.prisma)
 export const prisma =
   globalForPrisma.prisma ??
-  new PrismaClient();
+  new PrismaClient({
+    __internal: {
+      engine: {
+        cwd: process.cwd(),
+      },
+    },
+  } as any);
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
