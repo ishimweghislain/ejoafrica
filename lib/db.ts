@@ -8,15 +8,7 @@ const globalForPrisma = global as unknown as {
 // when not defined in the schema (which is now forbidden in schema.prisma)
 export const prisma =
   globalForPrisma.prisma ??
-  new PrismaClient({
-    // @ts-ignore
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL,
-      },
-    },
-    // log: ['query', 'info', 'warn', 'error'],
-  });
+  new PrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
