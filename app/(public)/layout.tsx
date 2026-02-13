@@ -43,7 +43,7 @@ export default function PublicLayout({
                         <div className="bg-emerald-500 p-2 rounded-xl shadow-lg shadow-emerald-500/20 group-hover:rotate-12 transition-transform">
                             <GraduationCap className="w-8 h-8 text-white" />
                         </div>
-                        <span className="hidden sm:inline">EjoAfrica</span>
+                        <span className="hidden sm:inline">Eshuri</span>
                     </Link>
 
                     <nav className="hidden md:flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
@@ -105,7 +105,7 @@ export default function PublicLayout({
                             <div className="bg-emerald-500 p-2 rounded-xl">
                                 <GraduationCap className="w-6 h-6" />
                             </div>
-                            <span>EjoAfrica</span>
+                            <span>Eshuri</span>
                         </div>
                         <p className="text-sm text-gray-400 font-bold leading-relaxed opacity-70">
                             Engineering the next generation of African education through advanced management nodes.
@@ -124,7 +124,7 @@ export default function PublicLayout({
                     <div>
                         <h4 className="font-black mb-6 text-[10px] uppercase tracking-[0.3em] text-emerald-500">Tech Support</h4>
                         <ul className="space-y-4 text-xs font-bold text-gray-400">
-                            <li>contact@ejoafrica.edu</li>
+                            <li>contact@eshuri.edu</li>
                             <li>24/7 Monitoring Available</li>
                             <li>System Status: Online</li>
                         </ul>
@@ -140,7 +140,7 @@ export default function PublicLayout({
                     </div>
                 </div>
                 <div className="max-w-7xl mx-auto px-4 mt-20 pt-10 border-t border-white/5 text-center text-[9px] font-black uppercase tracking-[0.5em] text-gray-600">
-                    © {new Date().getFullYear()} EjoAfrica Technology. Designed for Excellence.
+                    © {new Date().getFullYear()} Eshuri Technology. Designed for Excellence.
                 </div>
             </footer>
         </div>

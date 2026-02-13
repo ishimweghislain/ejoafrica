@@ -119,12 +119,12 @@ export default function HomePage() {
                             <span className="text-emerald-600 font-black text-xs uppercase tracking-widest">Partner Spotlight</span>
                             <h2 className="text-4xl font-black leading-tight text-gray-900">Elevating Standards at <span className="text-emerald-600">Lycée De Kigali</span></h2>
                             <p className="text-gray-500 leading-relaxed font-medium">
-                                As one of Rwanda's top-performing schools, Lycée De Kigali needed a system that could match their rigorous academic standards. EjoAfrica provided the perfect solution for managing complex course hierarchies and detailed student disciplinary tracking.
+                                As one of Rwanda's top-performing schools, Lycée De Kigali needed a system that could match their rigorous academic standards. Eshuri provided the perfect solution for managing complex course hierarchies and detailed student disciplinary tracking.
                             </p>
                         </div>
 
                         <div className="bg-gray-50 p-8 rounded-[2rem] border border-gray-100 italic font-medium text-gray-700 relative">
-                            "Switching to EjoAfrica was the best decision for our administrative staff. The time saved on timetable generation and report processing is unprecedented. It has truly modernized our teaching environment."
+                            "Switching to Eshuri was the best decision for our administrative staff. The time saved on timetable generation and report processing is unprecedented. It has truly modernized our teaching environment."
                             <footer className="mt-4 not-italic font-black text-sm text-gray-900">— Principal, Lycée De Kigali</footer>
                         </div>
                     </div>
@@ -139,7 +139,7 @@ export default function HomePage() {
 
                     <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">Ready for a <span className="text-emerald-400">Live Demo</span>?</h2>
                     <p className="text-gray-400 text-sm md:text-base font-medium max-w-xl mx-auto">
-                        Experience how EjoAfrica can transform your institution. Contact us to request your administrative access.
+                        Experience how Eshuri can transform your institution. Contact us to request your administrative access.
                     </p>
                     <div className="flex justify-center pt-8">
                         <Link href="/contact" className="bg-emerald-500 text-white px-10 py-4 rounded-2xl font-black hover:bg-emerald-400 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-emerald-500/20 text-sm uppercase tracking-widest">

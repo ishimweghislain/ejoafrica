@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
     Home, Users, BookOpen, Settings, Calendar, FileText,
     GraduationCap, ClipboardList, ShieldAlert, CalendarCheck,
     Briefcase, FileSpreadsheet, BookMarked, Users2, MessageCircle,
-    Fingerprint, Menu
+    Fingerprint, Menu, X, LogOut
 } from "lucide-react";
+import LogoutButton from "@/components/LogoutButton";
 
 interface DashboardMobileNavProps {
     role: string;
@@ -15,6 +17,7 @@ interface DashboardMobileNavProps {
 
 export default function DashboardMobileNav({ role }: DashboardMobileNavProps) {
     const pathname = usePathname();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const menuItems = [
         { icon: <Home className="w-5 h-5" />, label: "Dashboard", href: "/dashboard", roles: ["ALL"] },
@@ -53,20 +56,65 @@ export default function DashboardMobileNav({ role }: DashboardMobileNavProps) {
     );
 
     return (
-        <nav className="md:hidden fixed bottom-0 w-full bg-white border-t px-6 h-20 flex items-center justify-between z-40 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
-            {filteredItems.slice(0, 4).map((item, idx) => {
-                const isActive = pathname === item.href;
-                return (
-                    <Link key={idx} href={item.href} className={`flex flex-col items-center gap-1 transition-colors ${isActive ? 'text-emerald-600' : 'text-gray-500 hover:text-emerald-600'}`}>
-                        {item.icon}
-                        <span className="text-[9px] font-black uppercase tracking-[0.05em]">{item.label.split(' ')[0]}</span>
-                    </Link>
-                )
-            })}
-            <Link href="/dashboard" className="flex flex-col items-center gap-1 text-gray-500">
-                <Menu className="w-5 h-5" />
-                <span className="text-[9px] font-black uppercase tracking-[0.05em]">Portal</span>
-            </Link>
-        </nav>
+        <>
+            {/* Mobile Menu Overlay */}
+            {isMenuOpen && (
+                <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm md:hidden animate-fade-in">
+                    <div className="absolute bottom-0 w-full bg-white rounded-t-[3rem] p-8 max-h-[85vh] overflow-y-auto animate-bubble">
+                        <div className="flex justify-between items-center mb-8">
+                            <h2 className="text-xl font-black text-gray-900 tracking-tight">System Menu</h2>
+                            <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200 transition-colors">
+                                <X className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 mb-10">
+                            {filteredItems.map((item, idx) => {
+                                const isActive = pathname === item.href;
+                                return (
+                                    <Link
+                                        key={idx}
+                                        href={item.href}
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className={`flex flex-col items-center gap-3 p-6 rounded-3xl border transition-all ${isActive
+                                                ? "bg-emerald-50 border-emerald-100 text-emerald-600 shadow-sm"
+                                                : "bg-gray-50 border-gray-50 text-gray-500 hover:bg-gray-100"
+                                            }`}
+                                    >
+                                        <div className={`${isActive ? "text-emerald-500 scale-110" : "text-gray-400"} transition-all`}>
+                                            {item.icon}
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-center">{item.label}</span>
+                                    </Link>
+                                );
+                            })}
+                        </div>
+
+                        <div className="pt-6 border-t">
+                            <LogoutButton />
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <nav className="md:hidden fixed bottom-0 w-full bg-white border-t px-6 h-20 flex items-center justify-between z-40 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+                {filteredItems.slice(0, 4).map((item, idx) => {
+                    const isActive = pathname === item.href;
+                    return (
+                        <Link key={idx} href={item.href} className={`flex flex-col items-center gap-1 transition-colors ${isActive ? 'text-emerald-600' : 'text-gray-500 hover:text-emerald-600'}`}>
+                            {item.icon}
+                            <span className="text-[9px] font-black uppercase tracking-[0.05em]">{item.label.split(' ')[0]}</span>
+                        </Link>
+                    )
+                })}
+                <button
+                    onClick={() => setIsMenuOpen(true)}
+                    className={`flex flex-col items-center gap-1 transition-colors ${isMenuOpen ? 'text-emerald-600' : 'text-gray-500'}`}
+                >
+                    <Menu className="w-5 h-5" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.05em]">Portal</span>
+                </button>
+            </nav>
+        </>
     );
 }
