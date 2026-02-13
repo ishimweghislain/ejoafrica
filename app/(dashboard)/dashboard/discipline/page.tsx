@@ -59,7 +59,7 @@ export default function DisciplinePage() {
         );
     }
 
-    const filteredClasses = data?.classes.filter((c: any) =>
+    const filteredClasses = (data?.classes || []).filter((c: any) =>
         c.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -96,7 +96,7 @@ export default function DisciplinePage() {
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{cls.users.length} Student Nodes</p>
                                 </div>
                                 <div className={`px-4 py-2 rounded-xl text-xs font-black ${Number(cls.averageDiscipline) > 35 ? 'bg-emerald-50 text-emerald-600' :
-                                        Number(cls.averageDiscipline) > 25 ? 'bg-orange-50 text-orange-600' : 'bg-red-50 text-red-600'
+                                    Number(cls.averageDiscipline) > 25 ? 'bg-orange-50 text-orange-600' : 'bg-red-50 text-red-600'
                                     }`}>
                                     {cls.averageDiscipline} AVG
                                 </div>
