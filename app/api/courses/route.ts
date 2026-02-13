@@ -38,7 +38,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
     const session = await getSession();
-    if (!session || (session.role !== "SCHOOL_ADMIN" && session.role !== "DOS")) {
+    if (!session || (session.role !== "SCHOOL_ADMIN" && session.role !== "DOS" && session.role !== "TEACHER")) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
