@@ -33,7 +33,7 @@ export default function StudentsPage() {
         try {
             const res = await fetch("/api/users?role=STUDENT");
             const data = await res.json();
-            setStudents(data);
+            setStudents(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error(err);
         } finally {

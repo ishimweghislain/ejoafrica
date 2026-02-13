@@ -44,9 +44,9 @@ export default function RegistrationPage() {
 
     const filteredUsers = users.filter(user => {
         const matchesSearch =
-            user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchQuery.toLowerCase());
+            (user.firstName || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (user.lastName || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (user.email || "").toLowerCase().includes(searchQuery.toLowerCase());
 
         const matchesTab = activeTab === "ALL" || user.role === activeTab;
 
