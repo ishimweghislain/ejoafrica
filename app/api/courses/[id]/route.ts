@@ -18,12 +18,45 @@ async function getSession() {
     }
 }
 
+export async function GET(
+    request: Request,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    const { id } = await params;
+    try {
+        const course = await prisma.course.findUnique({
+            where: { id },
+            include: {
+                class: true,
+                teacher: true,
+                term: { include: { academicYear: true } },
+                topics: {
+                    include: {
+                        subtopics: {
+                            include: {
+                                units: true
+                            }
+                        }
+                    },
+                    orderBy: { createdAt: 'asc' }
+                }
+            }
+        });
+
+        if (!course) return NextResponse.json({ error: "Course not found" }, { status: 404 });
+
+        return NextResponse.json(course);
+    } catch (error) {
+        return NextResponse.json({ error: "Failed to fetch course details" }, { status: 500 });
+    }
+}
+
 export async function PUT(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await getSession();
-    if (!session || (session.role !== "SCHOOL_ADMIN" && session.role !== "DOS")) {
+    if (!session || (session.role !== "SCHOOL_ADMIN" && session.role !== "DOS" && session.role !== "TEACHER")) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
