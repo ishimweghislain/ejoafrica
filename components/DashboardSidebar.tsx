@@ -58,7 +58,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
             <div className="p-6">
                 <Link href="/dashboard" className="flex items-center gap-2 font-black text-2xl tracking-tight text-emerald-600">
                     <GraduationCap className="w-8 h-8" />
-                    <span>EjoAfrica</span>
+                    <span>Eshuri</span>
                 </Link>
             </div>
 
@@ -71,8 +71,8 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
                             key={idx}
                             href={item.href}
                             className={`flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all group ${isActive
-                                    ? "bg-emerald-50 text-emerald-600 shadow-sm"
-                                    : "text-gray-500 hover:bg-emerald-50 hover:text-emerald-600"
+                                ? "bg-emerald-50 text-emerald-600 shadow-sm"
+                                : "text-gray-500 hover:bg-emerald-50 hover:text-emerald-600"
                                 }`}
                         >
                             <span className={`transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`}>

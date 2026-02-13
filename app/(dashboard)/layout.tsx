@@ -102,7 +102,7 @@ export default async function DashboardLayout({
                 <header className="bg-white/80 backdrop-blur-md border-b px-6 h-16 flex items-center justify-between sticky top-0 z-30">
                     <div className="md:hidden flex items-center gap-2 font-black text-emerald-600">
                         <GraduationCap className="w-6 h-6" />
-                        <span>EjoAfrica</span>
+                        <span>Eshuri</span>
                     </div>
                     <div className="hidden md:block">
                         <h2 className="text-sm font-black uppercase tracking-widest text-gray-500">

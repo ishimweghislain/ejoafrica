@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EjoAfrica - Smart School Management",
+  title: "Eshuri - Smart School Management",
   description: "Next-gen school management platform for African schools",
   icons: {
     icon: '/icon.svg',
