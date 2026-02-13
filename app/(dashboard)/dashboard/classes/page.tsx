@@ -47,7 +47,8 @@ export default function ClassesPage() {
                 body: JSON.stringify({ name: className }),
             });
 
-            if (!res.ok) throw new Error("Operation failed");
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Operation failed");
 
             toast.success(`Class Node ${selectedClass ? 'Synchronized' : 'Provisioned'}.`, { id: tid, icon: "🏫" });
             setClassName("");
@@ -152,7 +153,7 @@ export default function ClassesPage() {
 
             {/* Modal for Add/Edit */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-white/40 backdrop-blur-md" onClick={() => setIsModalOpen(false)} />
                     <form onSubmit={handleSubmit} className="relative bg-white w-full max-w-md rounded-[3rem] p-10 shadow-2xl animate-fade-up border border-slate-100 space-y-10">
                         <div className="flex items-center gap-4">

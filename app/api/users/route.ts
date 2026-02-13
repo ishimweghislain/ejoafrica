@@ -53,7 +53,8 @@ export async function POST(request: Request) {
             country,
             city,
             address,
-            school
+            school,
+            classId
         } = body;
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -71,6 +72,7 @@ export async function POST(request: Request) {
                 city,
                 address,
                 school: school || "Lycée de Kigali",
+                classId: classId || null,
             },
         });
 

@@ -30,6 +30,9 @@ model User {
   school            String?
   role              UserRole @default(STUDENT)
   profileImage      String?
+  disciplineMarks   Int      @default(40)
+  classId           String?
+  class             Class?   @relation(fields: [classId], references: [id])
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -80,6 +83,7 @@ model Class {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   
+  users      User[]
   courses    Course[]
   timetables Timetable[]
   schemes    SchemeOfWork[]

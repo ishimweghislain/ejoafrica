@@ -27,6 +27,7 @@ export default function UserModal({
     }, []);
 
     const [loading, setLoading] = useState(false);
+    const [classes, setClasses] = useState<any[]>([]);
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -40,15 +41,29 @@ export default function UserModal({
         city: "Kigali",
         address: "",
         school: "Lycée de Kigali",
+        classId: "",
     });
+
+    useEffect(() => {
+        async function fetchClasses() {
+            try {
+                const res = await fetch("/api/classes");
+                const data = await res.json();
+                setClasses(data);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        if (isOpen) fetchClasses();
+    }, [isOpen]);
 
     useEffect(() => {
         if (initialData) {
             setFormData({
-                ...formData,
                 ...initialData,
-                password: "", // Don't show password
+                password: "",
                 confirmPassword: "",
+                classId: initialData.classId || "",
             });
         } else {
             setFormData({
@@ -64,6 +79,7 @@ export default function UserModal({
                 city: "Kigali",
                 address: "",
                 school: "Lycée de Kigali",
+                classId: "",
             });
         }
     }, [initialData, isOpen]);
@@ -113,7 +129,7 @@ export default function UserModal({
     if (!isOpen || !mounted) return null;
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-slate-900/60" onClick={onClose} />
 
             <div className="relative bg-white border border-slate-100 w-full max-w-3xl rounded-[3rem] p-10 animate-fade-up overflow-y-auto max-h-[90vh] shadow-2xl">
@@ -171,6 +187,8 @@ export default function UserModal({
                                             <option value="PARENT">Parent / Tutor</option>
                                         </select>
                                     </div>
+
+                                    )}
                                     <div>
                                         <label className={labelClass}>Institutional Node</label>
                                         <input className={inputClass} value={formData.school} onChange={(e) => setFormData({ ...formData, school: e.target.value })} />
@@ -257,9 +275,9 @@ export default function UserModal({
                             </>
                         )}
                     </button>
-                </form>
-            </div>
-        </div>,
+                </form >
+            </div >
+        </div >,
         document.body
     );
 }

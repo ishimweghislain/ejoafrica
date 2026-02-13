@@ -71,7 +71,9 @@ export default function AcademicTermsPage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
-            if (!res.ok) throw new Error("Synchronization protocol failed.");
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Synchronization protocol failed.");
 
             toast.success(`Term Node ${selectedTerm ? 'Updated' : 'Deployed'}.`, { id: tid, icon: "🗓️" });
             handleCloseModal();
@@ -214,7 +216,7 @@ export default function AcademicTermsPage() {
 
             {/* Modal for Add/Edit */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-white/40 backdrop-blur-md" onClick={handleCloseModal} />
                     <form onSubmit={handleSubmit} className="relative bg-white w-full max-w-md rounded-[3rem] p-10 animate-fade-up shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] border border-slate-100 space-y-10">
                         <div className="flex items-center gap-4">

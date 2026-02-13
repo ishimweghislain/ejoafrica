@@ -43,7 +43,8 @@ export async function PUT(
             country,
             city,
             address,
-            school
+            school,
+            classId
         } = body;
 
         const updateData: any = {
@@ -57,6 +58,7 @@ export async function PUT(
             city,
             address,
             school: school || "Lycée de Kigali",
+            classId: classId || null,
         };
 
         if (password) {

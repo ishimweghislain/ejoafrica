@@ -72,7 +72,8 @@ export default function AcademicYearModal({
                 body: JSON.stringify(formData),
             });
 
-            if (!res.ok) throw new Error("Synchronization protocol failed.");
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Synchronization protocol failed.");
 
             toast.success(`Academic Cycle ${editingYear ? 'Updated' : 'Deployed'}.`, { id: tid, icon: "📅" });
             onSuccess();
@@ -90,7 +91,7 @@ export default function AcademicYearModal({
     if (!isOpen || !mounted) return null;
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-slate-900/60" onClick={onClose} />
 
             <div className="relative bg-white border border-slate-100 w-full max-w-md rounded-[3rem] p-10 animate-fade-up shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)]">
