@@ -28,7 +28,7 @@ export default function RegistrationPage() {
         if (formData.password !== formData.confirmPassword) {
             toast.error("Security check failed: Passwords do not match.", {
                 icon: "🔒",
-                style: {
+                style: {    
                     borderRadius: '20px',
                     background: '#333',
                     color: '#fff',
