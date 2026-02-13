@@ -188,6 +188,16 @@ export default function UserModal({
                                         </select>
                                     </div>
 
+                                    {formData.role === "STUDENT" && (
+                                        <div>
+                                            <label className={labelClass}>Academic Class</label>
+                                            <select className={inputClass} value={formData.classId} onChange={(e) => setFormData({ ...formData, classId: e.target.value })}>
+                                                <option value="">Select Class</option>
+                                                {classes.map(c => (
+                                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
                                     )}
                                     <div>
                                         <label className={labelClass}>Institutional Node</label>
