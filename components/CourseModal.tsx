@@ -89,12 +89,10 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
         setLoading(true);
         const tid = toast.loading(`${initialData ? 'Syncing' : 'Deploying'} course curriculum...`);
 
-        // Find the first term of the selected academic year for now if not set
-        const selectedYear = academicYears.find(y => y.id === formData.academicYearId);
-        const termId = formData.termId || selectedYear?.terms?.[0]?.id || selectedYear?.id;
+        const termId = formData.termId;
 
-        if (!termId) {
-            toast.error("Calendar Protocol Error: Select a valid academic year.", { id: tid });
+        if (!termId || termId === "") {
+            toast.error("Calendar Protocol Error: Select a valid academic term.", { id: tid });
             setLoading(false);
             return;
         }
@@ -109,7 +107,8 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
                 body: JSON.stringify({ ...formData, termId }),
             });
 
-            if (!res.ok) throw new Error("Course Deployment Protocol Failure.");
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Course Deployment Protocol Failure.");
 
             toast.success(`Course ${initialData ? 'Updated' : 'Deployed'}.`, { id: tid, icon: "📚" });
             onSuccess();
@@ -126,8 +125,11 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
 
     if (!isOpen || !mounted) return null;
 
+    const selectedYear = academicYears.find(y => y.id === formData.academicYearId);
+    const availableTerms = selectedYear?.terms || [];
+
     return createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-slate-900/60" onClick={onClose} />
 
             <div className="relative bg-white border border-slate-100 w-full max-w-xl rounded-[3rem] p-10 animate-fade-up shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)]">
@@ -187,11 +189,21 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
                             <div className="grid grid-cols-2 gap-6">
                                 <div>
                                     <label className={labelClass}>Academic Cycle</label>
-                                    <select required className={inputClass} value={formData.academicYearId} onChange={(e) => setFormData({ ...formData, academicYearId: e.target.value })}>
+                                    <select required className={inputClass} value={formData.academicYearId} onChange={(e) => setFormData({ ...formData, academicYearId: e.target.value, termId: "" })}>
                                         <option value="">Select Cycle</option>
                                         {academicYears.map(y => <option key={y.id} value={y.id}>{y.title}</option>)}
                                     </select>
                                 </div>
+                                <div>
+                                    <label className={labelClass}>Academic Term</label>
+                                    <select required className={inputClass} value={formData.termId} onChange={(e) => setFormData({ ...formData, termId: e.target.value })}>
+                                        <option value="">Select Term</option>
+                                        {availableTerms.map((t: any) => <option key={t.id} value={t.id}>{t.title}</option>)}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-6">
                                 <div>
                                     <label className={labelClass}>Weekly Bandwidth (H)</label>
                                     <input type="number" className={inputClass} value={formData.hoursPerWeek} onChange={(e) => setFormData({ ...formData, hoursPerWeek: e.target.value })} />
