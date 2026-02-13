@@ -5,7 +5,7 @@ export default function PartnersPage() {
         {
             school: "Lycée De Kigali",
             role: "Excellence in Academics",
-            message: "The transition to EjoAfrica has been transformative for our administrative workflows. The depth of the curriculum management system allows us to maintain the high standards our institution is known for. It truly is the digital backbone of our academic excellence.",
+            message: "The transition to Eshuri has been transformative for our administrative workflows. The depth of the curriculum management system allows us to maintain the high standards our institution is known for. It truly is the digital backbone of our academic excellence.",
             principal: "Principal, LDK"
         }
     ];
@@ -18,7 +18,7 @@ export default function PartnersPage() {
                         <School className="w-3 h-3" />
                         <span>Official Partnerships</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-tight">Elite Institutions <br /><span className="text-emerald-600">Trust EjoAfrica</span></h1>
+                    <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-tight">Elite Institutions <br /><span className="text-emerald-600">Trust Eshuri</span></h1>
                     <p className="text-gray-500 max-w-2xl mx-auto font-medium">
                         We partner with the most prestigious educational institutions in Rwanda to redefine the standards of school management.
                     </p>

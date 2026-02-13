@@ -44,6 +44,7 @@ export default function DashboardMobileNav({ role }: DashboardMobileNavProps) {
         { icon: <FileSpreadsheet className="w-5 h-5" />, label: "Scheme of Work", href: "/dashboard/scheme-of-work", roles: ["TEACHER"] },
         { icon: <BookMarked className="w-5 h-5" />, label: "Lesson Plan", href: "/dashboard/lesson-plan", roles: ["TEACHER"] },
         { icon: <FileText className="w-5 h-5" />, label: "Exams", href: "/dashboard/exams", roles: ["TEACHER"] },
+        { icon: <BookOpen className="w-5 h-5" />, label: "Question Bank", href: "/dashboard/question-bank", roles: ["TEACHER", "STUDENT"] },
 
         // Parent specific
         { icon: <Users className="w-5 h-5" />, label: "My Children", href: "/dashboard/children", roles: ["PARENT"] },
@@ -77,8 +78,8 @@ export default function DashboardMobileNav({ role }: DashboardMobileNavProps) {
                                         href={item.href}
                                         onClick={() => setIsMenuOpen(false)}
                                         className={`flex flex-col items-center gap-3 p-6 rounded-3xl border transition-all ${isActive
-                                                ? "bg-emerald-50 border-emerald-100 text-emerald-600 shadow-sm"
-                                                : "bg-gray-50 border-gray-50 text-gray-500 hover:bg-gray-100"
+                                            ? "bg-emerald-50 border-emerald-100 text-emerald-600 shadow-sm"
+                                            : "bg-gray-50 border-gray-50 text-gray-500 hover:bg-gray-100"
                                             }`}
                                     >
                                         <div className={`${isActive ? "text-emerald-500 scale-110" : "text-gray-400"} transition-all`}>

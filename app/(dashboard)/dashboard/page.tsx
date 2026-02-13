@@ -93,7 +93,7 @@ export default function DashboardHome() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-black tracking-tight text-gray-900">Institutional Pulse</h1>
-                    <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">EjoAfrica Management Engine</p>
+                    <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Eshuri Management Engine</p>
                 </div>
                 <div className="flex gap-3">
                     <Link href="/dashboard/academic-years" className="bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-2">

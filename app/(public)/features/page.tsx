@@ -41,7 +41,7 @@ export default function FeaturesPage() {
                     Everything You Need to <span className="text-emerald-600">Excel</span>
                 </h1>
                 <p className="text-lg text-gray-500 leading-relaxed">
-                    EjoAfrica provides a comprehensive suite of tools designed to handle every aspect of modern school administration across Africa.
+                    Eshuri provides a comprehensive suite of tools designed to handle every aspect of modern school administration across Africa.
                 </p>
             </div>
 
