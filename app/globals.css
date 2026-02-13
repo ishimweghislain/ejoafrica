@@ -138,3 +138,19 @@ body {
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
 }
+@layer utilities {
+  .animate-fade-up {
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
