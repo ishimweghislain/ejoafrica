@@ -24,6 +24,9 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, descri
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-slate-900/60 transition-opacity" onClick={onClose} />
             <div className="relative bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl animate-fade-up border border-slate-100">
+                <button onClick={onClose} className="absolute top-6 right-6 p-2 hover:bg-slate-50 rounded-xl transition-all text-slate-300 hover:text-slate-500">
+                    <X className="w-5 h-5" />
+                </button>
                 <div className="flex flex-col items-center text-center space-y-6">
                     <div className="bg-red-50 p-6 rounded-[2.5rem] text-red-500 shadow-xl shadow-red-500/10">
                         <AlertTriangle className="w-10 h-10" />

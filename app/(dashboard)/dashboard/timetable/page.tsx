@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Calendar, Clock, User, Book, Filter, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Calendar, Clock, User, Book, Filter, Loader2, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import TimetableModal from "@/components/TimetableModal";
+import { toast } from "react-hot-toast";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -41,20 +42,33 @@ export default function TimetablePage() {
         }
     }
 
+    async function handleDelete(id: string) {
+        if (!confirm("Are you sure you want to remove this session?")) return;
+        const tid = toast.loading("Decommissioning session...");
+        try {
+            const res = await fetch(`/api/timetables/${id}`, { method: "DELETE" });
+            if (!res.ok) throw new Error("Protocol Error");
+            toast.success("Session Removed.", { id: tid });
+            fetchData();
+        } catch (err) {
+            toast.error("Failed to remove session.", { id: tid });
+        }
+    }
+
     useEffect(() => {
         fetchData();
     }, [selectedClass]);
 
     return (
-        <div className="space-y-8 animate-fade-up">
+        <div className="space-y-6 animate-fade-up">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Institutional Timetable</h1>
-                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest text-emerald-600">Synchronized scheduling for academic nodes and faculty.</p>
+                    <h1 className="text-2xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Institutional Timetable</h1>
+                    <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest text-emerald-600">Synchronized faculty scheduling.</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                     <select
-                        className="bg-white border border-slate-100 rounded-[1.5rem] px-6 py-4 text-xs font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-emerald-500/5 shadow-sm"
+                        className="bg-white border border-slate-100 rounded-2xl px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-emerald-500/5 shadow-sm"
                         value={selectedClass}
                         onChange={(e) => setSelectedClass(e.target.value)}
                     >
@@ -63,53 +77,59 @@ export default function TimetablePage() {
                     </select>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="bg-slate-900 text-white rounded-[1.5rem] px-8 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all flex items-center gap-3 shadow-xl shadow-slate-900/10"
+                        className="bg-slate-900 text-white rounded-2xl px-6 py-3 font-black uppercase tracking-widest text-[9px] hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-xl"
                     >
-                        <Plus className="w-5 h-5" />
+                        <Plus className="w-4 h-4" />
                         <span>Provision Slot</span>
                     </button>
                 </div>
             </div>
 
-            <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto min-h-[60vh]">
+            <div className="bg-slate-900 rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden">
+                <div className="overflow-x-auto min-h-[50vh]">
                     {loading ? (
                         <div className="flex h-full items-center justify-center min-h-[40vh]">
-                            <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
+                            <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
                         </div>
                     ) : (
-                        <div className="grid grid-cols-7 min-w-[1200px] border-collapse relative">
+                        <div className="grid grid-cols-7 min-w-[900px] border-collapse relative">
                             {DAYS.map((day, idx) => (
-                                <div key={day} className="border-r border-gray-50 last:border-0 relative">
-                                    <div className="p-6 bg-gray-50/50 sticky top-0 z-10 border-b border-gray-100 mb-4">
-                                        <h3 className="text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">{day}</h3>
+                                <div key={day} className="border-r border-white/5 last:border-0 relative">
+                                    <div className="p-3 bg-slate-900/80 backdrop-blur-md sticky top-0 z-10 border-b border-white/5 mb-3">
+                                        <h3 className="text-center text-[8px] font-black uppercase tracking-[0.2em] text-emerald-500/60">{day.substring(0, 3)}</h3>
                                     </div>
 
-                                    <div className="px-4 space-y-4 pb-8">
+                                    <div className="px-2 space-y-2 pb-6">
                                         {entries.filter(e => e.day === idx).length > 0 ? (
                                             entries.filter(e => e.day === idx).map((entry) => (
-                                                <div key={entry.id} className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all hover:scale-[1.02] cursor-pointer group space-y-4">
-                                                    <div className="space-y-1">
-                                                        <span className="text-[10px] font-black tracking-widest text-emerald-600 opacity-60 uppercase">{entry.class.name}</span>
-                                                        <h4 className="font-black text-sm text-gray-900 leading-tight group-hover:text-emerald-600 transition-colors uppercase">{entry.course.title}</h4>
+                                                <div key={entry.id} className="bg-slate-800/50 p-3 rounded-2xl border border-white/5 shadow-sm hover:bg-slate-800 transition-all cursor-pointer group space-y-2 relative overflow-hidden">
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); handleDelete(entry.id); }}
+                                                        className="absolute top-1 right-1 p-1 bg-red-500/0 text-red-500/0 group-hover:bg-red-500 group-hover:text-white rounded-lg transition-all"
+                                                    >
+                                                        <Trash2 className="w-2.5 h-2.5" />
+                                                    </button>
+
+                                                    <div className="space-y-0.5">
+                                                        <span className="text-[7px] font-black tracking-widest text-emerald-500/40 uppercase">{entry.class.name}</span>
+                                                        <h4 className="font-black text-[10px] text-white leading-tight uppercase truncate pr-4">{entry.course.title}</h4>
                                                     </div>
 
-                                                    <div className="space-y-2 pt-2 border-t border-gray-50">
-                                                        <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400">
-                                                            <Clock className="w-3 h-3" />
+                                                    <div className="space-y-1 pt-1.5 border-t border-white/5">
+                                                        <div className="flex items-center gap-1.5 text-[8px] font-bold text-slate-500">
+                                                            <Clock className="w-2.5 h-2.5 text-emerald-500/30" />
                                                             <span>{entry.startTime} - {entry.endTime}</span>
                                                         </div>
-                                                        <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400">
-                                                            <User className="w-3 h-3" />
+                                                        <div className="flex items-center gap-1.5 text-[8px] font-bold text-slate-500">
+                                                            <User className="w-2.5 h-2.5 text-emerald-500/30" />
                                                             <span className="truncate">{entry.teacher.firstName} {entry.teacher.lastName[0]}.</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             ))
                                         ) : (
-                                            <div className="py-20 text-center flex flex-col items-center gap-3 opacity-20 filter grayscale">
-                                                <Calendar className="w-8 h-8 text-gray-300" />
-                                                <span className="text-[10px] uppercase font-black tracking-widest">No Sessions</span>
+                                            <div className="py-8 text-center flex flex-col items-center gap-2 opacity-5">
+                                                <Calendar className="w-5 h-5 text-white" />
                                             </div>
                                         )}
                                     </div>

@@ -217,8 +217,16 @@ export default function AcademicTermsPage() {
             {/* Modal for Add/Edit */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-white/40 backdrop-blur-md" onClick={handleCloseModal} />
+                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={handleCloseModal} />
                     <form onSubmit={handleSubmit} className="relative bg-white w-full max-w-md rounded-[3rem] p-10 animate-fade-up shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] border border-slate-100 space-y-10">
+                        <button
+                            type="button"
+                            onClick={handleCloseModal}
+                            className="absolute top-8 right-8 p-3 hover:bg-slate-50 rounded-2xl transition-all text-slate-400 hover:text-slate-600"
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
+
                         <div className="flex items-center gap-4">
                             <div className="bg-slate-900 p-4 rounded-[2rem] text-white shadow-2xl">
                                 {selectedTerm ? <RefreshCcw className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
