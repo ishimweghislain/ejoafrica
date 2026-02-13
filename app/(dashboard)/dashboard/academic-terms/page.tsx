@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Plus, Search, Loader2, CalendarRange, Trash2, Edit2, X, AlertTriangle, RefreshCcw, Check, Calendar, Bookmark } from "lucide-react";
 import ConfirmModal from "@/components/ConfirmModal";
 import { toast } from "react-hot-toast";
@@ -20,6 +21,9 @@ interface AcademicTerm {
 }
 
 export default function AcademicTermsPage() {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
+
     const [terms, setTerms] = useState<AcademicTerm[]>([]);
     const [years, setYears] = useState<AcademicYear[]>([]);
     const [loading, setLoading] = useState(true);

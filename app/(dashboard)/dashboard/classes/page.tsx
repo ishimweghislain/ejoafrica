@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Plus, Search, Loader2, LayoutGrid, Edit2, Trash2, AlertTriangle, X, RefreshCcw } from "lucide-react";
 import ConfirmModal from "@/components/ConfirmModal";
 import { toast } from "react-hot-toast";
@@ -11,6 +12,9 @@ interface ClassType {
 }
 
 export default function ClassesPage() {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
+
     const [classes, setClasses] = useState<ClassType[]>([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -152,14 +156,14 @@ export default function ClassesPage() {
             </div>
 
             {/* Modal for Add/Edit */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-slate-900/60" onClick={() => setIsModalOpen(false)} />
-                    <form onSubmit={handleSubmit} className="relative bg-white w-full max-w-md rounded-[3rem] p-10 shadow-2xl animate-fade-up border border-slate-100 space-y-10">
+            {isModalOpen && mounted && createPortal(
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-6">
+                    <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]" onClick={() => setIsModalOpen(false)} />
+                    <form onSubmit={handleSubmit} className="relative bg-white w-full max-w-md rounded-[3rem] p-8 md:p-10 shadow-2xl animate-fade-up border border-slate-100 space-y-10 overflow-y-auto max-h-[95vh]">
                         <button
                             type="button"
                             onClick={() => setIsModalOpen(false)}
-                            className="absolute top-8 right-8 p-3 hover:bg-slate-50 rounded-2xl transition-all text-slate-400 hover:text-slate-600"
+                            className="absolute top-6 right-6 p-3 hover:bg-slate-50 rounded-2xl transition-all text-slate-400 hover:text-slate-600"
                         >
                             <X className="w-6 h-6" />
                         </button>
@@ -196,7 +200,8 @@ export default function ClassesPage() {
                             {selectedClass ? "Finalize Synchronization" : "Create Institutional Node"}
                         </button>
                     </form>
-                </div>
+                </div>,
+                document.body
             )}
 
             <ConfirmModal
