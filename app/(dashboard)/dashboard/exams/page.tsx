@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, FileText, ChevronRight, Book, GraduationCap, Loader2, Sparkles } from "lucide-react";
+import { Plus, FileText, ChevronRight, Book, GraduationCap, Loader2, Sparkles, Target } from "lucide-react";
+import ExamModal from "@/components/ExamModal";
 
 interface Exam {
     id: string;
@@ -16,12 +17,13 @@ interface Exam {
 export default function ExamsPage() {
     const [exams, setExams] = useState<Exam[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     async function fetchExams() {
         try {
             const res = await fetch("/api/exams");
             const data = await res.json();
-            setExams(data);
+            setExams(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error(err);
         } finally {
@@ -37,12 +39,15 @@ export default function ExamsPage() {
         <div className="space-y-8 animate-fade-up">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900">Assessment Center</h1>
-                    <p className="text-gray-500 text-sm">Design and schedule examinations based on Bloom's Taxonomy.</p>
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Assessment Center</h1>
+                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest text-emerald-600 italic">Advanced cognitive evaluation nodes.</p>
                 </div>
-                <button className="btn-primary flex items-center justify-center gap-2">
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-slate-900 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-slate-900/10 hover:bg-emerald-600 transition-all flex items-center justify-center gap-3"
+                >
                     <Plus className="w-5 h-5" />
-                    <span>New Examination</span>
+                    <span>Provision Examination</span>
                 </button>
             </div>
 
@@ -95,6 +100,11 @@ export default function ExamsPage() {
                     </div>
                 )}
             </div>
+            <ExamModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={fetchExams}
+            />
         </div>
     );
 }
