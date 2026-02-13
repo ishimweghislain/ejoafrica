@@ -4,8 +4,7 @@ import "dotenv/config";
 
 // Prisma 7 initialization
 const prisma = new PrismaClient({
-    // @ts-ignore
-    accelerateUrl: process.env.PRISMA_DATABASE_URL || process.env.DATABASE_URL,
+    datasourceUrl: process.env.DATABASE_URL,
 });
 
 async function main() {
