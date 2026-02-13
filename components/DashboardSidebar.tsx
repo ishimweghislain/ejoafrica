@@ -55,7 +55,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
     );
 
     return (
-        <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0 overflow-y-auto">
+        <aside className="hidden md:flex flex-col w-64 bg-white border-r h-screen sticky top-0 left-0 overflow-y-auto shrink-0 z-40">
             <div className="p-6">
                 <Link href="/dashboard" className="flex items-center gap-2 font-black text-2xl tracking-tight text-emerald-600">
                     <GraduationCap className="w-8 h-8" />
