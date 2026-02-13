@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, Calendar, Clock, User, Book, Filter, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import TimetableModal from "@/components/TimetableModal";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -20,6 +21,7 @@ export default function TimetablePage() {
     const [classes, setClasses] = useState<any[]>([]);
     const [selectedClass, setSelectedClass] = useState("");
     const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     async function fetchData() {
         setLoading(true);
@@ -30,8 +32,8 @@ export default function TimetablePage() {
                 fetch("/api/classes")
             ]);
             const [tData, cData] = await Promise.all([tRes.json(), cRes.json()]);
-            setEntries(tData);
-            setClasses(cData);
+            setEntries(Array.isArray(tData) ? tData : []);
+            setClasses(Array.isArray(cData) ? cData : []);
         } catch (err) {
             console.error(err);
         } finally {
@@ -46,22 +48,25 @@ export default function TimetablePage() {
     return (
         <div className="space-y-8 animate-fade-up">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900">Institutional Timetable</h1>
-                    <p className="text-gray-500 text-sm">Synchronized scheduling for classes and faculty.</p>
+                <div className="space-y-1">
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Institutional Timetable</h1>
+                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest text-emerald-600">Synchronized scheduling for academic nodes and faculty.</p>
                 </div>
                 <div className="flex gap-3">
                     <select
-                        className="bg-white border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-widest outline-none focus:ring-2 focus:ring-emerald-500/20"
+                        className="bg-white border border-slate-100 rounded-[1.5rem] px-6 py-4 text-xs font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-emerald-500/5 shadow-sm"
                         value={selectedClass}
                         onChange={(e) => setSelectedClass(e.target.value)}
                     >
-                        <option value="">All Classes</option>
-                        {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                        <option value="">All Class Nodes</option>
+                        {classes.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
-                    <button className="btn-primary flex items-center gap-2">
-                        <Plus className="w-4 h-4" />
-                        <span>Add Slot</span>
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-slate-900 text-white rounded-[1.5rem] px-8 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all flex items-center gap-3 shadow-xl shadow-slate-900/10"
+                    >
+                        <Plus className="w-5 h-5" />
+                        <span>Provision Slot</span>
                     </button>
                 </div>
             </div>
@@ -114,6 +119,12 @@ export default function TimetablePage() {
                     )}
                 </div>
             </div>
+
+            <TimetableModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={fetchData}
+            />
         </div>
     );
 }
