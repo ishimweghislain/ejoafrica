@@ -85,42 +85,42 @@ export default function TimetablePage() {
                 </div>
             </div>
 
-            <div className="bg-slate-900 rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden">
-                <div className="overflow-x-auto min-h-[50vh]">
+            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl overflow-hidden">
+                <div className="overflow-x-auto">
                     {loading ? (
                         <div className="flex h-full items-center justify-center min-h-[40vh]">
-                            <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
+                            <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
                         </div>
                     ) : (
-                        <div className="grid grid-cols-7 min-w-[900px] border-collapse relative">
+                        <div className="grid grid-cols-7 min-w-[800px] border-collapse relative bg-white">
                             {DAYS.map((day, idx) => (
-                                <div key={day} className="border-r border-white/5 last:border-0 relative">
-                                    <div className="p-3 bg-slate-900/80 backdrop-blur-md sticky top-0 z-10 border-b border-white/5 mb-3">
-                                        <h3 className="text-center text-[8px] font-black uppercase tracking-[0.2em] text-emerald-500/60">{day.substring(0, 3)}</h3>
+                                <div key={day} className="border-r border-slate-50 last:border-0 relative bg-white">
+                                    <div className="p-3 bg-slate-50 sticky top-0 z-10 border-b border-slate-100 mb-3 text-center">
+                                        <h3 className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">{day.substring(0, 3)}</h3>
                                     </div>
 
                                     <div className="px-2 space-y-2 pb-6">
                                         {entries.filter(e => e.day === idx).length > 0 ? (
                                             entries.filter(e => e.day === idx).map((entry) => (
-                                                <div key={entry.id} className="bg-slate-800/50 p-3 rounded-2xl border border-white/5 shadow-sm hover:bg-slate-800 transition-all cursor-pointer group space-y-2 relative overflow-hidden">
+                                                <div key={entry.id} className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group space-y-2 relative overflow-hidden">
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); handleDelete(entry.id); }}
-                                                        className="absolute top-1 right-1 p-1 bg-red-500/0 text-red-500/0 group-hover:bg-red-500 group-hover:text-white rounded-lg transition-all"
+                                                        className="absolute top-1 right-1 p-1 bg-red-50 text-red-500 opacity-0 group-hover:opacity-100 rounded-lg transition-all"
                                                     >
                                                         <Trash2 className="w-2.5 h-2.5" />
                                                     </button>
 
                                                     <div className="space-y-0.5">
-                                                        <span className="text-[7px] font-black tracking-widest text-emerald-500/40 uppercase">{entry.class.name}</span>
-                                                        <h4 className="font-black text-[10px] text-white leading-tight uppercase truncate pr-4">{entry.course.title}</h4>
+                                                        <span className="text-[7px] font-black tracking-widest text-emerald-600/60 uppercase">{entry.class.name}</span>
+                                                        <h4 className="font-black text-[10px] text-slate-900 leading-tight uppercase truncate pr-4">{entry.course.title}</h4>
                                                     </div>
 
-                                                    <div className="space-y-1 pt-1.5 border-t border-white/5">
-                                                        <div className="flex items-center gap-1.5 text-[8px] font-bold text-slate-500">
+                                                    <div className="space-y-1 pt-1.5 border-t border-slate-50">
+                                                        <div className="flex items-center gap-1.5 text-[8px] font-bold text-slate-400">
                                                             <Clock className="w-2.5 h-2.5 text-emerald-500/30" />
                                                             <span>{entry.startTime} - {entry.endTime}</span>
                                                         </div>
-                                                        <div className="flex items-center gap-1.5 text-[8px] font-bold text-slate-500">
+                                                        <div className="flex items-center gap-1.5 text-[8px] font-bold text-slate-400">
                                                             <User className="w-2.5 h-2.5 text-emerald-500/30" />
                                                             <span className="truncate">{entry.teacher.firstName} {entry.teacher.lastName[0]}.</span>
                                                         </div>
@@ -128,8 +128,8 @@ export default function TimetablePage() {
                                                 </div>
                                             ))
                                         ) : (
-                                            <div className="py-8 text-center flex flex-col items-center gap-2 opacity-5">
-                                                <Calendar className="w-5 h-5 text-white" />
+                                            <div className="py-8 text-center flex flex-col items-center gap-2 opacity-10 grayscale">
+                                                <Calendar className="w-5 h-5 text-slate-300" />
                                             </div>
                                         )}
                                     </div>
