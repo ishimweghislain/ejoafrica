@@ -169,7 +169,7 @@ model Timetable {
   id             String       @id @default(uuid())
   classId        String
   class          Class        @relation(fields: [classId], references: [id])
-  day            String
+  day            Int
   startTime      String
   endTime        String
   academicYearId String
