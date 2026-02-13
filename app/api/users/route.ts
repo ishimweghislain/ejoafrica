@@ -22,10 +22,21 @@ async function getSession() {
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const role = searchParams.get("role");
+    const parentId = searchParams.get("parentId");
 
     try {
+        const where: any = {};
+        if (role && role !== "ALL") where.role = role as any;
+        if (parentId) {
+            where.parents = { some: { id: parentId } };
+        }
+
         const users = await prisma.user.findMany({
-            where: role ? { role: role as any } : {},
+            where,
+            include: {
+                // @ts-ignore
+                class: true,
+            },
             orderBy: { createdAt: 'desc' }
         });
         return NextResponse.json(users);
@@ -72,6 +83,7 @@ export async function POST(request: Request) {
                 city,
                 address,
                 school: school || "Lycée de Kigali",
+                // @ts-ignore
                 classId: classId || null,
             },
         });
