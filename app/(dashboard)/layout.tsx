@@ -106,7 +106,7 @@ export default async function DashboardLayout({
                     </div>
                     <div className="hidden md:block">
                         <h2 className="text-sm font-black uppercase tracking-widest text-gray-500">
-                            {role.replace('_', ' ')} <span className="text-emerald-500">Node</span>
+                            {role.replace('_', ' ')} <span className="text-emerald-500">Portal</span>
                         </h2>
                     </div>
                     <div className="flex items-center gap-4">

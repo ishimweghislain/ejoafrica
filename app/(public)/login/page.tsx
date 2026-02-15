@@ -31,10 +31,10 @@ export default function LoginPage() {
                 throw new Error(data.error || "Login failed");
             }
 
-            toast.success("Authentication Successful: Mapping institutional node...", { icon: "🔓" });
+            toast.success("Login Successful: Loading your dashboard...", { icon: "👋" });
             router.push("/dashboard");
         } catch (err: any) {
-            toast.error(`ACCESS DENIED: ${err.message}`, { icon: "🚫" });
+            toast.error(`Login failed: ${err.message}`, { icon: "❌" });
         } finally {
             setLoading(false);
         }
@@ -54,8 +54,8 @@ export default function LoginPage() {
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tight">Access Node</h2>
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600">Institutional Gateway</p>
+                        <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tight">Sign In</h2>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600">System Portal</p>
                     </div>
                 </div>
 
@@ -63,7 +63,7 @@ export default function LoginPage() {
 
                     <div className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] ml-2 block">System Identifier</label>
+                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] ml-2 block">Email Address</label>
                             <div className="relative group">
                                 <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
                                 <input
@@ -78,7 +78,7 @@ export default function LoginPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] ml-2 block">Security Token</label>
+                            <label className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] ml-2 block">Password</label>
                             <div className="relative group">
                                 <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
                                 <input
@@ -86,7 +86,7 @@ export default function LoginPage() {
                                     name="password"
                                     type="password"
                                     required
-                                    placeholder="Master Password"
+                                    placeholder="Enter your password"
                                     className="w-full bg-gray-50/50 border border-gray-100 rounded-3xl px-14 py-5 text-sm font-bold text-gray-900 outline-none ring-4 ring-transparent focus:ring-emerald-500/10 focus:bg-white focus:border-emerald-500 transition-all"
                                 />
                             </div>
@@ -101,12 +101,12 @@ export default function LoginPage() {
                         {loading ? (
                             <>
                                 <Loader2 className="w-5 h-5 animate-spin" />
-                                Synchronizing...
+                                Logging in...
                             </>
                         ) : (
                             <>
                                 <LogIn className="w-5 h-5" />
-                                Initialize Access
+                                Sign In
                             </>
                         )}
                     </button>
@@ -114,7 +114,7 @@ export default function LoginPage() {
 
                 <div className="text-center">
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 leading-relaxed px-6">
-                        Provisioned accounts only. Contact System Root for credentials.
+                        Authorized accounts only. Contact School Admin if you need help.
                     </p>
                 </div>
             </div>
