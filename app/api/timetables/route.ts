@@ -32,6 +32,7 @@ export async function GET(request: Request) {
                 term: true,
                 academicYear: true,
             },
+     
             orderBy: [
                 { day: 'asc' },
                 { startTime: 'asc' }

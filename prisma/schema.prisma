@@ -32,7 +32,7 @@ model User {
   profileImage      String?
   disciplineMarks   Int      @default(40)
   classId           String?
-  class             Class?   @relation(fields: [classId], references: [id])
+  class             Class?   @relation(fields: [classId], references: [id], onDelete: Cascade)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -64,7 +64,7 @@ model AcademicYear {
 model AcademicTerm {
   id             String       @id @default(uuid())
   academicYearId String
-  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
   title          String
   startDate      DateTime
   endDate        DateTime
@@ -94,14 +94,14 @@ model Course {
   id              String       @id @default(uuid())
   title           String
   classId         String
-  class           Class        @relation(fields: [classId], references: [id])
+  class           Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
   teacherId       String
-  teacher         User         @relation("TeacherCourses", fields: [teacherId], references: [id])
+  teacher         User         @relation("TeacherCourses", fields: [teacherId], references: [id], onDelete: Cascade)
   notation        String?
   academicYearId  String
-  academicYear    AcademicYear @relation(fields: [academicYearId], references: [id])
+  academicYear    AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
   termId          String
-  term            AcademicTerm @relation(fields: [termId], references: [id])
+  term            AcademicTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   
@@ -126,7 +126,7 @@ model Topic {
   id        String      @id @default(uuid())
   title     String
   courseId  String
-  course    Course      @relation(fields: [courseId], references: [id])
+  course    Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   
@@ -137,7 +137,7 @@ model Subtopic {
   id        String   @id @default(uuid())
   title     String
   topicId   String
-  topic     Topic    @relation(fields: [topicId], references: [id])
+  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
@@ -147,7 +147,7 @@ model Subtopic {
 model Unit {
   id                 String   @id @default(uuid())
   subtopicId         String
-  subtopic           Subtopic @relation(fields: [subtopicId], references: [id])
+  subtopic           Subtopic @relation(fields: [subtopicId], references: [id], onDelete: Cascade)
   title              String
   periods            Int
   keyUnitCompetency  String?
@@ -168,18 +168,18 @@ model Unit {
 model Timetable {
   id             String       @id @default(uuid())
   classId        String
-  class          Class        @relation(fields: [classId], references: [id])
+  class          Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
   day            Int
   startTime      String
   endTime        String
   academicYearId String
-  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
   termId         String
-  term           AcademicTerm @relation(fields: [termId], references: [id])
+  term           AcademicTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
   courseId       String
-  course         Course       @relation(fields: [courseId], references: [id])
+  course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   teacherId      String
-  teacher        User         @relation("TeacherTimetables", fields: [teacherId], references: [id])
+  teacher        User         @relation("TeacherTimetables", fields: [teacherId], references: [id], onDelete: Cascade)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 }
@@ -187,13 +187,13 @@ model Timetable {
 model SchemeOfWork {
   id             String       @id @default(uuid())
   classId        String
-  class          Class        @relation(fields: [classId], references: [id])
+  class          Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
   academicYearId String
-  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
   termId         String
-  term           AcademicTerm @relation(fields: [termId], references: [id])
+  term           AcademicTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
   courseId       String
-  course         Course       @relation(fields: [courseId], references: [id])
+  course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   periodsPerWeek Int
   reference      String?
   createdAt      DateTime     @default(now())
@@ -205,11 +205,11 @@ model SchemeOfWork {
 model Lesson {
   id             String       @id @default(uuid())
   schemeId       String
-  scheme         SchemeOfWork @relation(fields: [schemeId], references: [id])
+  scheme         SchemeOfWork @relation(fields: [schemeId], references: [id], onDelete: Cascade)
   startDate      DateTime
   endDate        DateTime
   unitId         String
-  unit           Unit         @relation(fields: [unitId], references: [id])
+  unit           Unit         @relation(fields: [unitId], references: [id], onDelete: Cascade)
   title          String
   evaluation     String?
   teachingMethod String?
@@ -224,15 +224,15 @@ model Exam {
   title          String
   description    String?
   classId        String
-  class          Class        @relation(fields: [classId], references: [id])
+  class          Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
   courseId       String
-  course         Course       @relation(fields: [courseId], references: [id])
+  course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   termId         String
-  term           AcademicTerm @relation(fields: [termId], references: [id])
+  term           AcademicTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
   academicYearId String
-  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
   teacherId      String
-  teacher        User         @relation("TeacherExams", fields: [teacherId], references: [id])
+  teacher        User         @relation("TeacherExams", fields: [teacherId], references: [id], onDelete: Cascade)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   
@@ -248,9 +248,9 @@ model Exam {
 model StudentDiscipline {
   id          String   @id @default(uuid())
   studentId   String
-  student     User     @relation("StudentDiscipline", fields: [studentId], references: [id])
+  student     User     @relation("StudentDiscipline", fields: [studentId], references: [id], onDelete: Cascade)
   reporterId  String
-  reporter    User     @relation("IncidentReporter", fields: [reporterId], references: [id])
+  reporter    User     @relation("IncidentReporter", fields: [reporterId], references: [id], onDelete: Cascade)
   description String
   date        DateTime @default(now())
   remarks     String?
