@@ -68,7 +68,7 @@ export default function PublicLayout({
                     <div className="flex items-center gap-4">
                         <Link href="/login" className="bg-white text-slate-900 px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all hover:bg-emerald-500 hover:text-white hover:scale-105 active:scale-95 shadow-xl shadow-white/5">
                             <LogIn className="w-4 h-4" />
-                            <span>Gateway Access</span>
+                            <span>System Portal</span>
                         </Link>
                     </div>
                 </div>
@@ -108,16 +108,16 @@ export default function PublicLayout({
                             <span>Eshuri</span>
                         </div>
                         <p className="text-sm text-gray-400 font-bold leading-relaxed opacity-70">
-                            Engineering the next generation of African education through advanced management nodes.
+                            Engineering the next generation of African education through smart management tools.
                         </p>
                     </div>
 
                     <div>
                         <h4 className="font-black mb-6 text-[10px] uppercase tracking-[0.3em] text-emerald-500">Navigation</h4>
                         <ul className="space-y-4 text-xs font-bold text-gray-400">
-                            <li><Link href="/" className="hover:text-white transition-colors">Home Terminal</Link></li>
-                            <li><Link href="/features" className="hover:text-white transition-colors">System Features</Link></li>
-                            <li><Link href="/partners" className="hover:text-white transition-colors">Institutional Partners</Link></li>
+                            <li><Link href="/" className="hover:text-white transition-colors">Home Page</Link></li>
+                            <li><Link href="/features" className="hover:text-white transition-colors">Our Features</Link></li>
+                            <li><Link href="/partners" className="hover:text-white transition-colors">Our Partners</Link></li>
                         </ul>
                     </div>
 
@@ -125,7 +125,7 @@ export default function PublicLayout({
                         <h4 className="font-black mb-6 text-[10px] uppercase tracking-[0.3em] text-emerald-500">Tech Support</h4>
                         <ul className="space-y-4 text-xs font-bold text-gray-400">
                             <li>contact@eshuri.edu</li>
-                            <li>24/7 Monitoring Available</li>
+                            <li>24/7 Support Available</li>
                             <li>System Status: Online</li>
                         </ul>
                     </div>
@@ -133,9 +133,9 @@ export default function PublicLayout({
                     <div>
                         <h4 className="font-black mb-6 text-[10px] uppercase tracking-[0.3em] text-emerald-500">Compliance</h4>
                         <ul className="space-y-4 text-xs font-bold text-gray-400">
-                            <li>Privacy Protocol</li>
-                            <li>Service Agreements</li>
-                            <li>Data Encryption</li>
+                            <li>Privacy Policy</li>
+                            <li>Terms of Service</li>
+                            <li>Secure Data</li>
                         </ul>
                     </div>
                 </div>
