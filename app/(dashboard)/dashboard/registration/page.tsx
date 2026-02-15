@@ -32,7 +32,7 @@ export default function RegistrationPage() {
             setUsers(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error(err);
-            toast.error("Failed to synchronize user registry.");
+            toast.error("Failed to load users.");
         } finally {
             setLoading(false);
         }
@@ -59,20 +59,20 @@ export default function RegistrationPage() {
     };
 
     const handleDelete = async (id: string) => {
-        const tid = toast.loading("Decommissioning user node...");
+        const tid = toast.loading("Deleting user...");
         try {
             const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error("Decommissioning refused by protocol.");
-            toast.success("User Node Decommissioned.", { id: tid });
+            if (!res.ok) throw new Error("Could not delete user.");
+            toast.success("User deleted successfully.", { id: tid });
             fetchUsers();
             setShowDeleteConfirm(null);
         } catch (err: any) {
-            toast.error(`Protocol Error: ${err.message}`, { id: tid });
+            toast.error(`Error: ${err.message}`, { id: tid });
         }
     };
 
     const roles = [
-        { id: "ALL", label: "All Nodes", icon: <Users className="w-4 h-4" /> },
+        { id: "ALL", label: "All Users", icon: <Users className="w-4 h-4" /> },
         { id: "STUDENT", label: "Students", icon: <GraduationCap className="w-4 h-4" /> },
         { id: "TEACHER", label: "Teachers", icon: <Briefcase className="w-4 h-4" /> },
         { id: "SCHOOL_ADMIN", label: "Admins", icon: <Shield className="w-4 h-4" /> },
@@ -83,15 +83,15 @@ export default function RegistrationPage() {
         <div className="space-y-10 animate-fade-up">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Identity Management</h1>
-                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest text-emerald-600">Provision and monitor institutional access nodes.</p>
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">User Management</h1>
+                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest text-emerald-600">Create and manage accounts for students, teachers, and staff.</p>
                 </div>
                 <button
                     onClick={() => { setSelectedUser(null); setIsModalOpen(true); }}
                     className="bg-slate-900 text-white rounded-2xl px-10 py-5 font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-slate-900/20 hover:bg-emerald-600 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
                 >
                     <UserPlus className="w-5 h-5" />
-                    <span>Enroll New Identity</span>
+                    <span>Add New User</span>
                 </button>
             </div>
 
@@ -114,7 +114,7 @@ export default function RegistrationPage() {
                 <div className="relative w-full md:w-72">
                     <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                     <input
-                        placeholder="Filter Identity..."
+                        placeholder="Search users..."
                         className="w-full bg-slate-50/50 border border-slate-100 rounded-[1.5rem] pl-12 pr-6 py-3 text-xs font-bold focus:ring-4 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -126,7 +126,7 @@ export default function RegistrationPage() {
                 {loading ? (
                     <div className="col-span-full py-40 flex flex-col items-center gap-4">
                         <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Syncing Identity Stream...</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Loading users...</p>
                     </div>
                 ) : filteredUsers.length > 0 ? (
                     filteredUsers.map(user => (
@@ -173,8 +173,8 @@ export default function RegistrationPage() {
                     <div className="col-span-full py-40 flex flex-col items-center gap-6 bg-white rounded-[4rem] border border-dashed border-slate-200">
                         <Users className="w-16 h-16 text-slate-200" />
                         <div className="text-center space-y-2">
-                            <p className="font-black text-slate-900 uppercase tracking-tighter text-xl">No Identities Found</p>
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Clear filters or provision a new institutional node.</p>
+                            <p className="font-black text-slate-900 uppercase tracking-tighter text-xl">No Users Found</p>
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Clear filters or add a new user account.</p>
                         </div>
                     </div>
                 )}
@@ -191,8 +191,8 @@ export default function RegistrationPage() {
                 isOpen={!!showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(null)}
                 onConfirm={() => showDeleteConfirm && handleDelete(showDeleteConfirm)}
-                title="Decommission Node?"
-                description="This will permanently revoke all institutional access for this identity."
+                title="Delete User?"
+                description="This will permanently remove this user's account and access."
             />
         </div>
     );
