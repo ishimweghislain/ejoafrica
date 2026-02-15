@@ -37,12 +37,12 @@ export default function AcademicYearsPage() {
     }, []);
 
     async function handleDelete(id: string) {
-        toast.loading("Decommissioning academic cycle...", { id: "delete-year" });
+        toast.loading("Deleting academic year...", { id: "delete-year" });
         try {
             const res = await fetch(`/api/academic-years/${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error("Protocol violation: Deletion refused.");
+            if (!res.ok) throw new Error("Could not delete academic year.");
 
-            toast.success("Cycle Decommissioned.", { id: "delete-year", icon: "🗑️" });
+            toast.success("Academic year deleted.", { id: "delete-year", icon: "🗑️" });
             fetchYears();
             setShowDeleteConfirm(null);
         } catch (err) {
@@ -54,8 +54,8 @@ export default function AcademicYearsPage() {
         <div className="space-y-8 animate-fade-up">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Academic Cycles</h1>
-                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Manage institutional calendars and academic timeframes.</p>
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Academic Years</h1>
+                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Manage your school's academic years and terms.</p>
                 </div>
                 <button
                     onClick={() => {
@@ -65,7 +65,7 @@ export default function AcademicYearsPage() {
                     className="bg-emerald-600 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[10px] shadow-xl shadow-emerald-600/20 hover:bg-emerald-500 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                     <Plus className="w-5 h-5" />
-                    <span>Deploy New Cycle</span>
+                    <span>Add Academic Year</span>
                 </button>
             </div>
 
@@ -74,10 +74,10 @@ export default function AcademicYearsPage() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50/50">
-                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Year Identifier</th>
-                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Commencement</th>
-                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Termination</th>
-                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">Synchronization</th>
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Year Name</th>
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Start Date</th>
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">End Date</th>
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -86,7 +86,7 @@ export default function AcademicYearsPage() {
                                     <td colSpan={4} className="px-10 py-24 text-center">
                                         <div className="flex flex-col items-center gap-4">
                                             <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 animate-pulse">Syncing Calendar Nodes...</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 animate-pulse">Loading years...</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -133,7 +133,7 @@ export default function AcademicYearsPage() {
                                     <td colSpan={4} className="px-10 py-32 text-center text-slate-300">
                                         <div className="flex flex-col items-center gap-6">
                                             <Calendar className="w-16 h-16 opacity-10" />
-                                            <p className="font-black uppercase tracking-widest text-[10px]">Registry Empty: No Cycles Found</p>
+                                            <p className="font-black uppercase tracking-widest text-[10px]">No academic years found</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -147,8 +147,8 @@ export default function AcademicYearsPage() {
                 isOpen={!!showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(null)}
                 onConfirm={() => showDeleteConfirm && handleDelete(showDeleteConfirm)}
-                title="Wipe Cycle?"
-                description="This will permanently decommission this academic calendar node and all associated terms."
+                title="Delete Academic Year?"
+                description="This will permanently remove this academic year and all its terms."
             />
 
             <AcademicYearModal

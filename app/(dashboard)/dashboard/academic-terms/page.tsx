@@ -65,7 +65,7 @@ export default function AcademicTermsPage() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setSubmitting(true);
-        const tid = toast.loading(`${selectedTerm ? 'Syncing' : 'Deploying'} academic term node...`);
+        const tid = toast.loading(`${selectedTerm ? 'Updating' : 'Adding'} academic term...`);
         try {
             const url = selectedTerm ? `/api/academic-terms/${selectedTerm.id}` : "/api/academic-terms";
             const method = selectedTerm ? "PUT" : "POST";
@@ -77,25 +77,25 @@ export default function AcademicTermsPage() {
             });
 
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Synchronization protocol failed.");
+            if (!res.ok) throw new Error(data.error || "Failed to save academic term.");
 
-            toast.success(`Term Node ${selectedTerm ? 'Updated' : 'Deployed'}.`, { id: tid, icon: "🗓️" });
+            toast.success(`Term ${selectedTerm ? 'Updated' : 'Added'} successfully.`, { id: tid, icon: "🗓️" });
             handleCloseModal();
             fetchData();
         } catch (err: any) {
-            toast.error(`PROTOCOL ERROR: ${err.message}`, { id: tid });
+            toast.error(`Error: ${err.message}`, { id: tid });
         } finally {
             setSubmitting(false);
         }
     }
 
     const handleDelete = async (id: string) => {
-        toast.loading("Decommissioning term node...", { id: "delete-term" });
+        toast.loading("Deleting term...", { id: "delete-term" });
         try {
             const res = await fetch(`/api/academic-terms/${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error("Deletion refused.");
+            if (!res.ok) throw new Error("Deletion failed.");
 
-            toast.success("Term Decommissioned.", { id: "delete-term", icon: "🗑️" });
+            toast.success("Term deleted successfully.", { id: "delete-term", icon: "🗑️" });
             fetchData();
             setShowDeleteConfirm(null);
         } catch (err) {
@@ -133,15 +133,15 @@ export default function AcademicTermsPage() {
         <div className="space-y-8 animate-fade-up">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Academic Terms</h1>
-                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Define and synchronize grading segments within academic cycles.</p>
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">School Terms</h1>
+                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Create and manage terms for each academic year.</p>
                 </div>
                 <button
                     onClick={handleAddNew}
                     className="bg-emerald-600 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[10px] shadow-xl shadow-emerald-600/20 hover:bg-emerald-500 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                     <Plus className="w-5 h-5" />
-                    <span>Provision New Term</span>
+                    <span>Add New Term</span>
                 </button>
             </div>
 
@@ -150,10 +150,10 @@ export default function AcademicTermsPage() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50/50">
-                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Term Identifier</th>
-                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Parent Cycle</th>
-                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Duration Range</th>
-                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">Synchronization</th>
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Term Name</th>
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Academic Year</th>
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Date Range</th>
+                                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -162,7 +162,7 @@ export default function AcademicTermsPage() {
                                     <td colSpan={4} className="px-10 py-24 text-center">
                                         <div className="flex flex-col items-center gap-4">
                                             <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 animate-pulse">Syncing Academic Terms...</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 animate-pulse">Loading terms...</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -179,7 +179,7 @@ export default function AcademicTermsPage() {
                                         </td>
                                         <td className="px-10 py-8">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-5 py-2 rounded-full border border-blue-100">
-                                                {term.academicYear?.title || "Legacy Cycle"}
+                                                {term.academicYear?.title || "Previous Year"}
                                             </span>
                                         </td>
                                         <td className="px-10 py-8 text-xs font-bold text-slate-500 tracking-wider">
@@ -208,7 +208,7 @@ export default function AcademicTermsPage() {
                                     <td colSpan={4} className="px-10 py-32 text-center text-slate-300">
                                         <div className="flex flex-col items-center gap-6">
                                             <CalendarRange className="w-16 h-16 opacity-10" />
-                                            <p className="font-black uppercase tracking-widest text-[10px]">Registry Empty: No Terms Defined</p>
+                                            <p className="font-black uppercase tracking-widest text-[10px]">No terms found</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -237,30 +237,30 @@ export default function AcademicTermsPage() {
                             </div>
                             <div>
                                 <h3 className="text-2xl font-black text-slate-900 leading-tight uppercase tracking-tighter">
-                                    {selectedTerm ? "Update Term" : "Deploy Term"}
+                                    {selectedTerm ? "Update Term" : "Add New Term"}
                                 </h3>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">
-                                    {selectedTerm ? "Synchronize Parameters" : "Provision Grading Period"}
+                                    {selectedTerm ? "Update school term" : "Create a new school term"}
                                 </p>
                             </div>
                         </div>
 
                         <div className="space-y-8">
                             <div>
-                                <label className={labelClass}>Parent Academic Cycle</label>
+                                <label className={labelClass}>Academic Year</label>
                                 <select
                                     required
                                     className={inputClass}
                                     value={formData.academicYearId}
                                     onChange={(e) => setFormData({ ...formData, academicYearId: e.target.value })}
                                 >
-                                    <option value="">Select Target Cycle</option>
+                                    <option value="">Select Academic Year</option>
                                     {years.map(y => <option key={y.id} value={y.id}>{y.title}</option>)}
                                 </select>
                             </div>
 
                             <div>
-                                <label className={labelClass}>Term Identifier</label>
+                                <label className={labelClass}>Term Name</label>
                                 <input
                                     required
                                     className={inputClass}
@@ -272,7 +272,7 @@ export default function AcademicTermsPage() {
 
                             <div className="grid grid-cols-2 gap-6">
                                 <div>
-                                    <label className={labelClass}>Commencement</label>
+                                    <label className={labelClass}>Start Date</label>
                                     <input
                                         type="date"
                                         required
@@ -282,7 +282,7 @@ export default function AcademicTermsPage() {
                                     />
                                 </div>
                                 <div>
-                                    <label className={labelClass}>Termination</label>
+                                    <label className={labelClass}>End Date</label>
                                     <input
                                         type="date"
                                         required
@@ -302,7 +302,7 @@ export default function AcademicTermsPage() {
                             {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                                 <>
                                     {selectedTerm ? <RefreshCcw className="w-5 h-5" /> : <Check className="w-5 h-5" />}
-                                    <span>{selectedTerm ? "Finalize Synchronization" : "Deploy Term Node"}</span>
+                                    <span>{selectedTerm ? "Save Changes" : "Save Term"}</span>
                                 </>
                             )}
                         </button>
@@ -315,8 +315,8 @@ export default function AcademicTermsPage() {
                 isOpen={!!showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(null)}
                 onConfirm={() => showDeleteConfirm && handleDelete(showDeleteConfirm)}
-                title="Wipe Term?"
-                description="This will permanently decommission this academic term node."
+                title="Delete Term?"
+                description="This will permanently remove this school term."
             />
         </div>
     );
