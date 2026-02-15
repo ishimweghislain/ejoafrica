@@ -92,8 +92,8 @@ export default function DashboardHome() {
         <div className="space-y-8 animate-fade-up">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight text-gray-900">Institutional Pulse</h1>
-                    <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Eshuri Management Engine</p>
+                    <h1 className="text-3xl font-black tracking-tight text-gray-900">School Overview</h1>
+                    <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Eshuri School Management</p>
                 </div>
                 <div className="flex gap-3">
                     <Link href="/dashboard/academic-years" className="bg-gray-100 hover:bg-gray-200 text-gray-900 px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-2">
@@ -128,28 +128,28 @@ export default function DashboardHome() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-sm space-y-8">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-bold tracking-tight text-gray-900">Recent Transmission</h3>
-                        <Link href="#" className="text-emerald-600 text-[10px] font-black uppercase tracking-widest hover:underline">Log History</Link>
+                        <h3 className="text-xl font-bold tracking-tight text-gray-900">Recent Updates</h3>
+                        <Link href="#" className="text-emerald-600 text-[10px] font-black uppercase tracking-widest hover:underline">View History</Link>
                     </div>
                     <div className="space-y-6">
                         <ActivityItem
                             icon={<Clock className="w-4 h-4" />}
-                            title="Identity Encrypted"
-                            desc="New student node added to database"
+                            title="New Student Added"
+                            desc="A new student record was created"
                             time="2h ago"
                             color="text-blue-600 bg-blue-50"
                         />
                         <ActivityItem
                             icon={<Calendar className="w-4 h-4" />}
-                            title="Term Synchronized"
+                            title="Term Updated"
                             desc="Academic Year 2026 data updated"
                             time="5h ago"
                             color="text-emerald-600 bg-emerald-50"
                         />
                         <ActivityItem
                             icon={<BookOpen className="w-4 h-4" />}
-                            title="Payload Updated"
-                            desc="Physics curriculum units expanded"
+                            title="Course Updated"
+                            desc="Physics curriculum updated"
                             time="1d ago"
                             color="text-orange-600 bg-orange-50"
                         />
@@ -164,14 +164,14 @@ export default function DashboardHome() {
                                 <SparklesIcon className="w-6 h-6 text-emerald-400" />
                             </div>
                             <div className="text-right">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Node Readiness</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Setup Progress</p>
                                 <p className="text-3xl font-black">{stats?.progress}%</p>
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <h3 className="text-2xl font-bold tracking-tight">Institutional Setup</h3>
-                            <p className="text-gray-400 text-sm font-medium leading-relaxed">Verification of required building blocks for platform full-deployment.</p>
+                            <h3 className="text-2xl font-bold tracking-tight">School Setup</h3>
+                            <p className="text-gray-400 text-sm font-medium leading-relaxed">Everything you need to get your school fully set up on the platform.</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
@@ -198,7 +198,7 @@ export default function DashboardHome() {
                             </div>
                             {!stats?.setupItems.every(i => i.done) && (
                                 <p className="text-[10px] font-bold text-gray-500 mt-4 uppercase tracking-widest text-center">
-                                    Action required: Complete {stats?.setupItems.filter(i => !i.done).length} pending protocols
+                                    Action required: Complete {stats?.setupItems.filter(i => !i.done).length} pending steps
                                 </p>
                             )}
                         </div>
