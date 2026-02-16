@@ -30,7 +30,7 @@ export async function GET(
             include: {
                 class: {
                     include: {
-                        students: true
+                        users: true
                     }
                 },
                 course: true,
