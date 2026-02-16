@@ -41,8 +41,8 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
         { icon: <Calendar className="w-5 h-5" />, label: "Timetable", href: "/dashboard/timetable", roles: ["TEACHER"] },
         { icon: <FileSpreadsheet className="w-5 h-5" />, label: "Scheme of Work", href: "/dashboard/scheme-of-work", roles: ["TEACHER"] },
         { icon: <BookMarked className="w-5 h-5" />, label: "Lesson Plan", href: "/dashboard/lesson-plan", roles: ["TEACHER"] },
-        { icon: <FileText className="w-5 h-5" />, label: "Exams", href: "/dashboard/exams", roles: ["TEACHER"] },
-        { icon: <BookOpen className="w-5 h-5" />, label: "Question Bank", href: "/dashboard/question-bank", roles: ["TEACHER", "STUDENT"] },
+        { icon: <ClipboardList className="w-5 h-5" />, label: "Assignments", href: "/dashboard/assignments", roles: ["TEACHER", "STUDENT", "PARENT"] },
+        { icon: <MessageCircle className="w-5 h-5" />, label: "Notifications", href: "/dashboard/notifications", roles: ["ALL"] },
 
         // Parent specific
         { icon: <Users className="w-5 h-5" />, label: "My Children", href: "/dashboard/children", roles: ["PARENT"] },

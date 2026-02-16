@@ -56,7 +56,7 @@ export async function PUT(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await getSession();
-    if (!session || (session.role !== "SCHOOL_ADMIN" && session.role !== "DOS" && session.role !== "TEACHER")) {
+    if (!session || (session.role !== "SCHOOL_ADMIN" && session.role !== "DOS")) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 

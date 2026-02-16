@@ -1,0 +1,98 @@
+import { prisma } from "@/lib/db";
+import { NextResponse } from "next/server";
+import { jwtVerify } from "jose";
+import { cookies } from "next/headers";
+
+const JWT_SECRET = new TextEncoder().encode(
+    process.env.JWT_SECRET || "default_secret_for_dev_only"
+);
+
+async function getSession() {
+    const token = (await cookies()).get("token")?.value;
+    if (!token) return null;
+    try {
+        const { payload } = await jwtVerify(token, JWT_SECRET);
+        return payload;
+    } catch (err) {
+        return null;
+    }
+}
+
+export async function POST(request: Request) {
+    const session = await getSession();
+    if (!session || session.role !== "STUDENT") {
+        return NextResponse.json({ error: "Only students can submit assignments" }, { status: 403 });
+    }
+
+    try {
+        const body = await request.json();
+        const { assignmentId, answers } = body; // answers: { questionId: string, answer: string }[]
+
+        // @ts-ignore
+        const assignment = await prisma.assignment.findUnique({
+            where: { id: assignmentId },
+            include: { questions: true }
+        });
+
+        if (!assignment) return NextResponse.json({ error: "Assignment not found" }, { status: 404 });
+
+        // Calculate score
+        let totalScore = 0;
+        const answerRecords: any[] = [];
+
+        for (const q of assignment.questions) {
+            const studentAnswer = answers.find((a: any) => a.questionId === q.id)?.answer;
+            const isCorrect = studentAnswer === q.correctAnswer;
+            if (isCorrect) totalScore += q.marks;
+
+            answerRecords.push({
+                questionId: q.id,
+                studentId: session.id as string,
+                answer: studentAnswer || "",
+                isCorrect
+            });
+        }
+
+        // Check if late
+        const status = (assignment.deadline && new Date() > assignment.deadline) ? "LATE" : "COMPLETED";
+
+        // Save everything in a transaction
+        const submission = await prisma.$transaction(async (tx) => {
+            // 1. Save answers
+            // @ts-ignore
+            await tx.questionAnswer.createMany({
+                data: answerRecords
+            });
+
+            // 2. Save submission
+            // @ts-ignore
+            const sub = await tx.assignmentSubmission.create({
+                data: {
+                    assignmentId,
+                    studentId: session.id as string,
+                    score: totalScore,
+                    status
+                }
+            });
+
+            // 3. Notify teacher
+            const student = await tx.user.findUnique({ where: { id: session.id as string } });
+            // @ts-ignore
+            await tx.notification.create({
+                data: {
+                    userId: assignment.teacherId,
+                    title: "New Assignment Submission",
+                    message: `${student?.firstName} ${student?.lastName} completed '${assignment.title}'. Score: ${totalScore}`,
+                    type: "SUCCESS"
+                }
+            });
+
+            return sub;
+        });
+
+        return NextResponse.json(submission);
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: "Failed to submit assignment" }, { status: 500 });
+    }
+}

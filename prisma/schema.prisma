@@ -39,12 +39,14 @@ model User {
   // Relations
   courses           Course[] @relation("TeacherCourses")
   studyingCourses   Course[] @relation("StudentCourses")
-  exams             Exam[]   @relation("TeacherExams")
+  assignments       Assignment[] @relation("TeacherAssignments")
+  submissions       AssignmentSubmission[] @relation("StudentSubmissions")
   timetables        Timetable[] @relation("TeacherTimetables")
   disciplinaryReports StudentDiscipline[] @relation("StudentDiscipline")
   incidentReporter    StudentDiscipline[] @relation("IncidentReporter")
   children          User[]   @relation("ParentStudent")
   parents           User[]   @relation("ParentStudent")
+  notifications     Notification[]
   
   // Question Bank Relations
   createdQuestions  Question[] @relation("TeacherQuestions")
@@ -63,7 +65,6 @@ model AcademicYear {
   courses   Course[]
   timetables Timetable[]
   schemes   SchemeOfWork[]
-  exams     Exam[]
 }
 
 model AcademicTerm {
@@ -79,7 +80,6 @@ model AcademicTerm {
   courses        Course[]
   timetables     Timetable[]
   schemes        SchemeOfWork[]
-  exams          Exam[]
 }
 
 model Class {
@@ -92,8 +92,8 @@ model Class {
   courses    Course[]
   timetables Timetable[]
   schemes    SchemeOfWork[]
-  exams      Exam[]
   questions  Question[]
+  assignments Assignment[]
 }
 
 model Course {
@@ -126,8 +126,8 @@ model Course {
   topics          Topic[]
   timetables      Timetable[]
   schemes         SchemeOfWork[]
-  exams           Exam[]
   questions       Question[]
+  assignments     Assignment[]
 }
 
 model Topic {
@@ -227,32 +227,6 @@ model Lesson {
   updatedAt      DateTime     @updatedAt
 }
 
-model Exam {
-  id             String       @id @default(uuid())
-  title          String
-  description    String?
-  classId        String
-  class          Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
-  courseId       String
-  course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  termId         String
-  term           AcademicTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
-  academicYearId String
-  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
-  teacherId      String
-  teacher        User         @relation("TeacherExams", fields: [teacherId], references: [id], onDelete: Cascade)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  
-  // Bloom's Taxonomy
-  remembering    Boolean      @default(false)
-  understanding  Boolean      @default(false)
-  applying       Boolean      @default(false)
-  analyzing      Boolean      @default(false)
-  evaluating     Boolean      @default(false)
-  creating       Boolean      @default(false)
-}
-
 model StudentDiscipline {
   id          String   @id @default(uuid())
   studentId   String
@@ -266,22 +240,55 @@ model StudentDiscipline {
   updatedAt   DateTime @updatedAt
 }
 
-model Question {
-  id          String   @id @default(uuid())
-  text        String
-  options     String[] // Store as array of strings
-  correctAnswer String
-  difficulty  String   @default("MEDIUM") // EASY, MEDIUM, HARD
+model Assignment {
+  id          String       @id @default(uuid())
+  title       String
+  description String?
+  deadline    DateTime?
+  classId     String
+  class       Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
   courseId    String
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  classId     String?
-  class       Class?   @relation(fields: [classId], references: [id], onDelete: Cascade)
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   teacherId   String
-  teacher     User     @relation("TeacherQuestions", fields: [teacherId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  teacher     User         @relation("TeacherAssignments", fields: [teacherId], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  questions   Question[]
+  submissions AssignmentSubmission[]
+}
 
-  answers     QuestionAnswer[]
+model AssignmentSubmission {
+  id           String     @id @default(uuid())
+  assignmentId String
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      User       @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
+  score        Float      @default(0)
+  status       String     @default("COMPLETED") // COMPLETED, LATE, MISSED
+  createdAt    DateTime   @default(now())
+}
+
+model Question {
+  id            String      @id @default(uuid())
+  text          String
+  options       String[]
+  correctAnswer String
+  marks         Int         @default(1)
+  timer         Int?        // Seconds for this question
+  difficulty    String      @default("MEDIUM")
+  courseId      String
+  course        Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  classId       String?
+  class         Class?      @relation(fields: [classId], references: [id], onDelete: Cascade)
+  assignmentId  String?
+  assignment    Assignment? @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  teacherId     String
+  teacher       User        @relation("TeacherQuestions", fields: [teacherId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  answers       QuestionAnswer[]
 }
 
 model QuestionAnswer {
@@ -293,4 +300,15 @@ model QuestionAnswer {
   answer     String
   isCorrect  Boolean
   createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, SUCCESS, WARNING, ALARM
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

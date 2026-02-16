@@ -15,6 +15,7 @@ export async function GET() {
 
     try {
         const { payload } = await jwtVerify(token, JWT_SECRET);
+        // @ts-ignore
         const user = await prisma.user.findUnique({
             where: { id: payload.userId as string },
             select: {
@@ -30,6 +31,8 @@ export async function GET() {
                 city: true,
                 address: true,
                 profileImage: true,
+                classId: true,
+                children: true,
             }
         });
 
