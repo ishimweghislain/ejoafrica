@@ -68,6 +68,45 @@ export default function UserModal({
     }, [initialData, isOpen]);
 
     const [allStudents, setAllStudents] = useState<any[]>([]);
+
+    // 1. Fetch Basic Data (Classes)
+    useEffect(() => {
+        async function fetchClasses() {
+            try {
+                const res = await fetch("/api/classes");
+                const data = await res.json();
+                setClasses(Array.isArray(data) ? data : []);
+            } catch (err) {
+                console.error("Failed to load classes:", err);
+            }
+        }
+        if (isOpen) fetchClasses();
+    }, [isOpen]);
+
+    // 2. Fetch Dependent Data (Courses for Student/Class)
+    useEffect(() => {
+        async function fetchCourses() {
+            if (!formData.classId) {
+                setAvailableCourses([]);
+                return;
+            }
+            setFetchingCourses(true);
+            try {
+                const res = await fetch(`/api/courses?classId=${formData.classId}`);
+                const data = await res.json();
+                setAvailableCourses(Array.isArray(data) ? data : []);
+            } catch (err) {
+                console.error("Failed to load courses:", err);
+            } finally {
+                setFetchingCourses(false);
+            }
+        }
+        if (isOpen && formData.role === "STUDENT" && formData.classId) {
+            fetchCourses();
+        }
+    }, [isOpen, formData.classId, formData.role]);
+
+    // 3. Fetch Students for Parent accounts
     useEffect(() => {
         async function fetchStudents() {
             if (formData.role === "PARENT") {

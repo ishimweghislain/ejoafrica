@@ -18,9 +18,13 @@ async function getSession() {
     }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+    const { searchParams } = new URL(request.url);
+    const classId = searchParams.get("classId");
+
     try {
         const courses = await prisma.course.findMany({
+            where: classId ? { classId } : {},
             include: {
                 class: true,
                 teacher: true,
