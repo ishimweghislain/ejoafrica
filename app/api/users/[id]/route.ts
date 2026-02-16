@@ -47,42 +47,84 @@ export async function PUT(
             classId
         } = body;
 
-        const updateData: any = {
-            firstName,
-            lastName,
-            email,
-            role: role as any,
-            phone,
-            accountPin,
-            country,
-            city,
-            address,
-            school: school || "Lycée de Kigali",
-            classId: classId || null,
-        };
-
-        if (password) {
-            updateData.password = await bcrypt.hash(password, 10);
-        }
-
-        if (body.courseIds) {
-            updateData.studyingCourses = {
-                set: body.courseIds.map((id: string) => ({ id }))
+        const result = await prisma.$transaction(async (tx) => {
+            const updateData: any = {
+                firstName,
+                lastName,
+                email,
+                role: role as any,
+                phone,
+                accountPin,
+                country,
+                city,
+                address,
+                school: school || "Lycée de Kigali",
+                classId: classId || null,
             };
-        }
 
-        if (body.studentIds) {
-            updateData.children = {
-                set: body.studentIds.map((id: string) => ({ id }))
-            };
-        }
+            if (password) {
+                updateData.password = await bcrypt.hash(password, 10);
+            }
 
-        const user = await prisma.user.update({
-            where: { id },
-            data: updateData,
+            if (body.courseIds) {
+                updateData.studyingCourses = {
+                    set: body.courseIds.map((id: string) => ({ id }))
+                };
+            }
+
+            if (body.studentIds) {
+                updateData.children = {
+                    set: body.studentIds.map((id: string) => ({ id }))
+                };
+            }
+
+            // 1. Update primary user
+            const user = await tx.user.update({
+                where: { id },
+                data: updateData,
+            });
+
+            // 2. Handle Parents if Student update
+            if (role === "STUDENT" && body.parent1) {
+                const parentsToConnect = [];
+
+                // Helper to find/create parent
+                const handleParent = async (pData: any) => {
+                    if (!pData || !pData.email) return null;
+                    let p = await tx.user.findUnique({ where: { email: pData.email } });
+                    if (!p) {
+                        p = await tx.user.create({
+                            data: {
+                                firstName: pData.firstName,
+                                lastName: pData.lastName,
+                                email: pData.email,
+                                password: pData.password ? await bcrypt.hash(pData.password, 10) : await bcrypt.hash("Parent123!", 10),
+                                role: "PARENT",
+                                phone: pData.phone,
+                                school: school || "Lycée de Kigali",
+                            }
+                        });
+                    }
+                    return p.id;
+                };
+
+                const p1Id = await handleParent(body.parent1);
+                if (p1Id) parentsToConnect.push({ id: p1Id });
+
+                const p2Id = await handleParent(body.parent2);
+                if (p2Id) parentsToConnect.push({ id: p2Id });
+
+                // Update connections
+                await tx.user.update({
+                    where: { id },
+                    data: { parents: { set: parentsToConnect } }
+                });
+            }
+
+            return user;
         });
 
-        return NextResponse.json(user);
+        return NextResponse.json(result);
     } catch (error: any) {
         return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
     }

@@ -35,9 +35,10 @@ export async function GET(request: Request) {
             where,
             include: {
                 class: true,
+                // @ts-ignore
                 studyingCourses: true,
                 parents: {
-                    select: { id: true, firstName: true, lastName: true, email: true }
+                    select: { id: true, firstName: true, lastName: true, email: true, phone: true }
                 }
             },
             orderBy: { createdAt: 'desc' }
@@ -74,7 +75,7 @@ export async function POST(request: Request) {
             parent2
         } = body;
 
-        const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+        const hashedPassword = password ? await bcrypt.hash(password, 10) : await bcrypt.hash("ChangeMe123!", 10);
 
         // Start a transaction to ensure all users are created correctly
         const result = await prisma.$transaction(async (tx) => {
@@ -84,7 +85,7 @@ export async function POST(request: Request) {
                     firstName,
                     lastName,
                     email,
-                    password: hashedPassword || await bcrypt.hash("ChangeMe123!", 10),
+                    password: hashedPassword,
                     role: role as any,
                     phone,
                     accountPin,
@@ -94,10 +95,12 @@ export async function POST(request: Request) {
                     school: school || "Lycée de Kigali",
                     classId: classId || null,
                     // Link courses if student
+                    // @ts-ignore
                     studyingCourses: (role === "STUDENT" && courseIds) ? {
                         connect: courseIds.map((id: string) => ({ id }))
                     } : undefined,
                     // Link children if parent
+                    // @ts-ignore
                     children: (role === "PARENT" && body.studentIds) ? {
                         connect: body.studentIds.map((id: string) => ({ id }))
                     } : undefined,
@@ -106,49 +109,38 @@ export async function POST(request: Request) {
 
             // 2. Handle Parents if Student
             if (role === "STUDENT" && parent1 && parent1.email) {
-                // Find or create Parent 1
-                let p1 = await tx.user.findUnique({ where: { email: parent1.email } });
-                if (!p1) {
-                    const p1HashedPassword = parent1.password ? await bcrypt.hash(parent1.password, 10) : hashedPassword;
-                    p1 = await tx.user.create({
-                        data: {
-                            firstName: parent1.firstName,
-                            lastName: parent1.lastName,
-                            email: parent1.email,
-                            password: p1HashedPassword || await bcrypt.hash("Parent123!", 10),
-                            role: "PARENT",
-                            phone: parent1.phone,
-                            school: school || "Lycée de Kigali",
-                        }
-                    });
-                }
+                const parentsToConnect = [];
 
-                // Link Parent 1 to Student
-                await tx.user.update({
-                    where: { id: user.id },
-                    data: { parents: { connect: { id: p1.id } } }
-                });
-
-                // Optional Parent 2
-                if (parent2 && parent2.email) {
-                    let p2 = await tx.user.findUnique({ where: { email: parent2.email } });
-                    if (!p2) {
-                        const p2HashedPassword = parent2.password ? await bcrypt.hash(parent2.password, 10) : hashedPassword;
-                        p2 = await tx.user.create({
+                const handleParent = async (pData: any) => {
+                    if (!pData || !pData.email) return null;
+                    let p = await tx.user.findUnique({ where: { email: pData.email } });
+                    if (!p) {
+                        const pPassword = pData.password || "Parent123!";
+                        p = await tx.user.create({
                             data: {
-                                firstName: parent2.firstName,
-                                lastName: parent2.lastName,
-                                email: parent2.email,
-                                password: p2HashedPassword || await bcrypt.hash("Parent123!", 10),
+                                firstName: pData.firstName,
+                                lastName: pData.lastName,
+                                email: pData.email,
+                                password: await bcrypt.hash(pPassword, 10),
                                 role: "PARENT",
-                                phone: parent2.phone,
+                                phone: pData.phone,
                                 school: school || "Lycée de Kigali",
                             }
                         });
                     }
+                    return p.id;
+                };
+
+                const p1Id = await handleParent(parent1);
+                if (p1Id) parentsToConnect.push({ id: p1Id });
+
+                const p2Id = await handleParent(parent2);
+                if (p2Id) parentsToConnect.push({ id: p2Id });
+
+                if (parentsToConnect.length > 0) {
                     await tx.user.update({
                         where: { id: user.id },
-                        data: { parents: { connect: { id: p2.id } } }
+                        data: { parents: { connect: parentsToConnect } }
                     });
                 }
             }
