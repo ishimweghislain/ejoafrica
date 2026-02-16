@@ -40,7 +40,7 @@ export default function ClassesPage() {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        const tid = toast.loading(`${selectedClass ? 'Updating' : 'Creating'} institutional class node...`);
+        const tid = toast.loading(`${selectedClass ? 'Updating' : 'Creating'} class profile...`);
         try {
             const url = selectedClass ? `/api/classes/${selectedClass.id}` : "/api/classes";
             const method = selectedClass ? "PUT" : "POST";
@@ -54,27 +54,27 @@ export default function ClassesPage() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || "Operation failed");
 
-            toast.success(`Class Node ${selectedClass ? 'Synchronized' : 'Provisioned'}.`, { id: tid, icon: "🏫" });
+            toast.success(`Class ${selectedClass ? 'updated' : 'added'} successfully.`, { id: tid, icon: "🏫" });
             setClassName("");
             setSelectedClass(null);
             setIsModalOpen(false);
             fetchClasses();
         } catch (err: any) {
-            toast.error(`Protocol Error: ${err.message}`, { id: tid });
+            toast.error(`Error: ${err.message}`, { id: tid });
         }
     }
 
     const handleDelete = async (id: string) => {
-        toast.loading("Decommissioning class node...", { id: "delete-class" });
+        toast.loading("Deleting class...", { id: "delete-class" });
         try {
             const res = await fetch(`/api/classes/${id}`, { method: "DELETE" });
             if (!res.ok) throw new Error("Deletion failed");
 
-            toast.success("Class Node Decommissioned.", { id: "delete-class", icon: "🗑️" });
+            toast.success("Class deleted successfully.", { id: "delete-class", icon: "🗑️" });
             fetchClasses();
             setShowDeleteConfirm(null);
         } catch (error) {
-            toast.error("Protocol Error: Deletion failed.", { id: "delete-class" });
+            toast.error("Error: Could not delete class.", { id: "delete-class" });
         }
     };
 
@@ -94,15 +94,15 @@ export default function ClassesPage() {
         <div className="space-y-8 animate-fade-up">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">Academic Classes</h1>
-                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Organize and segment students into institutional class nodes.</p>
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">School Classes</h1>
+                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Organize and manage your school's academic classes.</p>
                 </div>
                 <button
                     onClick={handleAddNew}
                     className="bg-emerald-600 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[10px] shadow-xl shadow-emerald-600/20 hover:bg-emerald-500 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                     <Plus className="w-5 h-5" />
-                    <span>Provision New Class</span>
+                    <span>Add New Class</span>
                 </button>
             </div>
 
@@ -110,7 +110,7 @@ export default function ClassesPage() {
                 {loading ? (
                     <div className="col-span-full py-20 flex flex-col items-center gap-4">
                         <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Syncing Class Structure...</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Loading school classes...</p>
                     </div>
                 ) : classes.length > 0 ? (
                     classes.map((cls) => (
@@ -123,7 +123,7 @@ export default function ClassesPage() {
 
                             <div className="space-y-2">
                                 <h3 className="text-2xl font-black text-slate-900 tracking-tighter group-hover:text-emerald-600 transition-colors">{cls.name}</h3>
-                                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Institutional Level</p>
+                                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Class Level</p>
                             </div>
 
                             <div className="flex gap-3 pt-4 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0">
@@ -148,8 +148,8 @@ export default function ClassesPage() {
                             <LayoutGrid className="w-16 h-16 text-slate-200" />
                         </div>
                         <div className="space-y-2">
-                            <p className="text-xl font-black text-slate-900 uppercase">No Classes Defined</p>
-                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Start by provisioning institutional class nodes.</p>
+                            <p className="text-xl font-black text-slate-900 uppercase">No Classes Found</p>
+                            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Start by adding your first school class.</p>
                         </div>
                     </div>
                 )}
@@ -174,16 +174,16 @@ export default function ClassesPage() {
                             </div>
                             <div>
                                 <h3 className="text-2xl font-black text-slate-900 leading-tight">
-                                    {selectedClass ? "Update Class" : "New Class Node"}
+                                    {selectedClass ? "Update Class" : "Add New Class"}
                                 </h3>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500">
-                                    {selectedClass ? "Modify Identifier" : "Provision New Access Point"}
+                                    {selectedClass ? "Edit Class Name" : "Create new class"}
                                 </p>
                             </div>
                         </div>
 
                         <div className="space-y-4">
-                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] ml-2 block">Class Identifier</label>
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] ml-2 block">Class Name</label>
                             <input
                                 required
                                 className="w-full bg-slate-50/50 border border-slate-100 rounded-[2rem] px-8 py-6 text-sm font-bold text-slate-900 focus:ring-8 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all placeholder:text-slate-300"
@@ -197,7 +197,7 @@ export default function ClassesPage() {
                             type="submit"
                             className="w-full bg-slate-900 text-white py-6 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200"
                         >
-                            {selectedClass ? "Finalize Synchronization" : "Create Institutional Node"}
+                            {selectedClass ? "Save Changes" : "Create Class"}
                         </button>
                     </form>
                 </div>,
@@ -208,8 +208,8 @@ export default function ClassesPage() {
                 isOpen={!!showDeleteConfirm}
                 onClose={() => setShowDeleteConfirm(null)}
                 onConfirm={() => showDeleteConfirm && handleDelete(showDeleteConfirm)}
-                title="Wipe Record?"
-                description="This will permanently decommission this class node and all associated student pointers."
+                title="Delete Class?"
+                description="This will permanently delete this class and all linked student records."
             />
         </div>
     );

@@ -15,7 +15,7 @@ export default function SettingsPage() {
             const data = await res.json();
             setUser(data);
         } catch (err) {
-            toast.error("Failed to load profile parameters.");
+            toast.error("Failed to load profile details.");
         } finally {
             setLoading(false);
         }
@@ -28,18 +28,18 @@ export default function SettingsPage() {
     async function handleUpdate(e: React.FormEvent) {
         e.preventDefault();
         setSaving(true);
-        const tid = toast.loading("Synchronizing profile changes...");
+        const tid = toast.loading("Saving profile changes...");
         try {
             const res = await fetch(`/api/users/${user.id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(user),
             });
-            if (!res.ok) throw new Error("Synchronization protocol failed.");
-            toast.success("Profile Synchronized.", { id: tid });
+            if (!res.ok) throw new Error("Could not save changes.");
+            toast.success("Profile updated successfully.", { id: tid });
             fetchProfile();
         } catch (err: any) {
-            toast.error(`Protocol Error: ${err.message}`, { id: tid });
+            toast.error(`Error: ${err.message}`, { id: tid });
         } finally {
             setSaving(false);
         }
@@ -49,7 +49,7 @@ export default function SettingsPage() {
         return (
             <div className="flex flex-col items-center justify-center py-40 gap-4">
                 <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Syncing Personal Node...</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Loading profile...</p>
             </div>
         );
     }
@@ -60,8 +60,8 @@ export default function SettingsPage() {
     return (
         <div className="max-w-4xl mx-auto space-y-10 animate-fade-up">
             <div className="space-y-1">
-                <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Account Parameters</h1>
-                <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest text-emerald-600">Configure your personal access node and identity details.</p>
+                <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Account Settings</h1>
+                <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest text-emerald-600">Configure your personal account and contact information.</p>
             </div>
 
             <form onSubmit={handleUpdate} className="space-y-8">
@@ -72,8 +72,8 @@ export default function SettingsPage() {
                                 <User className="w-6 h-6" />
                             </div>
                             <div>
-                                <h4 className="font-black uppercase tracking-widest text-xs text-slate-900">Identity Structure</h4>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Legal credentials associated with this node.</p>
+                                <h4 className="font-black uppercase tracking-widest text-xs text-slate-900">Personal Information</h4>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Your basic identification details.</p>
                             </div>
                         </div>
 
@@ -87,7 +87,7 @@ export default function SettingsPage() {
                                 <input className={inputClass} value={user.lastName} onChange={e => setUser({ ...user, lastName: e.target.value })} />
                             </div>
                             <div className="md:col-span-2">
-                                <label className={labelClass}>Institutional Email</label>
+                                <label className={labelClass}>Email Address</label>
                                 <div className="relative">
                                     <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
                                     <input className={`${inputClass} pl-14`} value={user.email} onChange={e => setUser({ ...user, email: e.target.value })} />
@@ -102,8 +102,8 @@ export default function SettingsPage() {
                                 <Globe className="w-6 h-6" />
                             </div>
                             <div>
-                                <h4 className="font-black uppercase tracking-widest text-xs text-slate-900">Routing Metadata</h4>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Geographic and contact parameters.</p>
+                                <h4 className="font-black uppercase tracking-widest text-xs text-slate-900">Contact Information</h4>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Address and phone number details.</p>
                             </div>
                         </div>
 
@@ -148,7 +148,7 @@ export default function SettingsPage() {
                         {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                             <>
                                 <Save className="w-5 h-5" />
-                                <span>Commit Profile Changes</span>
+                                <span>Save Changes</span>
                             </>
                         )}
                     </button>

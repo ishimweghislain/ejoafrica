@@ -44,11 +44,11 @@ export default function TimetablePage() {
 
     async function handleDelete(id: string) {
         if (!confirm("Are you sure you want to remove this session?")) return;
-        const tid = toast.loading("Decommissioning session...");
+        const tid = toast.loading("Deleting session...");
         try {
             const res = await fetch(`/api/timetables/${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error("Protocol Error");
-            toast.success("Session Removed.", { id: tid });
+            if (!res.ok) throw new Error("Could not delete session");
+            toast.success("Session deleted successfully.", { id: tid });
             fetchData();
         } catch (err) {
             toast.error("Failed to remove session.", { id: tid });
@@ -63,8 +63,8 @@ export default function TimetablePage() {
         <div className="space-y-6 animate-fade-up">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Institutional Timetable</h1>
-                    <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest text-emerald-600">Synchronized faculty scheduling.</p>
+                    <h1 className="text-2xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">School Schedule</h1>
+                    <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest text-emerald-600">Weekly class and teacher schedules.</p>
                 </div>
                 <div className="flex gap-2">
                     <select
@@ -72,7 +72,7 @@ export default function TimetablePage() {
                         value={selectedClass}
                         onChange={(e) => setSelectedClass(e.target.value)}
                     >
-                        <option value="">All Class Nodes</option>
+                        <option value="">All Classes</option>
                         {classes.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                     <button
@@ -80,7 +80,7 @@ export default function TimetablePage() {
                         className="bg-slate-900 text-white rounded-2xl px-6 py-3 font-black uppercase tracking-widest text-[9px] hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-xl"
                     >
                         <Plus className="w-4 h-4" />
-                        <span>Provision Slot</span>
+                        <span>Add Session</span>
                     </button>
                 </div>
             </div>

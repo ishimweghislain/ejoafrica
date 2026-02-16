@@ -38,12 +38,17 @@ model User {
 
   // Relations
   courses           Course[] @relation("TeacherCourses")
+  studyingCourses   Course[] @relation("StudentCourses")
   exams             Exam[]   @relation("TeacherExams")
   timetables        Timetable[] @relation("TeacherTimetables")
   disciplinaryReports StudentDiscipline[] @relation("StudentDiscipline")
   incidentReporter    StudentDiscipline[] @relation("IncidentReporter")
   children          User[]   @relation("ParentStudent")
   parents           User[]   @relation("ParentStudent")
+  
+  // Question Bank Relations
+  createdQuestions  Question[] @relation("TeacherQuestions")
+  questionAnswers   QuestionAnswer[]
 }
 
 model AcademicYear {
@@ -88,6 +93,7 @@ model Class {
   timetables Timetable[]
   schemes    SchemeOfWork[]
   exams      Exam[]
+  questions  Question[]
 }
 
 model Course {
@@ -97,6 +103,7 @@ model Course {
   class           Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
   teacherId       String
   teacher         User         @relation("TeacherCourses", fields: [teacherId], references: [id], onDelete: Cascade)
+  students        User[]       @relation("StudentCourses")
   notation        String?
   academicYearId  String
   academicYear    AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
@@ -120,6 +127,7 @@ model Course {
   timetables      Timetable[]
   schemes         SchemeOfWork[]
   exams           Exam[]
+  questions       Question[]
 }
 
 model Topic {
@@ -175,7 +183,7 @@ model Timetable {
   academicYearId String
   academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
   termId         String
-  term           AcademicTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
+  term            AcademicTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
   courseId       String
   course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   teacherId      String
@@ -256,4 +264,33 @@ model StudentDiscipline {
   remarks     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Question {
+  id          String   @id @default(uuid())
+  text        String
+  options     String[] // Store as array of strings
+  correctAnswer String
+  difficulty  String   @default("MEDIUM") // EASY, MEDIUM, HARD
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  classId     String?
+  class       Class?   @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacherId   String
+  teacher     User     @relation("TeacherQuestions", fields: [teacherId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  answers     QuestionAnswer[]
+}
+
+model QuestionAnswer {
+  id         String   @id @default(uuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  studentId  String
+  student    User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  answer     String
+  isCorrect  Boolean
+  createdAt  DateTime @default(now())
 }

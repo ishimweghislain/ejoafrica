@@ -33,19 +33,40 @@ export async function GET() {
         if (session.role === "TEACHER") {
             const teacherCourses = await prisma.course.findMany({
                 where: { teacherId: session.userId as string },
-                // @ts-ignore
                 include: { class: { include: { users: { where: { role: "STUDENT" } } } } }
             });
 
             const uniqueClasses = new Set(teacherCourses.map(c => c.classId));
             const uniqueStudents = new Set();
-            // @ts-ignore
-            teacherCourses.forEach(c => c.class.users.forEach((u: any) => uniqueStudents.add(u.id)));
+            teacherCourses.forEach((c: any) => c.class.users.forEach((u: any) => uniqueStudents.add(u.id)));
 
             studentsCount = uniqueStudents.size;
             classesCount = uniqueClasses.size;
             coursesCount = teacherCourses.length;
-            teachersCount = 1; // Just themselves
+            teachersCount = 1;
+        } else if (session.role === "PARENT") {
+            const parent = await prisma.user.findUnique({
+                where: { id: session.userId as string },
+                include: { children: { include: { class: true, studyingCourses: true } } }
+            });
+            if (parent) {
+                studentsCount = parent.children.length;
+                const uniqueClasses = new Set(parent.children.map(c => c.classId).filter(Boolean));
+                classesCount = uniqueClasses.size;
+                const uniqueCourses = new Set();
+                parent.children.forEach(c => c.studyingCourses.forEach(co => uniqueCourses.add(co.id)));
+                coursesCount = uniqueCourses.size;
+            }
+        } else if (session.role === "STUDENT") {
+            const student = await prisma.user.findUnique({
+                where: { id: session.userId as string },
+                include: { class: true, studyingCourses: true }
+            });
+            if (student) {
+                studentsCount = 1;
+                classesCount = student.class ? 1 : 0;
+                coursesCount = student.studyingCourses.length;
+            }
         } else {
             [studentsCount, teachersCount, classesCount, coursesCount] = await Promise.all([
                 prisma.user.count({ where: { role: 'STUDENT' } }),

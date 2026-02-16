@@ -65,6 +65,18 @@ export async function PUT(
             updateData.password = await bcrypt.hash(password, 10);
         }
 
+        if (body.courseIds) {
+            updateData.studyingCourses = {
+                set: body.courseIds.map((id: string) => ({ id }))
+            };
+        }
+
+        if (body.studentIds) {
+            updateData.children = {
+                set: body.studentIds.map((id: string) => ({ id }))
+            };
+        }
+
         const user = await prisma.user.update({
             where: { id },
             data: updateData,

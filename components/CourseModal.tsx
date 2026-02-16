@@ -132,32 +132,32 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-slate-900/60" onClick={onClose} />
 
-            <div className="relative bg-white border border-slate-100 w-full max-w-xl rounded-[3rem] p-10 animate-fade-up shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)]">
-                <div className="flex items-center justify-between mb-10">
+            <div className="relative bg-white border border-slate-100 w-full max-w-lg rounded-[2.5rem] p-8 animate-fade-up shadow-[0_50px_100px_-20px_rgba(0,0,0,0.1)] overflow-y-auto max-h-[90vh]">
+                <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-4">
-                        <div className="bg-slate-900 p-4 rounded-[2rem] text-white shadow-2xl">
-                            {initialData ? <RefreshCcw className="w-6 h-6" /> : <BookOpen className="w-6 h-6" />}
+                        <div className="bg-slate-900 p-3 rounded-2xl text-white shadow-2xl">
+                            {initialData ? <RefreshCcw className="w-5 h-5" /> : <BookOpen className="w-5 h-5" />}
                         </div>
                         <div>
-                            <h3 className="text-2xl font-black text-slate-900 leading-tight uppercase tracking-tighter">
+                            <h3 className="text-xl font-black text-slate-900 leading-tight uppercase tracking-tighter">
                                 {initialData ? "Modify Course" : "Course Design"}
                             </h3>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Curriculum Engine</p>
+                            <p className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Curriculum Engine</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-3 hover:bg-slate-50 rounded-2xl transition-all">
-                        <X className="w-6 h-6 text-slate-400" />
+                    <button onClick={onClose} className="p-2 hover:bg-slate-50 rounded-xl transition-all">
+                        <X className="w-5 h-5 text-slate-400" />
                     </button>
                 </div>
 
                 {fetchingData ? (
-                    <div className="py-20 flex flex-col items-center gap-4">
-                        <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
+                    <div className="py-12 flex flex-col items-center gap-4">
+                        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading Metadata...</p>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                        <div className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="space-y-4">
                             <div>
                                 <label className={labelClass}>Course Title</label>
                                 <input
@@ -169,7 +169,7 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className={labelClass}>Class Level</label>
                                     <select required className={inputClass} value={formData.classId} onChange={(e) => setFormData({ ...formData, classId: e.target.value })}>
@@ -186,7 +186,7 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className={labelClass}>Academic Cycle</label>
                                     <select required className={inputClass} value={formData.academicYearId} onChange={(e) => setFormData({ ...formData, academicYearId: e.target.value, termId: "" })}>
@@ -203,27 +203,26 @@ export default function CourseModal({ isOpen, onClose, onSuccess, initialData }:
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-6">
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className={labelClass}>Weekly Bandwidth (H)</label>
                                     <input type="number" className={inputClass} value={formData.hoursPerWeek} onChange={(e) => setFormData({ ...formData, hoursPerWeek: e.target.value })} />
                                 </div>
-                            </div>
-
-                            <div>
-                                <label className={labelClass}>Course Protocol ID (Notation)</label>
-                                <input className={inputClass} placeholder="e.g. PHY-A1" value={formData.notation} onChange={(e) => setFormData({ ...formData, notation: e.target.value })} />
+                                <div>
+                                    <label className={labelClass}>Course Protocol ID</label>
+                                    <input className={inputClass} placeholder="e.g. PHY-A1" value={formData.notation} onChange={(e) => setFormData({ ...formData, notation: e.target.value })} />
+                                </div>
                             </div>
                         </div>
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full bg-slate-900 text-white py-6 rounded-[2rem] flex items-center justify-center gap-4 text-xs font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200"
+                            className="w-full bg-slate-900 text-white py-4 rounded-2xl flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200"
                         >
-                            {loading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : (
+                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                                 <>
-                                    {initialData ? <RefreshCcw className="w-5 h-5" /> : <BookOpen className="w-5 h-5" />}
+                                    {initialData ? <RefreshCcw className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
                                     <span>{initialData ? "Apply Changes" : "Deploy Curriculum"}</span>
                                 </>
                             )}
