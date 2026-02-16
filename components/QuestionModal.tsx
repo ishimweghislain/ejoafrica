@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, Loader2, HelpCircle, Plus, Trash2, CheckCircle2 } from "lucide-react";
+import { X, Loader2, HelpCircle, CheckCircle2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 interface QuestionModalProps {

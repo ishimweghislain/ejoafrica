@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { BookOpen, Plus, Search, Filter, HelpCircle, ArrowRight, Book, Tags, Loader2, User, LayoutGrid } from "lucide-react";
-import QuestionModal from "@/components/QuestionModal";
+import QuestionModal from "../../../../components/QuestionModal";
 import { toast } from "react-hot-toast";
 
 export default function QuestionBankPage() {
