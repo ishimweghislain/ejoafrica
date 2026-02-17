@@ -29,8 +29,8 @@ export default function FeaturesPage() {
         },
         {
             icon: <FileText className="w-8 h-8" />,
-            title: "Exams & Marking",
-            description: "Create question banks and full exams. Track student progress with modern marking tools."
+            title: "Assignments & Reports",
+            description: "Create question banks and student assignments. Track progress with detailed performance reports."
         }
     ];
 

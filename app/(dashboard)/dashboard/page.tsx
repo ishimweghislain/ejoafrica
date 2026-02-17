@@ -89,11 +89,11 @@ export default function DashboardHome() {
                     link: "/dashboard/timetable"
                 },
                 {
-                    label: "Exam Records",
-                    value: `Manage Tests`,
+                    label: "Student Reports",
+                    value: `View Grades`,
                     icon: <GraduationCap className="w-6 h-6" />,
                     color: "bg-emerald-600",
-                    link: "/dashboard/exams"
+                    link: "/dashboard/assignments"
                 },
             ];
         }
@@ -115,11 +115,11 @@ export default function DashboardHome() {
                     link: "/dashboard/timetable"
                 },
                 {
-                    label: "Attendance & Marks",
-                    value: `Academic Report`,
+                    label: "My Progress",
+                    value: `Grades & Reports`,
                     icon: <GraduationCap className="w-6 h-6" />,
                     color: "bg-emerald-600",
-                    link: role === "STUDENT" ? "/dashboard/performance" : "/dashboard/my-children"
+                    link: role === "STUDENT" ? "/dashboard/assignments" : "/dashboard/my-children"
                 },
                 {
                     label: "Discipline Account",
@@ -244,8 +244,8 @@ export default function DashboardHome() {
                                 />
                                 <ActivityItem
                                     icon={<Clock className="w-4 h-4" />}
-                                    title="Upcoming Test"
-                                    desc="Physics CAT 1 scheduled for Friday"
+                                    title="Upcoming Assignment"
+                                    desc="Physics Homework due Friday"
                                     time="3h ago"
                                     color="text-orange-600 bg-orange-50"
                                 />
