@@ -79,28 +79,48 @@ export async function POST(request: Request) {
             parsedDeadline = new Date(deadline);
         }
 
-        const assignment = await prisma.assignment.create({
-            data: {
-                title,
-                description,
-                deadline: parsedDeadline,
-                classId,
-                courseId,
-                teacherId: session.userId as string,
-                questions: {
-                    create: Array.isArray(questions) ? questions.map((q: any) => ({
-                        text: q.text,
-                        options: q.options,
-                        correctAnswer: q.correctAnswer,
-                        marks: parseInt(q.marks) || 1,
-                        timer: q.timer ? parseInt(q.timer) : null,
-                        difficulty: q.difficulty || "MEDIUM",
-                        courseId,
-                        teacherId: session.userId as string,
-                    })) : []
-                }
-            },
-            include: { questions: true }
+        const assignment = await prisma.$transaction(async (tx) => {
+            const newAssignment = await tx.assignment.create({
+                data: {
+                    title,
+                    description,
+                    deadline: parsedDeadline,
+                    classId,
+                    courseId,
+                    teacherId: session.userId as string,
+                    questions: {
+                        create: Array.isArray(questions) ? questions.map((q: any) => ({
+                            text: q.text,
+                            options: q.options,
+                            correctAnswer: q.correctAnswer,
+                            marks: parseInt(q.marks) || 1,
+                            timer: q.timer ? parseInt(q.timer) : null,
+                            difficulty: q.difficulty || "MEDIUM",
+                            courseId,
+                            teacherId: session.userId as string,
+                        })) : []
+                    }
+                },
+                include: { questions: true }
+            });
+
+            // Notify students in the class
+            const students = await tx.user.findMany({
+                where: { classId: classId, role: "STUDENT" }
+            });
+
+            if (students.length > 0) {
+                await tx.notification.createMany({
+                    data: students.map(s => ({
+                        userId: s.id,
+                        title: "New Assignment",
+                        message: `A new assignment '${title}' has been posted in ${newAssignment.courseId}.`,
+                        type: "INFO"
+                    }))
+                });
+            }
+
+            return newAssignment;
         });
 
         return NextResponse.json(assignment);
@@ -108,8 +128,7 @@ export async function POST(request: Request) {
         console.error("ASSIGNMENT CREATE ERROR:", error);
         return NextResponse.json({
             error: "Failed to create assignment",
-            details: error.message,
-            stack: process.env.NODE_ENV === "development" ? error.stack : undefined
+            details: error.message
         }, { status: 500 });
     }
 }

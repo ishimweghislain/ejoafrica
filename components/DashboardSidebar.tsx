@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -16,6 +17,21 @@ interface DashboardSidebarProps {
 
 export default function DashboardSidebar({ role }: DashboardSidebarProps) {
     const pathname = usePathname();
+
+    const [notifCount, setNotifCount] = useState(0);
+
+    useEffect(() => {
+        async function fetchNotifCount() {
+            try {
+                const res = await fetch("/api/notifications/count");
+                const data = await res.json();
+                setNotifCount(data.count || 0);
+            } catch (err) { }
+        }
+        fetchNotifCount();
+        const interval = setInterval(fetchNotifCount, 30000); // refresh every 30s
+        return () => clearInterval(interval);
+    }, []);
 
     const menuItems = [
         { icon: <Home className="w-5 h-5" />, label: "Dashboard", href: "/dashboard", roles: ["ALL"] },
@@ -42,7 +58,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
         { icon: <FileSpreadsheet className="w-5 h-5" />, label: "Scheme of Work", href: "/dashboard/scheme-of-work", roles: ["TEACHER"] },
         { icon: <BookMarked className="w-5 h-5" />, label: "Lesson Plan", href: "/dashboard/lesson-plan", roles: ["TEACHER"] },
         { icon: <ClipboardList className="w-5 h-5" />, label: "Assignments", href: "/dashboard/assignments", roles: ["TEACHER", "STUDENT", "PARENT"] },
-        { icon: <MessageCircle className="w-5 h-5" />, label: "Notifications", href: "/dashboard/notifications", roles: ["ALL"] },
+        { icon: <MessageCircle className="w-5 h-5" />, label: "Notifications", href: "/dashboard/notifications", roles: ["ALL"], badge: notifCount },
 
         // Parent specific
         { icon: <Users className="w-5 h-5" />, label: "My Children", href: "/dashboard/children", roles: ["PARENT"] },
@@ -71,15 +87,22 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
                         <Link
                             key={idx}
                             href={item.href}
-                            className={`flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all group ${isActive
+                            className={`flex items-center justify-between gap-3 px-4 py-3 text-sm font-bold rounded-2xl transition-all group ${isActive
                                 ? "bg-emerald-50 text-emerald-600 shadow-sm"
                                 : "text-gray-500 hover:bg-emerald-50 hover:text-emerald-600"
                                 }`}
                         >
-                            <span className={`transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`}>
-                                {item.icon}
-                            </span>
-                            {item.label}
+                            <div className="flex items-center gap-3">
+                                <span className={`transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`}>
+                                    {item.icon}
+                                </span>
+                                {item.label}
+                            </div>
+                            {item.badge && item.badge > 0 && (
+                                <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-bounce">
+                                    {item.badge}
+                                </span>
+                            )}
                         </Link>
                     )
                 })}

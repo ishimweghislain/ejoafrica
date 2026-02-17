@@ -32,7 +32,7 @@ export default function LessonPlanPage() {
             const data = await res.json();
             setLessons(Array.isArray(data) ? data : []);
         } catch (err) {
-            toast.error("Failed to sync pedagogical execution plan.");
+            toast.error("Failed to load lesson plans.");
         } finally {
             setLoading(false);
         }
@@ -46,15 +46,15 @@ export default function LessonPlanPage() {
         <div className="space-y-10 animate-fade-up">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Tactical Execution</h1>
-                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest text-emerald-600">Daily lesson plans and micro-curriculum nodes.</p>
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter">Lesson Plans</h1>
+                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest text-emerald-600">Plan and track your daily lessons.</p>
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
                     className="bg-slate-900 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-slate-900/10 hover:bg-emerald-600 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
                 >
                     <Plus className="w-5 h-5" />
-                    <span>Provision Lesson</span>
+                    <span>Add Lesson</span>
                 </button>
             </div>
 
@@ -68,8 +68,8 @@ export default function LessonPlanPage() {
                                 <CheckCircle2 className="w-6 h-6" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold tracking-tight uppercase">Daily readiness</h3>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-100">Synchronized for today</p>
+                                <h3 className="text-xl font-bold tracking-tight uppercase">Today's Progress</h3>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-100">Tasks for today</p>
                             </div>
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between text-[11px] font-bold">
@@ -100,7 +100,7 @@ export default function LessonPlanPage() {
                     {loading ? (
                         <div className="py-20 flex flex-col items-center gap-4">
                             <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
-                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Syncing Execution Nodes...</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading lessons...</p>
                         </div>
                     ) : lessons.length > 0 ? lessons.map(lesson => (
                         <div key={lesson.id} className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm hover:shadow-xl transition-all group">
@@ -142,8 +142,8 @@ export default function LessonPlanPage() {
                         <div className="py-32 flex flex-col items-center gap-6 bg-slate-50/50 rounded-[4rem] border border-dashed border-slate-200">
                             <BookOpen className="w-16 h-16 text-slate-200" />
                             <div className="text-center space-y-2">
-                                <p className="font-black text-slate-900 uppercase tracking-tighter text-xl">No Active Execution Blocks</p>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Initialize a lesson block from your curricular blueprints.</p>
+                                <p className="font-black text-slate-900 uppercase tracking-tighter text-xl">No Lessons Found</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Create a lesson plan to get started.</p>
                             </div>
                         </div>
                     )}

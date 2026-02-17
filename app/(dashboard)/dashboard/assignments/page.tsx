@@ -5,7 +5,7 @@ import {
     Plus, Search, Filter, ClipboardList, Clock,
     ArrowRight, Book, Loader2, User, ChevronRight,
     CheckCircle2, AlertCircle, Eye, Printer, FileText,
-    TrendingUp, Award, Play
+    TrendingUp, Award, Play, Trash2
 } from "lucide-react";
 import AssignmentModal from "@/components/AssignmentModal";
 import TakeAssignmentModal from "@/components/TakeAssignmentModal";
@@ -118,7 +118,7 @@ export default function AssignmentsPage() {
                     <h1 className="text-4xl font-black tracking-tight text-slate-900 uppercase tracking-tighter italic">Assignments</h1>
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest leading-relaxed">Systematic educational assessments and performance metrics tracking.</p>
+                        <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest leading-relaxed">View and manage school assignments.</p>
                     </div>
                 </div>
                 {isTeacher && (
@@ -127,7 +127,7 @@ export default function AssignmentsPage() {
                         className="bg-slate-900 text-white rounded-3xl px-10 py-5 font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-slate-900/10 hover:bg-emerald-600 hover:scale-105 transition-all flex items-center justify-center gap-4"
                     >
                         <Plus className="w-5 h-5" />
-                        <span>Deploy Assignment</span>
+                        <span>Add Assignment</span>
                     </button>
                 )}
             </div>
@@ -139,7 +139,7 @@ export default function AssignmentsPage() {
                         <TrendingUp className="w-7 h-7" />
                     </div>
                     <div>
-                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Active nodes</p>
+                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Active assignments</p>
                         <p className="text-2xl font-black text-slate-900 italic">{assignments.length}</p>
                     </div>
                 </div>
@@ -149,7 +149,7 @@ export default function AssignmentsPage() {
                             <Clock className="w-7 h-7" />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Pending modules</p>
+                            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Need to do</p>
                             <p className="text-2xl font-black text-slate-900 italic">{assignments.filter(a => !a.submissions.some((s: any) => s.studentId === user.id)).length}</p>
                         </div>
                     </div>
@@ -199,7 +199,7 @@ export default function AssignmentsPage() {
                 {loading ? (
                     <div className="col-span-full py-40 flex flex-col items-center gap-6">
                         <Loader2 className="w-16 h-16 animate-spin text-emerald-600" />
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Syncing Curricula Architecture...</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Syncing assignments...</p>
                     </div>
                 ) : filteredAssignments.length > 0 ? (
                     filteredAssignments.map(a => {
@@ -228,6 +228,27 @@ export default function AssignmentsPage() {
                                         </div>
                                         {(isTeacher || isDOS) && (
                                             <div className="flex gap-2">
+                                                {isTeacher && (
+                                                    <button
+                                                        onClick={async () => {
+                                                            if (confirm("Are you sure you want to delete this assignment?")) {
+                                                                try {
+                                                                    const res = await fetch(`/api/assignments/${a.id}`, { method: 'DELETE' });
+                                                                    if (res.ok) {
+                                                                        toast.success("Assignment deleted");
+                                                                        fetchData();
+                                                                    }
+                                                                } catch (err) {
+                                                                    toast.error("Failed to delete");
+                                                                }
+                                                            }
+                                                        }}
+                                                        className="p-3 bg-red-50 text-red-400 hover:bg-red-500 hover:text-white rounded-2xl transition-all"
+                                                        title="Delete Assignment"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                )}
                                                 <button
                                                     onClick={() => printReports(a)}
                                                     className="p-3 bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 rounded-2xl transition-all"
@@ -244,7 +265,7 @@ export default function AssignmentsPage() {
                                             {a.title}
                                         </h3>
                                         <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest leading-relaxed line-clamp-2">
-                                            {a.description || "Deploy individual student assessment module with verification protocols enabled."}
+                                            {a.description || "No special instructions given."}
                                         </p>
                                     </div>
 
@@ -254,7 +275,7 @@ export default function AssignmentsPage() {
                                                 <FileText className="w-4 h-4" />
                                             </div>
                                             <div className="space-y-0.5">
-                                                <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Modules</p>
+                                                <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Structure</p>
                                                 <p className="text-[10px] font-black text-slate-900 lowercase">{a.questions.length} Questions</p>
                                             </div>
                                         </div>
@@ -282,7 +303,7 @@ export default function AssignmentsPage() {
                                                             <CheckCircle2 className="w-5 h-5" />
                                                         </div>
                                                         <div>
-                                                            <p className="text-[9px] font-black uppercase text-emerald-600 tracking-widest">Result Verified</p>
+                                                            <p className="text-[9px] font-black uppercase text-emerald-600 tracking-widest">Score</p>
                                                             <p className="text-xl font-black text-slate-900 italic">{studentSubmission.score} Pts</p>
                                                         </div>
                                                     </div>
@@ -295,8 +316,8 @@ export default function AssignmentsPage() {
                                                 <div className="bg-red-50 p-6 rounded-[2rem] flex items-center gap-4 border border-red-100 text-red-700">
                                                     <AlertCircle className="w-6 h-6" />
                                                     <div className="space-y-1">
-                                                        <p className="text-[10px] font-black uppercase tracking-widest">Module Blocked</p>
-                                                        <p className="text-[8px] font-black uppercase italic opacity-70">Deadline expired. Submission Protocol: FAILED (0 PTS)</p>
+                                                        <p className="text-[10px] font-black uppercase tracking-widest">Closed</p>
+                                                        <p className="text-[8px] font-black uppercase italic opacity-70">The deadline has passed.</p>
                                                     </div>
                                                 </div>
                                             ) : (
@@ -304,7 +325,7 @@ export default function AssignmentsPage() {
                                                     onClick={() => { setSelectedAssignment(a); setIsTakeModalOpen(true); }}
                                                     className="w-full bg-slate-900 text-white p-5 rounded-[2rem] flex items-center justify-between group/take hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200"
                                                 >
-                                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] ml-4">Start Assessment</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] ml-4">Start Now</span>
                                                     <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center group-hover/take:bg-white group-hover/take:text-emerald-600 transition-all">
                                                         <Play className="w-5 h-5 fill-current" />
                                                     </div>
@@ -347,7 +368,7 @@ export default function AssignmentsPage() {
                                                                     </div>
                                                                     <div>
                                                                         <p className="text-[9px] font-black uppercase text-slate-900">{child.firstName}</p>
-                                                                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{sub ? 'RESULT SYNCED' : 'PENDING'}</p>
+                                                                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{sub ? 'DONE' : 'PENDING'}</p>
                                                                     </div>
                                                                 </div>
                                                                 {sub ? (
@@ -367,7 +388,7 @@ export default function AssignmentsPage() {
                                                     onClick={() => printReports(a)}
                                                     className="w-full bg-slate-50 text-slate-900 p-5 rounded-[2rem] flex items-center justify-between hover:bg-slate-900 hover:text-white transition-all group/view border border-slate-100"
                                                 >
-                                                    <span className="text-[10px] font-black uppercase tracking-widest ml-4 italic">View Analytical Reports</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest ml-4 italic">View Reports</span>
                                                     <ArrowRight className="w-5 h-5 transform group-hover/view:translate-x-2 transition-all" />
                                                 </button>
                                             )}
@@ -383,17 +404,17 @@ export default function AssignmentsPage() {
                             <ClipboardList className="w-16 h-16" />
                         </div>
                         <div className="space-y-4">
-                            <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic">No Active Modules</h3>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Institutional assessment repository zero instances.</p>
+                            <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic">No Assignments</h3>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No assignments have been created yet.</p>
+                            {isTeacher && (
+                                <button
+                                    onClick={() => setIsAddModalOpen(true)}
+                                    className="bg-slate-900 text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200"
+                                >
+                                    Add Your First Assignment
+                                </button>
+                            )}
                         </div>
-                        {isTeacher && (
-                            <button
-                                onClick={() => setIsAddModalOpen(true)}
-                                className="bg-slate-900 text-white px-12 py-5 rounded-[2rem] font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200"
-                            >
-                                Deploy First Assessment
-                            </button>
-                        )}
                     </div>
                 )}
             </div>

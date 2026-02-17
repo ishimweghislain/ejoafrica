@@ -49,7 +49,7 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
                 });
                 setUnits(allUnits);
             } catch (err) {
-                toast.error("Unit sync failure.");
+                toast.error("Failed to load units.");
             } finally {
                 setFetching(false);
             }
@@ -61,7 +61,7 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
         e.preventDefault();
         if (!schemeId) return;
         setLoading(true);
-        const tid = toast.loading("Persisting lesson block...");
+        const tid = toast.loading("Saving lesson...");
 
         try {
             const res = await fetch("/api/lessons", {
@@ -73,13 +73,13 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
                 }),
             });
 
-            if (!res.ok) throw new Error("Protocol error.");
+            if (!res.ok) throw new Error("Failed to save.");
 
-            toast.success("Lesson Node Archived.", { id: tid, icon: "📓" });
+            toast.success("Lesson saved.", { id: tid, icon: "📓" });
             onSuccess();
             onClose();
         } catch (err: any) {
-            toast.error(`ARCHIVAL ERROR: ${err.message}`, { id: tid });
+            toast.error(`Error: ${err.message}`, { id: tid });
         } finally {
             setLoading(false);
         }
@@ -100,8 +100,8 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
                             <BookOpen className="w-8 h-8" />
                         </div>
                         <div>
-                            <h3 className="text-2xl font-black uppercase tracking-tighter">Lesson Engineering</h3>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Pedagogical Execution Plan</p>
+                            <h3 className="text-2xl font-black uppercase tracking-tighter">Add Lesson</h3>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Daily lesson plan</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-3 hover:bg-slate-50 rounded-2xl transition-all"><X className="w-6 h-6 text-slate-400" /></button>
@@ -115,23 +115,23 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
                         </div>
 
                         <div className="col-span-2">
-                            <label className={labelClass}>Target Syllabus Unit</label>
+                            <label className={labelClass}>Unit</label>
                             <select required className={inputClass} value={formData.unitId} onChange={e => setFormData({ ...formData, unitId: e.target.value })}>
-                                <option value="">Select Curricular Node</option>
+                                <option value="">Select unit</option>
                                 {units.map(u => (
                                     <option key={u.id} value={u.id}>
-                                        [{u.subtopicTitle}] - {u.title}
+                                        {u.title}
                                     </option>
                                 ))}
                             </select>
                         </div>
 
                         <div>
-                            <label className={labelClass}>Commencement</label>
+                            <label className={labelClass}>Start Date</label>
                             <input type="datetime-local" required className={inputClass} value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })} />
                         </div>
                         <div>
-                            <label className={labelClass}>Termination</label>
+                            <label className={labelClass}>End Date</label>
                             <input type="datetime-local" required className={inputClass} value={formData.endDate} onChange={e => setFormData({ ...formData, endDate: e.target.value })} />
                         </div>
 
@@ -148,7 +148,7 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
                     </div>
 
                     <button disabled={loading} className="w-full bg-slate-900 text-white py-6 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-xl disabled:opacity-50">
-                        {loading ? "Persisting Execution Node..." : "Archive Lesson Block"}
+                        {loading ? "Saving..." : "Save Lesson"}
                     </button>
                 </form>
             </div>
