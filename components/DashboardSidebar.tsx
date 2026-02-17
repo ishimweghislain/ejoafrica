@@ -98,7 +98,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
                                 </span>
                                 {item.label}
                             </div>
-                            {item.badge && item.badge > 0 && (
+                            {item.badge !== undefined && item.badge > 0 && (
                                 <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-bounce">
                                     {item.badge}
                                 </span>
