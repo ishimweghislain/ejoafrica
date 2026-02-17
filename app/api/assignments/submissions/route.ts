@@ -28,7 +28,6 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { assignmentId, answers } = body; // answers: { questionId: string, answer: string }[]
 
-        // @ts-ignore
         const assignment = await prisma.assignment.findUnique({
             where: { id: assignmentId },
             include: { questions: true }
@@ -47,7 +46,7 @@ export async function POST(request: Request) {
 
             answerRecords.push({
                 questionId: q.id,
-                studentId: session.id as string,
+                studentId: session.userId as string,
                 answer: studentAnswer || "",
                 isCorrect
             });
@@ -59,25 +58,22 @@ export async function POST(request: Request) {
         // Save everything in a transaction
         const submission = await prisma.$transaction(async (tx) => {
             // 1. Save answers
-            // @ts-ignore
             await tx.questionAnswer.createMany({
                 data: answerRecords
             });
 
             // 2. Save submission
-            // @ts-ignore
             const sub = await tx.assignmentSubmission.create({
                 data: {
                     assignmentId,
-                    studentId: session.id as string,
+                    studentId: session.userId as string,
                     score: totalScore,
                     status
                 }
             });
 
             // 3. Notify teacher
-            const student = await tx.user.findUnique({ where: { id: session.id as string } });
-            // @ts-ignore
+            const student = await tx.user.findUnique({ where: { id: session.userId as string } });
             await tx.notification.create({
                 data: {
                     userId: assignment.teacherId,

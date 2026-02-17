@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     try {
         // @ts-ignore
         const notifications = await prisma.notification.findMany({
-            where: { userId: session.id as string },
+            where: { userId: session.userId as string },
             orderBy: { createdAt: 'desc' },
             take: 50
         });
@@ -42,7 +42,7 @@ export async function PUT(request: Request) {
     try {
         // @ts-ignore
         await prisma.notification.updateMany({
-            where: { userId: session.id as string, read: false },
+            where: { userId: session.userId as string, read: false },
             data: { read: true }
         });
         return NextResponse.json({ message: "Notifications marked as read" });

@@ -63,7 +63,7 @@ export async function POST(request: Request) {
                 difficulty,
                 courseId,
                 classId: classId || null,
-                teacherId: session.id as string,
+                teacherId: session.userId as string,
             },
         });
 

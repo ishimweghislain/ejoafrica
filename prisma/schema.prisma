@@ -51,7 +51,6 @@ model User {
   // Question Bank Relations
   createdQuestions  Question[] @relation("TeacherQuestions")
   questionAnswers   QuestionAnswer[]
-  exams             Exam[] @relation("TeacherExams")
 }
 
 model AcademicYear {
@@ -66,7 +65,6 @@ model AcademicYear {
   courses   Course[]
   timetables Timetable[]
   schemes   SchemeOfWork[]
-  exams     Exam[]
 }
 
 model AcademicTerm {
@@ -82,7 +80,6 @@ model AcademicTerm {
   courses        Course[]
   timetables     Timetable[]
   schemes        SchemeOfWork[]
-  exams          Exam[]
 }
 
 model Class {
@@ -97,7 +94,6 @@ model Class {
   schemes    SchemeOfWork[]
   questions  Question[]
   assignments Assignment[]
-  exams      Exam[]
 }
 
 model Course {
@@ -132,7 +128,6 @@ model Course {
   schemes         SchemeOfWork[]
   questions       Question[]
   assignments     Assignment[]
-  exams           Exam[]
 }
 
 model Topic {
@@ -263,26 +258,6 @@ model Assignment {
   submissions AssignmentSubmission[]
 }
 
-model Exam {
-  id             String       @id @default(uuid())
-  title          String
-  description    String?
-  classId        String
-  class          Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
-  courseId       String
-  course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  teacherId      String
-  teacher        User         @relation("TeacherExams", fields: [teacherId], references: [id], onDelete: Cascade)
-  academicYearId String
-  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
-  termId         String
-  term           AcademicTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-
-  questions      Question[]
-}
-
 model AssignmentSubmission {
   id           String     @id @default(uuid())
   assignmentId String
@@ -308,8 +283,6 @@ model Question {
   class         Class?      @relation(fields: [classId], references: [id], onDelete: Cascade)
   assignmentId  String?
   assignment    Assignment? @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  examId        String?
-  exam          Exam?       @relation(fields: [examId], references: [id], onDelete: Cascade)
   teacherId     String
   teacher       User        @relation("TeacherQuestions", fields: [teacherId], references: [id], onDelete: Cascade)
   createdAt     DateTime    @default(now())

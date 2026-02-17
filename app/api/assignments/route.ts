@@ -27,11 +27,11 @@ export async function GET(request: Request) {
     const courseId = searchParams.get("courseId");
 
     let where: any = {};
-    if (session.role === "TEACHER") where.teacherId = session.id;
+    if (session.role === "TEACHER") where.teacherId = session.userId;
     if (session.role === "STUDENT") where.classId = session.classId;
     if (session.role === "PARENT") {
         const parent = await prisma.user.findUnique({
-            where: { id: session.id as string },
+            where: { id: session.userId as string },
             include: { children: true }
         });
         const childClassIds = parent?.children.map(c => c.classId).filter(Boolean) as string[];
@@ -42,7 +42,6 @@ export async function GET(request: Request) {
     if (courseId) where.courseId = courseId;
 
     try {
-        // @ts-ignore
         const assignments = await prisma.assignment.findMany({
             where,
             include: {
@@ -74,17 +73,22 @@ export async function POST(request: Request) {
             title, description, deadline, classId, courseId, questions
         } = body;
 
-        // @ts-ignore
+        // Ensure deadline is a valid date or null
+        let parsedDeadline = null;
+        if (deadline && !isNaN(Date.parse(deadline))) {
+            parsedDeadline = new Date(deadline);
+        }
+
         const assignment = await prisma.assignment.create({
             data: {
                 title,
                 description,
-                deadline: deadline ? new Date(deadline) : null,
+                deadline: parsedDeadline,
                 classId,
                 courseId,
-                teacherId: session.id as string,
+                teacherId: session.userId as string,
                 questions: {
-                    create: questions.map((q: any) => ({
+                    create: Array.isArray(questions) ? questions.map((q: any) => ({
                         text: q.text,
                         options: q.options,
                         correctAnswer: q.correctAnswer,
@@ -92,16 +96,20 @@ export async function POST(request: Request) {
                         timer: q.timer ? parseInt(q.timer) : null,
                         difficulty: q.difficulty || "MEDIUM",
                         courseId,
-                        teacherId: session.id as string,
-                    }))
+                        teacherId: session.userId as string,
+                    })) : []
                 }
             },
             include: { questions: true }
         });
 
         return NextResponse.json(assignment);
-    } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: "Failed to create assignment" }, { status: 500 });
+    } catch (error: any) {
+        console.error("ASSIGNMENT CREATE ERROR:", error);
+        return NextResponse.json({
+            error: "Failed to create assignment",
+            details: error.message,
+            stack: process.env.NODE_ENV === "development" ? error.stack : undefined
+        }, { status: 500 });
     }
 }
