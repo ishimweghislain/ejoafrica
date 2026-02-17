@@ -31,6 +31,7 @@ interface Course {
     id: string;
     title: string;
     class: { name: string };
+    teacherId: string;
     teacher: { firstName: string, lastName: string };
     hoursPerWeek: number;
     topics: Topic[];
@@ -40,21 +41,28 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
     const { id } = use(params);
     const router = useRouter();
     const [course, setCourse] = useState<Course | null>(null);
+    const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
     // Modal states
-    const [modalConfig, setModalConfig] = useState<{ isOpen: boolean; type: "TOPIC" | "SUBTOPIC" | "UNIT"; parentId: string }>({
+    const [modalConfig, setModalConfig] = useState<{ isOpen: boolean; type: "TOPIC" | "SUBTOPIC" | "UNIT"; parentId: string; initialData?: any }>({
         isOpen: false,
         type: "TOPIC",
         parentId: id
     });
 
-    async function fetchDetails() {
+    async function fetchData() {
         try {
-            const res = await fetch(`/api/courses/${id}`);
-            const data = await res.json();
-            if (data.error) throw new Error(data.error);
-            setCourse(data);
+            const [cRes, uRes] = await Promise.all([
+                fetch(`/api/courses/${id}`),
+                fetch("/api/auth/me")
+            ]);
+            const cData = await cRes.json();
+            const uData = await uRes.json();
+
+            if (cData.error) throw new Error(cData.error);
+            setCourse(cData);
+            setUser(uData);
         } catch (err: any) {
             toast.error(err.message);
             router.push("/dashboard/courses");
@@ -64,11 +72,24 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
     }
 
     useEffect(() => {
-        fetchDetails();
+        fetchData();
     }, [id]);
 
-    const openModal = (type: "TOPIC" | "SUBTOPIC" | "UNIT", parentId: string) => {
-        setModalConfig({ isOpen: true, type, parentId });
+    const openModal = (type: "TOPIC" | "SUBTOPIC" | "UNIT", parentId: string, initialData?: any) => {
+        setModalConfig({ isOpen: true, type, parentId, initialData });
+    };
+
+    const handleDelete = async (type: "topics" | "subtopics" | "units", itemId: string) => {
+        if (!confirm("Are you sure you want to delete this curriculum node?")) return;
+
+        try {
+            const res = await fetch(`/api/${type}/${itemId}`, { method: "DELETE" });
+            if (!res.ok) throw new Error("Failed to delete.");
+            toast.success("Node removed.");
+            fetchData();
+        } catch (err: any) {
+            toast.error(err.message);
+        }
     };
 
     if (loading) return (
@@ -79,6 +100,10 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
     );
 
     if (!course) return null;
+
+    const isTeacher = user?.role === "TEACHER" || user?.role === "DOS" || user?.role === "SCHOOL_ADMIN";
+    const canEdit = isTeacher && (user?.userId === course.teacherId || user?.role !== "TEACHER");
+    const isStudent = user?.role === "STUDENT" || user?.role === "PARENT";
 
     return (
         <div className="space-y-10 animate-fade-up">
@@ -100,18 +125,20 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                         </div>
                     </div>
                 </div>
-                <div className="flex gap-3">
-                    <button className="p-4 bg-white border border-slate-100 text-slate-400 rounded-2xl hover:bg-slate-50 transition-all shadow-sm">
-                        <Share2 className="w-5 h-5" />
-                    </button>
-                    <button
-                        onClick={() => openModal("TOPIC", id)}
-                        className="bg-slate-900 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-slate-900/10 hover:bg-emerald-600 transition-all flex items-center gap-3"
-                    >
-                        <Plus className="w-5 h-5" />
-                        <span>Extend Curriculum</span>
-                    </button>
-                </div>
+                {!isStudent && canEdit && (
+                    <div className="flex gap-3">
+                        <button className="p-4 bg-white border border-slate-100 text-slate-400 rounded-2xl hover:bg-slate-50 transition-all shadow-sm">
+                            <Share2 className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={() => openModal("TOPIC", id)}
+                            className="bg-slate-900 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-slate-900/10 hover:bg-emerald-600 transition-all flex items-center gap-3"
+                        >
+                            <Plus className="w-5 h-5" />
+                            <span>Extend Curriculum</span>
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* Matrix View */}
@@ -125,12 +152,24 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                                         <p className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Major Domain {tIdx + 1}</p>
                                         <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">{topic.title}</h2>
                                     </div>
-                                    <button
-                                        onClick={() => openModal("SUBTOPIC", topic.id)}
-                                        className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all"
-                                    >
-                                        <Plus className="w-5 h-5" />
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        {canEdit && (
+                                            <>
+                                                <button onClick={() => openModal("TOPIC", id, topic)} className="p-3 text-slate-400 hover:text-emerald-600 transition-all">
+                                                    <Edit2 className="w-4 h-4" />
+                                                </button>
+                                                <button onClick={() => handleDelete("topics", topic.id)} className="p-3 text-slate-400 hover:text-red-600 transition-all">
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => openModal("SUBTOPIC", topic.id)}
+                                                    className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all ml-4"
+                                                >
+                                                    <Plus className="w-5 h-5" />
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="space-y-6">
@@ -143,12 +182,22 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                                                     </span>
                                                     <h3 className="font-black text-slate-800 uppercase text-sm tracking-tight">{sub.title}</h3>
                                                 </div>
-                                                <button
-                                                    onClick={() => openModal("UNIT", sub.id)}
-                                                    className="p-2 text-slate-300 hover:text-emerald-600 transition-colors"
-                                                >
-                                                    <Plus className="w-4 h-4" />
-                                                </button>
+                                                {canEdit && (
+                                                    <div className="flex items-center gap-2">
+                                                        <button onClick={() => openModal("SUBTOPIC", topic.id, sub)} className="p-2 text-slate-300 hover:text-emerald-600 transition-colors">
+                                                            <Edit2 className="w-4 h-4" />
+                                                        </button>
+                                                        <button onClick={() => handleDelete("subtopics", sub.id)} className="p-2 text-slate-300 hover:text-red-600 transition-colors">
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => openModal("UNIT", sub.id)}
+                                                            className="p-2 text-slate-300 hover:text-emerald-600 transition-colors ml-4"
+                                                        >
+                                                            <Plus className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -160,7 +209,19 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                                                                 <Clock className="w-3 h-3" /> {unit.periods} Periods Allocated
                                                             </p>
                                                         </div>
-                                                        <ChevronRight className="w-4 h-4 text-slate-200 group-hover/unit:text-emerald-500" />
+                                                        <div className="flex items-center gap-2 opacity-0 group-hover/unit:opacity-100 transition-opacity">
+                                                            {canEdit && (
+                                                                <>
+                                                                    <button onClick={(e) => { e.stopPropagation(); openModal("UNIT", sub.id, unit); }} className="p-2 text-slate-300 hover:text-emerald-600">
+                                                                        <Edit2 className="w-3.5 h-3.5" />
+                                                                    </button>
+                                                                    <button onClick={(e) => { e.stopPropagation(); handleDelete("units", unit.id); }} className="p-2 text-slate-300 hover:text-red-600">
+                                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                                    </button>
+                                                                </>
+                                                            )}
+                                                            <ChevronRight className="w-4 h-4 text-slate-200" />
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
@@ -179,7 +240,9 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                                 <h3 className="text-xl font-black text-slate-900 uppercase">Architecture Void</h3>
                                 <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest uppercase">No topics have been integrated into this curriculum node.</p>
                             </div>
-                            <button onClick={() => openModal("TOPIC", id)} className="btn-primary">Provision First Topic</button>
+                            {!isStudent && canEdit && (
+                                <button onClick={() => openModal("TOPIC", id)} className="btn-primary">Provision First Topic</button>
+                            )}
                         </div>
                     )}
                 </div>
@@ -201,9 +264,10 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
             <CurriculumModal
                 isOpen={modalConfig.isOpen}
                 onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
-                onSuccess={fetchDetails}
+                onSuccess={fetchData}
                 type={modalConfig.type}
                 parentId={modalConfig.parentId}
+                initialData={modalConfig.initialData}
             />
         </div>
     );

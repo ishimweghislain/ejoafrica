@@ -6,6 +6,15 @@ import {
     BookOpen,
     Calendar,
     GraduationCap,
+    ClipboardList,
+    ShieldAlert,
+    CalendarCheck,
+    Briefcase,
+    FileSpreadsheet,
+    BookMarked,
+    Users2,
+    MessageCircle,
+    Fingerprint,
     Clock,
     ArrowUpRight,
     Plus,
@@ -34,17 +43,20 @@ export default function DashboardHome() {
     const [stats, setStats] = useState<Stats | null>(null);
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [notifications, setNotifications] = useState<any[]>([]);
 
     useEffect(() => {
         async function loadData() {
             try {
-                const [sRes, mRes] = await Promise.all([
+                const [sRes, mRes, nRes] = await Promise.all([
                     fetch("/api/stats"),
-                    fetch("/api/auth/me")
+                    fetch("/api/auth/me"),
+                    fetch("/api/notifications")
                 ]);
-                const [sData, mData] = await Promise.all([sRes.json(), mRes.json()]);
+                const [sData, mData, nData] = await Promise.all([sRes.json(), mRes.json(), nRes.json()]);
                 setStats(sData);
                 setUser(mData);
+                setNotifications(Array.isArray(nData) ? nData.slice(0, 5) : []);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -213,43 +225,22 @@ export default function DashboardHome() {
                 <div className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-sm space-y-8">
                     <div className="flex items-center justify-between pb-6 border-b border-gray-50">
                         <h3 className="text-xl font-bold tracking-tight text-gray-900">Recent Notifications</h3>
-                        <Link href="#" className="text-emerald-600 text-[10px] font-black uppercase tracking-widest hover:underline">View All</Link>
+                        <Link href="/dashboard/notifications" className="text-emerald-600 text-[10px] font-black uppercase tracking-widest hover:underline">View All</Link>
                     </div>
                     <div className="space-y-8">
-                        {role === "SCHOOL_ADMIN" || role === "TEACHER" ? (
-                            <>
-                                <ActivityItem
-                                    icon={<Clock className="w-4 h-4" />}
-                                    title="System Activity"
-                                    desc="Academic records updated successfully"
-                                    time="Now"
-                                    color="text-blue-600 bg-blue-50"
-                                />
-                                <ActivityItem
-                                    icon={<Calendar className="w-4 h-4" />}
-                                    title="Holiday Update"
-                                    desc="National holiday added to calendar"
-                                    time="2d ago"
-                                    color="text-emerald-600 bg-emerald-50"
-                                />
-                            </>
-                        ) : (
-                            <>
-                                <ActivityItem
-                                    icon={<BookOpen className="w-4 h-4" />}
-                                    title="New Lesson Material"
-                                    desc="Mathematics unit 3 resources uploaded"
-                                    time="1h ago"
-                                    color="text-purple-600 bg-purple-50"
-                                />
-                                <ActivityItem
-                                    icon={<Clock className="w-4 h-4" />}
-                                    title="Upcoming Assignment"
-                                    desc="Physics Homework due Friday"
-                                    time="3h ago"
-                                    color="text-orange-600 bg-orange-50"
-                                />
-                            </>
+                        {notifications.length > 0 ? notifications.map((notif) => (
+                            <ActivityItem
+                                key={notif.id}
+                                icon={notif.type === "ASSIGNMENT" ? <ClipboardList className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
+                                title={notif.title}
+                                desc={notif.message}
+                                time={new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                color={notif.type === "ASSIGNMENT" ? "text-purple-600 bg-purple-50" : "text-emerald-600 bg-emerald-50"}
+                            />
+                        )) : (
+                            <div className="py-10 text-center">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No recent alerts</p>
+                            </div>
                         )}
                     </div>
                 </div>

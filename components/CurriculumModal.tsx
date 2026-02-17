@@ -13,9 +13,10 @@ interface CurriculumModalProps {
     onSuccess: () => void;
     type: CurriculumType;
     parentId: string; // Course ID for TOPIC, Topic ID for SUBTOPIC, Subtopic ID for UNIT
+    initialData?: any; // If provided, we are editing
 }
 
-export default function CurriculumModal({ isOpen, onClose, onSuccess, type, parentId }: CurriculumModalProps) {
+export default function CurriculumModal({ isOpen, onClose, onSuccess, type, parentId, initialData }: CurriculumModalProps) {
     const [mounted, setMounted] = useState(false);
     useEffect(() => { setMounted(true); }, []);
 
@@ -30,23 +31,37 @@ export default function CurriculumModal({ isOpen, onClose, onSuccess, type, pare
 
     useEffect(() => {
         if (isOpen) {
-            setFormData({ title: "", periods: "1", knowledge: "", skills: "", attitudes: "" });
+            if (initialData) {
+                setFormData({
+                    title: initialData.title || "",
+                    periods: initialData.periods?.toString() || "1",
+                    knowledge: initialData.knowledge || "",
+                    skills: initialData.skills || "",
+                    attitudes: initialData.attitudes || "",
+                });
+            } else {
+                setFormData({ title: "", periods: "1", knowledge: "", skills: "", attitudes: "" });
+            }
         }
-    }, [isOpen]);
+    }, [isOpen, initialData]);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
-        const tid = toast.loading(`Provisioning ${type.toLowerCase()} node...`);
+        const action = initialData ? "Updating" : "Provisioning";
+        const tid = toast.loading(`${action} ${type.toLowerCase()} node...`);
 
         try {
-            const endpoint = type === "TOPIC" ? "/api/topics" : type === "SUBTOPIC" ? "/api/subtopics" : "/api/units";
+            const baseEndpoint = type === "TOPIC" ? "/api/topics" : type === "SUBTOPIC" ? "/api/subtopics" : "/api/units";
+            const endpoint = initialData ? `${baseEndpoint}/${initialData.id}` : baseEndpoint;
+            const method = initialData ? "PATCH" : "POST";
+
             const payload = {
                 title: formData.title,
-                ...(type === "TOPIC" && { courseId: parentId }),
-                ...(type === "SUBTOPIC" && { topicId: parentId }),
+                ...(!initialData && type === "TOPIC" && { courseId: parentId }),
+                ...(!initialData && type === "SUBTOPIC" && { topicId: parentId }),
+                ...(!initialData && type === "UNIT" && { subtopicId: parentId }),
                 ...(type === "UNIT" && {
-                    subtopicId: parentId,
                     periods: formData.periods,
                     knowledge: formData.knowledge,
                     skills: formData.skills,
@@ -55,18 +70,18 @@ export default function CurriculumModal({ isOpen, onClose, onSuccess, type, pare
             };
 
             const res = await fetch(endpoint, {
-                method: "POST",
+                method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
 
             if (!res.ok) throw new Error("Protocol rejection.");
 
-            toast.success(`${type} Node Integrated.`, { id: tid, icon: "✅" });
+            toast.success(`${type} Node ${initialData ? 'Updated' : 'Integrated'}.`, { id: tid, icon: "✅" });
             onSuccess();
             onClose();
         } catch (err: any) {
-            toast.error(`INTEGRATION ERROR: ${err.message}`, { id: tid });
+            toast.error(`ERROR: ${err.message}`, { id: tid });
         } finally {
             setLoading(false);
         }
@@ -87,8 +102,8 @@ export default function CurriculumModal({ isOpen, onClose, onSuccess, type, pare
                             {type === "TOPIC" ? <Book className="w-6 h-6" /> : type === "SUBTOPIC" ? <Layers className="w-6 h-6" /> : <FilePlus className="w-6 h-6" />}
                         </div>
                         <div>
-                            <h3 className="text-xl font-black uppercase tracking-tighter">Syllabus Extension</h3>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Provisioning {type}</p>
+                            <h3 className="text-xl font-black uppercase tracking-tighter">{initialData ? 'Update' : 'Syllabus Extension'}</h3>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">{initialData ? 'Editing' : 'Provisioning'} {type}</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-slate-50 rounded-xl transition-all"><X className="w-5 h-5 text-slate-400" /></button>
@@ -126,7 +141,7 @@ export default function CurriculumModal({ isOpen, onClose, onSuccess, type, pare
                     )}
 
                     <button disabled={loading} className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all shadow-xl disabled:opacity-50">
-                        {loading ? "Integrating Node..." : "Commit Expansion"}
+                        {loading ? "Processing..." : initialData ? "Update Node" : "Commit Expansion"}
                     </button>
                 </form>
             </div>
