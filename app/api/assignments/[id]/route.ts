@@ -24,7 +24,6 @@ export async function GET(
 ) {
     const { id } = await params;
     try {
-        // @ts-ignore
         const assignment = await prisma.assignment.findUnique({
             where: { id },
             include: {
@@ -48,6 +47,35 @@ export async function GET(
     }
 }
 
+export async function PATCH(
+    request: Request,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    const session = await getSession();
+    if (!session || session.role !== "TEACHER") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    const { id } = await params;
+    try {
+        const body = await request.json();
+        const { title, description, deadline } = body;
+
+        const assignment = await prisma.assignment.update({
+            where: { id },
+            data: {
+                title,
+                description,
+                deadline: deadline ? new Date(deadline) : null
+            }
+        });
+
+        return NextResponse.json(assignment);
+    } catch (error) {
+        return NextResponse.json({ error: "Failed to update assignment" }, { status: 500 });
+    }
+}
+
 export async function DELETE(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -59,7 +87,6 @@ export async function DELETE(
 
     const { id } = await params;
     try {
-        // @ts-ignore
         await prisma.assignment.delete({ where: { id } });
         return NextResponse.json({ message: "Assignment deleted" });
     } catch (error) {

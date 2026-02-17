@@ -94,7 +94,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess }: Assignme
         }
 
         setLoading(true);
-        const tid = toast.loading("Deploying assignment architecture...");
+        const tid = toast.loading("Saving assignment...");
 
         try {
             const res = await fetch("/api/assignments", {
@@ -103,9 +103,9 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess }: Assignme
                 body: JSON.stringify({ ...formData, questions }),
             });
 
-            if (!res.ok) throw new Error("Deployment Protocol Failure");
+            if (!res.ok) throw new Error("Failed to save assignment");
 
-            toast.success("Assignment Deployed Successfully", { id: tid });
+            toast.success("Assignment saved successfully", { id: tid });
             onSuccess();
             onClose();
         } catch (err: any) {
@@ -132,8 +132,8 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess }: Assignme
                             <ClipboardList className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter italic">Assignment Architect</h3>
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">Educational Assessment Engine v2.0</p>
+                            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter italic">Create Assignment</h3>
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">Add new questions for your students</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-3 hover:bg-white rounded-2xl transition-all shadow-sm">
@@ -158,16 +158,16 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess }: Assignme
                                         <input
                                             required
                                             className={inputClass}
-                                            placeholder="e.g. Quantum Mechanics Final Assessment"
+                                            placeholder="e.g. Mathematics Mid-term"
                                             value={formData.title}
                                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                         />
                                     </div>
                                     <div className="space-y-4">
-                                        <label className={labelClass}>Instructional Description</label>
+                                        <label className={labelClass}>Instructions</label>
                                         <textarea
                                             className={`${inputClass} h-32 resize-none`}
-                                            placeholder="Specify rules, objectives, and guidance for students..."
+                                            placeholder="Tell students what to do..."
                                             value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                         />
@@ -176,7 +176,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess }: Assignme
                                 <div className="space-y-6">
                                     <div className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 space-y-6 shadow-sm">
                                         <div>
-                                            <label className={labelClass}>Timeline Deadline</label>
+                                            <label className={labelClass}>Deadline</label>
                                             <input
                                                 type="datetime-local"
                                                 className={inputClass}
@@ -209,9 +209,9 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess }: Assignme
                                 <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-2 h-8 bg-emerald-500 rounded-full"></div>
-                                        <h4 className="text-xl font-black text-slate-900 uppercase tracking-tighter">Question Pipeline</h4>
+                                        <h4 className="text-xl font-black text-slate-900 uppercase tracking-tighter">Questions</h4>
                                     </div>
-                                    <span className="bg-slate-100 px-4 py-2 rounded-xl text-[10px] font-black uppercase text-slate-500 tracking-widest">{questions.length} Nodes</span>
+                                    <span className="bg-slate-100 px-4 py-2 rounded-xl text-[10px] font-black uppercase text-slate-500 tracking-widest">{questions.length} Questions</span>
                                 </div>
 
                                 <div className="space-y-12">
@@ -232,10 +232,10 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess }: Assignme
                                             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                                                 <div className="md:col-span-3 space-y-6">
                                                     <div>
-                                                        <label className={labelClass}>Question Input</label>
+                                                        <label className={labelClass}>Question</label>
                                                         <input
                                                             className={`${inputClass} text-lg py-5 border-none bg-slate-50/50 placeholder:italic`}
-                                                            placeholder="State the scientific problem or theoretical question..."
+                                                            placeholder="Enter your question here..."
                                                             value={q.text}
                                                             onChange={(e) => handleQuestionChange(qIdx, 'text', e.target.value)}
                                                         />
@@ -268,7 +268,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess }: Assignme
 
                                                 <div className="space-y-6 bg-slate-50/30 p-6 rounded-[2rem] border border-slate-50">
                                                     <div>
-                                                        <label className={labelClass}>Grade Weight</label>
+                                                        <label className={labelClass}>Marks</label>
                                                         <div className="relative">
                                                             <input
                                                                 type="number"
@@ -293,7 +293,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess }: Assignme
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <label className={labelClass}>Complexity</label>
+                                                        <label className={labelClass}>Difficulty</label>
                                                         <select
                                                             className={inputClass}
                                                             value={q.difficulty}
@@ -317,7 +317,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess }: Assignme
                                         <div className="p-4 bg-slate-50 rounded-2xl group-hover:bg-emerald-500 group-hover:text-white transition-all">
                                             <Plus className="w-8 h-8" />
                                         </div>
-                                        <span className="text-xs font-black uppercase tracking-[0.2em] italic">Inject New Question Module</span>
+                                        <span className="text-xs font-black uppercase tracking-[0.2em] italic">Add Another Question</span>
                                     </button>
                                 </div>
                             </div>
@@ -348,7 +348,7 @@ export default function AssignmentModal({ isOpen, onClose, onSuccess }: Assignme
                             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                                 <>
                                     <CheckCircle2 className="w-5 h-5" />
-                                    <span>Initiate Deployment</span>
+                                    <span>Create Assignment</span>
                                 </>
                             )}
                         </button>

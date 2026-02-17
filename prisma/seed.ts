@@ -18,7 +18,6 @@ async function main() {
         await prisma.unit.deleteMany({});
         await prisma.subtopic.deleteMany({});
         await prisma.topic.deleteMany({});
-        await prisma.exam.deleteMany({});
         await prisma.course.deleteMany({});
         await prisma.class.deleteMany({});
         await prisma.academicTerm.deleteMany({});

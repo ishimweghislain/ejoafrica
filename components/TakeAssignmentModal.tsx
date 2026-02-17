@@ -79,12 +79,12 @@ export default function TakeAssignmentModal({ isOpen, onClose, assignment, onCom
             const data = await res.json();
             if (res.ok) {
                 setResult(data);
-                toast.success("Assignment transmitted successfully.");
+                toast.success("Assignment submitted successfully.");
             } else {
                 toast.error(data.error);
             }
         } catch (err) {
-            toast.error("Telemetry failure.");
+            toast.error("Failed to submit. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -98,34 +98,34 @@ export default function TakeAssignmentModal({ isOpen, onClose, assignment, onCom
 
             <div className="relative bg-white w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-fade-up">
                 {!isStarted ? (
-                    <div className="p-12 flex flex-col items-center justify-center text-center space-y-8">
-                        <div className="w-24 h-24 bg-emerald-50 rounded-[2.5rem] flex items-center justify-center text-emerald-600 shadow-inner">
-                            <ClipboardList className="w-12 h-12" />
+                    <div className="p-8 flex flex-col items-center justify-center text-center space-y-6">
+                        <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center text-emerald-600 shadow-sm">
+                            <ClipboardList className="w-10 h-10" />
                         </div>
-                        <div className="space-y-2">
-                            <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tighter italic">{assignment.title}</h3>
-                            <p className="text-slate-500 font-bold text-sm max-w-lg mx-auto">{assignment.description || 'No specialized instructions provided.'}</p>
+                        <div className="space-y-1">
+                            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter italic">{assignment.title}</h3>
+                            <p className="text-slate-500 font-bold text-xs max-w-md mx-auto">{assignment.description || 'No special instructions given.'}</p>
                         </div>
-                        <div className="grid grid-cols-2 gap-6 w-full max-w-md">
-                            <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-2">
-                                <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Question Count</span>
-                                <span className="text-2xl font-black text-slate-900">{questions.length}</span>
+                        <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
+                            <div className="bg-slate-50 p-4 rounded-3xl border border-slate-100 flex flex-col items-center gap-1">
+                                <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Questions</span>
+                                <span className="text-xl font-black text-slate-900">{questions.length}</span>
                             </div>
-                            <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-2">
-                                <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Total Weight</span>
-                                <span className="text-2xl font-black text-slate-900">{questions.reduce((acc: number, q: any) => acc + q.marks, 0)} Pts</span>
+                            <div className="bg-slate-50 p-4 rounded-3xl border border-slate-100 flex flex-col items-center gap-1">
+                                <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Points</span>
+                                <span className="text-xl font-black text-slate-900">{questions.reduce((acc: number, q: any) => acc + q.marks, 0)}</span>
                             </div>
                         </div>
-                        <div className="flex bg-orange-50 p-4 rounded-3xl border border-orange-100 items-center gap-4 text-orange-700">
-                            <AlertCircle className="w-6 h-6 shrink-0" />
-                            <p className="text-[10px] font-black uppercase tracking-widest">Caution: Timed modules active. Once started, the timer cannot be paused.</p>
+                        <div className="flex bg-orange-50 p-4 rounded-2xl border border-orange-100 items-center gap-3 text-orange-700 max-w-md">
+                            <AlertCircle className="w-5 h-5 shrink-0" />
+                            <p className="text-[9px] font-black uppercase tracking-widest leading-tight">Wait! Once you start, you cannot pause the timer.</p>
                         </div>
                         <button
                             onClick={startAssignment}
-                            className="bg-slate-900 text-white px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all flex items-center gap-3 shadow-2xl shadow-slate-200"
+                            className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all flex items-center gap-3 shadow-xl"
                         >
-                            <Play className="w-5 h-5 fill-current" />
-                            <span>Initiatize Assessment</span>
+                            <Play className="w-4 h-4 fill-current" />
+                            <span>Start Now</span>
                         </button>
                     </div>
                 ) : !isFinished ? (
@@ -187,7 +187,7 @@ export default function TakeAssignmentModal({ isOpen, onClose, assignment, onCom
                                 onClick={nextQuestion}
                                 className="bg-slate-900 text-white px-10 py-5 rounded-3xl font-black uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-emerald-600 transition-all shadow-xl"
                             >
-                                <span>{currentQuestionIdx === questions.length - 1 ? "Finalize Submisson" : "Proceed to Next"}</span>
+                                <span>{currentQuestionIdx === questions.length - 1 ? "Submit Assignment" : "Next Question"}</span>
                                 <ChevronRight className="w-4 h-4" />
                             </button>
                         </div>
@@ -197,7 +197,7 @@ export default function TakeAssignmentModal({ isOpen, onClose, assignment, onCom
                         {loading ? (
                             <div className="flex flex-col items-center gap-6">
                                 <Loader2 className="w-16 h-16 animate-spin text-emerald-600" />
-                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Processing Telemetry Data...</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Sending your answers...</p>
                             </div>
                         ) : (
                             <>
@@ -205,8 +205,8 @@ export default function TakeAssignmentModal({ isOpen, onClose, assignment, onCom
                                     <Award className="w-16 h-16" />
                                 </div>
                                 <div className="space-y-4">
-                                    <h3 className="text-4xl font-black text-slate-900 uppercase tracking-tighter italic">Evaluation Complete</h3>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600">Transmission Secured & Verified</p>
+                                    <h3 className="text-4xl font-black text-slate-900 uppercase tracking-tighter italic">Finished!</h3>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600">Your answers were saved safely</p>
                                 </div>
 
                                 <div className="p-10 bg-slate-900 rounded-[3rem] text-white w-full max-w-sm space-y-2 shadow-2xl">
@@ -218,7 +218,7 @@ export default function TakeAssignmentModal({ isOpen, onClose, assignment, onCom
                                     onClick={() => { onComplete(); onClose(); }}
                                     className="bg-slate-50 text-slate-900 px-12 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-900 hover:text-white transition-all border border-slate-100 shadow-sm"
                                 >
-                                    Return to Command Center
+                                    Go Back to Assignments
                                 </button>
                             </>
                         )}
