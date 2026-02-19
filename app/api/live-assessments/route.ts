@@ -30,6 +30,14 @@ export async function GET(request: Request) {
     let where: any = {};
     if (session.role === "TEACHER") where.teacherId = session.userId;
     if (session.role === "STUDENT") where.classId = session.classId;
+    if (session.role === "PARENT") {
+        const children = await prisma.user.findMany({
+            where: { parents: { some: { id: session.userId as string } } },
+            select: { classId: true }
+        });
+        const classIds = children.map(c => c.classId).filter(Boolean) as string[];
+        where.classId = { in: classIds };
+    }
     if (session.role === "DOS" || session.role === "SCHOOL_ADMIN") {
         // Admin and DOS see all
     }

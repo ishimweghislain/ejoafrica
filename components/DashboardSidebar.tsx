@@ -58,7 +58,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
         { icon: <FileSpreadsheet className="w-5 h-5" />, label: "Scheme of Work", href: "/dashboard/scheme-of-work", roles: ["TEACHER"] },
         { icon: <BookMarked className="w-5 h-5" />, label: "Lesson Plan", href: "/dashboard/lesson-plan", roles: ["TEACHER"] },
         { icon: <ClipboardList className="w-5 h-5" />, label: "Assignments", href: "/dashboard/assignments", roles: ["TEACHER", "STUDENT", "PARENT"] },
-        { icon: <Radio className="w-5 h-5" />, label: "Live Assessments", href: "/dashboard/live-assessments", roles: ["TEACHER", "STUDENT", "DOS", "SCHOOL_ADMIN"] },
+        { icon: <Radio className="w-5 h-5" />, label: "Live Assessments", href: "/dashboard/live-assessments", roles: ["TEACHER", "STUDENT", "DOS", "SCHOOL_ADMIN", "PARENT"] },
         { icon: <MessageCircle className="w-5 h-5" />, label: "Notifications", href: "/dashboard/notifications", roles: ["ALL"], badge: notifCount },
 
         // Parent specific

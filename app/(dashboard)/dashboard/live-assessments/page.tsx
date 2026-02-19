@@ -69,13 +69,20 @@ export default function LiveAssessmentsPage() {
 
     const isTeacher = user?.role === "TEACHER";
     const isStudent = user?.role === "STUDENT";
+    const isParent = user?.role === "PARENT";
     const isDOS = user?.role === "DOS" || user?.role === "SCHOOL_ADMIN";
 
     const printReport = async (a: any) => {
         const tid = toast.loading("Preparing report...");
         try {
             const sRes = await fetch(`/api/users?role=STUDENT&classId=${a.classId}`);
-            const students = await sRes.json();
+            let students = await sRes.json();
+
+            // If parent, only show their children
+            if (isParent && user.children) {
+                const childIds = user.children.map((c: any) => c.id);
+                students = students.filter((s: any) => childIds.includes(s.id));
+            }
 
             const printWindow = window.open('', '_blank');
             if (!printWindow) return;
@@ -313,7 +320,7 @@ export default function LiveAssessmentsPage() {
                                                 <p className="text-[10px] font-black text-slate-900">Final Results Ready</p>
                                             </div>
                                         </div>
-                                        {(isTeacher || isDOS) && (
+                                        {(isTeacher || isDOS || isParent) && (
                                             <button
                                                 onClick={() => printReport(a)}
                                                 className="p-3 bg-white text-emerald-600 rounded-xl shadow-sm hover:bg-emerald-600 hover:text-white transition-all"

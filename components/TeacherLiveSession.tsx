@@ -136,6 +136,9 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                             <div className="space-y-6">
                                 <div className="flex items-center gap-3">
                                     <span className="bg-rose-600 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest italic">Question {assessment.currentQuestionIndex + 1} of {assessment.questions.length}</span>
+                                    <div className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${questionResponses.length === classStudents.length ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-white/5 border-white/10 text-white'}`}>
+                                        Submitted: {questionResponses.length} / {classStudents.length}
+                                    </div>
                                     <div className="flex items-center gap-2 text-white/40 text-[10px] font-black uppercase tracking-widest">
                                         <Clock className="w-4 h-4" />
                                         <span>{currentQuestion.timer}s Limit</span>
