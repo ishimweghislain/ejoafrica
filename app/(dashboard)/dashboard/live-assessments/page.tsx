@@ -5,7 +5,7 @@ import {
     Plus, Search, Filter, Radio, Clock,
     ArrowRight, Book, Loader2, User, ChevronRight,
     CheckCircle2, AlertCircle, Eye, Printer, FileText,
-    TrendingUp, Award, Play, Trash2, Activity, Zap
+    TrendingUp, Award, Play, Trash2, Activity, Zap, RefreshCcw
 } from "lucide-react";
 import LiveAssessmentModal from "@/components/LiveAssessmentModal";
 import TeacherLiveSession from "@/components/TeacherLiveSession";
@@ -271,7 +271,16 @@ export default function LiveAssessmentsPage() {
                                         </div>
                                     </div>
                                     {a.status === 'LIVE' && (
-                                        <span className="bg-rose-600 text-white text-[8px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest animate-bounce">LIVE NOW</span>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => fetchData()}
+                                                className="p-2 hover:bg-rose-100 text-rose-600 rounded-full transition-all"
+                                                title="Refresh Status"
+                                            >
+                                                <RefreshCcw className="w-3 h-3" />
+                                            </button>
+                                            <span className="bg-rose-600 text-white text-[8px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest animate-bounce">LIVE NOW</span>
+                                        </div>
                                     )}
                                 </div>
 

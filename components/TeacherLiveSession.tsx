@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import {
     X, Users, Radio, ArrowRight, CheckCircle2,
-    Loader2, Zap, Award, BarChart3, Clock, Play
+    Loader2, Zap, Award, BarChart3, Clock, Play, RefreshCcw
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -111,6 +111,13 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                 </div>
 
                 <div className="flex items-center gap-10">
+                    <button
+                        onClick={() => fetchLiveDetails()}
+                        className="p-3 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all group"
+                        title="Refresh Status"
+                    >
+                        <RefreshCcw className="w-5 h-5 group-hover:rotate-180 transition-all duration-500" />
+                    </button>
                     <div className="flex items-center gap-4 bg-white/5 px-6 py-3 rounded-2xl">
                         <Users className="w-5 h-5 text-emerald-500" />
                         <div>
