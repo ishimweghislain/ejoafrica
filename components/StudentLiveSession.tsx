@@ -121,45 +121,45 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
     }
 
     return (
-        <div className="fixed inset-0 z-[70] bg-rose-600 flex flex-col animate-in fade-in slide-in-from-bottom-10 duration-500">
+        <div className="fixed inset-0 z-[70] bg-slate-50 flex flex-col animate-in fade-in slide-in-from-bottom-10 duration-500 overflow-hidden">
             {/* Header */}
-            <header className="p-8 flex items-center justify-between border-b border-white/20">
-                <div className="flex items-center gap-6">
-                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-rose-600 shadow-xl shadow-rose-900/20">
-                        <Radio className="w-6 h-6 animate-pulse" />
+            <header className="p-6 md:p-8 flex items-center justify-between border-b border-slate-200 bg-white">
+                <div className="flex items-center gap-4 md:gap-6">
+                    <div className="w-10 h-10 md:w-12 md:h-12 bg-rose-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-rose-200">
+                        <Radio className="w-5 h-5 md:w-6 md:h-6 animate-pulse" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">{assessment.title}</h2>
-                        <p className="text-[8px] font-black uppercase text-white/60 tracking-widest">{assessment.course.title} • Teacher {assessment.teacher.firstName}</p>
+                        <h2 className="text-lg md:text-xl font-black text-slate-900 italic uppercase tracking-tighter line-clamp-1">{assessment.title}</h2>
+                        <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest leading-none mt-1">{assessment.course.title} • Teacher {assessment.teacher.firstName}</p>
                     </div>
                 </div>
-                <div className="bg-black/20 text-white px-6 py-3 rounded-2xl border border-white/10 flex items-center gap-3 font-black text-[10px] uppercase italic">
+                <div className="hidden sm:flex bg-slate-900 text-white px-5 py-2.5 rounded-2xl border border-slate-800 items-center gap-3 font-black text-[9px] uppercase italic shadow-lg shadow-slate-200">
                     <Zap className="w-4 h-4 text-yellow-400" />
                     LIVE SESSION
                 </div>
             </header>
 
             {/* Main Area */}
-            <main className="flex-grow p-8 flex flex-col items-center justify-center max-w-4xl mx-auto w-full">
+            <main className="flex-grow p-4 md:p-8 flex flex-col items-center justify-center max-w-4xl mx-auto w-full overflow-y-auto custom-scrollbar">
                 {assessment.currentQuestionIndex === -1 ? (
-                    <div className="text-center space-y-10 animate-bounce">
-                        <div className="w-40 h-40 bg-white/10 rounded-[3.5rem] border border-white/20 flex items-center justify-center mx-auto shadow-2xl backdrop-blur-3xl">
-                            <Clock className="w-20 h-20 text-white" />
+                    <div className="text-center space-y-8 animate-bounce py-10">
+                        <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-[3.5rem] border border-slate-100 flex items-center justify-center mx-auto shadow-2xl">
+                            <Clock className="w-12 h-12 md:w-20 md:h-20 text-rose-500" />
                         </div>
-                        <div className="space-y-4 text-white">
-                            <h2 className="text-4xl font-black uppercase italic tracking-tighter">Waiting for Launch...</h2>
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Your teacher hasn't released the first question yet.</p>
+                        <div className="space-y-4">
+                            <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-slate-900">Waiting for Launch...</h2>
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Your teacher hasn't released the first question yet.</p>
                         </div>
                     </div>
                 ) : hasAnsweredCurrent ? (
-                    <div className="text-center space-y-12 w-full">
-                        <div className="bg-white p-12 rounded-[4rem] text-center space-y-8 shadow-2xl">
+                    <div className="text-center space-y-12 w-full max-w-2xl px-4">
+                        <div className="bg-white p-8 md:p-12 rounded-[3.5rem] text-center space-y-8 shadow-2xl border border-slate-50">
                             <div className="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-[2rem] flex items-center justify-center mx-auto shadow-lg animate-in zoom-in">
                                 <CheckCircle2 className="w-10 h-10" />
                             </div>
                             <div className="space-y-3">
-                                <h3 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">Response Locked!</h3>
-                                <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Great job. Waiting for your teacher to pass the next question...</p>
+                                <h3 className="text-2xl md:text-3xl font-black text-slate-900 uppercase italic tracking-tighter">Response Locked!</h3>
+                                <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest leading-relaxed">Great job. Waiting for your teacher to pass the next question...</p>
                             </div>
                             <div className="pt-8 border-t border-slate-50 flex items-center justify-center gap-4 text-[10px] font-black text-slate-300 uppercase italic">
                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -168,37 +168,37 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                         </div>
                     </div>
                 ) : currentQuestion ? (
-                    <div className="w-full space-y-12 animate-in zoom-in duration-300">
-                        <div className="space-y-6">
+                    <div className="w-full space-y-6 md:space-y-10 animate-in zoom-in duration-300 pb-10">
+                        <div className="space-y-4 md:space-y-6">
                             <div className="flex items-center justify-between">
-                                <span className="bg-white/20 text-white px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest italic border border-white/10">Question {assessment.currentQuestionIndex + 1}</span>
-                                <div className="flex items-center gap-2 text-white/60 font-black text-[10px] uppercase tracking-widest">
-                                    <Clock className="w-4 h-4" />
+                                <span className="bg-rose-50 text-rose-600 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest italic border border-rose-100 shadow-sm">Question {assessment.currentQuestionIndex + 1}</span>
+                                <div className="flex items-center gap-2 text-slate-400 font-black text-[10px] uppercase tracking-widest bg-white px-4 py-1.5 rounded-xl border border-slate-100 shadow-sm">
+                                    <Clock className="w-4 h-4 text-rose-500" />
                                     <span>{currentQuestion.timer}s Limit</span>
                                 </div>
                             </div>
-                            <h1 className="text-5xl font-black text-white leading-tight uppercase italic tracking-tighter">
+                            <h1 className="text-2xl md:text-4xl font-black text-slate-900 leading-tight uppercase italic tracking-tighter text-center">
                                 {currentQuestion.text}
                             </h1>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full">
                             {currentQuestion.options.map((opt: string, idx: number) => (
                                 <button
                                     key={idx}
                                     onClick={() => setSelectedAnswer(opt)}
-                                    className={`p-8 rounded-[2.5rem] border-2 text-left transition-all relative overflow-hidden group ${selectedAnswer === opt
-                                            ? 'bg-white border-white scale-105 shadow-2xl'
-                                            : 'bg-white/5 border-white/20 text-white hover:bg-white/10'
+                                    className={`p-6 md:p-8 rounded-[2rem] border-2 text-left transition-all relative overflow-hidden group ${selectedAnswer === opt
+                                        ? 'bg-white border-rose-600 scale-[1.02] shadow-2xl'
+                                        : 'bg-white border-slate-100 text-slate-600 hover:border-rose-200 hover:bg-slate-50'
                                         }`}
                                 >
-                                    <div className="flex items-center justify-between mb-4">
-                                        <span className={`text-[10px] font-black uppercase tracking-widest ${selectedAnswer === opt ? 'text-rose-600' : 'text-white/40'}`}>Option {String.fromCharCode(65 + idx)}</span>
-                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedAnswer === opt ? 'bg-rose-600 border-rose-600' : 'border-white/20'}`}>
-                                            {selectedAnswer === opt && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                                    <div className="flex items-center justify-between mb-3 md:mb-4">
+                                        <span className={`text-[9px] md:text-[10px] font-black uppercase tracking-widest ${selectedAnswer === opt ? 'text-rose-600' : 'text-slate-300'}`}>Option {String.fromCharCode(65 + idx)}</span>
+                                        <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full border-2 flex items-center justify-center ${selectedAnswer === opt ? 'bg-rose-600 border-rose-600' : 'border-slate-100'}`}>
+                                            {selectedAnswer === opt && <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>}
                                         </div>
                                     </div>
-                                    <p className={`text-xl font-black italic uppercase ${selectedAnswer === opt ? 'text-slate-900' : ''}`}>{opt}</p>
+                                    <p className={`text-lg md:text-xl font-black italic uppercase ${selectedAnswer === opt ? 'text-slate-900' : 'text-slate-700'}`}>{opt}</p>
                                 </button>
                             ))}
                         </div>
@@ -206,40 +206,45 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                         <button
                             disabled={!selectedAnswer || submitting}
                             onClick={submitAnswer}
-                            className={`w-full p-8 rounded-[2.5rem] flex items-center justify-between group transition-all shadow-2xl ${selectedAnswer
-                                    ? 'bg-slate-900 text-white hover:bg-black scale-[1.02]'
-                                    : 'bg-black/20 text-white/30 cursor-not-allowed'
+                            className={`w-full p-6 md:p-7 rounded-[2rem] flex items-center justify-between group transition-all shadow-xl ${selectedAnswer
+                                ? 'bg-slate-900 text-white hover:bg-black scale-[1.01]'
+                                : 'bg-slate-100 text-slate-300 cursor-not-allowed border border-slate-200'
                                 }`}
                         >
-                            <span className="text-xl font-black uppercase tracking-[0.2em] ml-4 italic">Submit Answer</span>
-                            {submitting ? <Loader2 className="w-8 h-8 animate-spin" /> : <Send className="w-8 h-8 group-hover:translate-x-2 transition-all" />}
+                            <span className="text-lg md:text-xl font-black uppercase tracking-[0.2em] ml-4 italic">Submit Answer</span>
+                            {submitting ? <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin" /> : <Send className="w-6 h-6 md:w-8 md:h-8 group-hover:translate-x-2 transition-all" />}
                         </button>
                     </div>
                 ) : (
-                    <div className="text-center text-white space-y-4">
-                        <AlertCircle className="w-16 h-16 mx-auto opacity-50" />
-                        <p className="font-black uppercase tracking-widest text-xs">Error: Question data corrupted or missing.</p>
+                    <div className="text-center text-slate-400 space-y-4 py-20">
+                        <AlertCircle className="w-16 h-16 mx-auto opacity-20" />
+                        <p className="font-black uppercase tracking-widest text-[10px]">Error: Question data corrupted or missing.</p>
                     </div>
                 )}
             </main>
 
             {/* Participation Footer */}
-            <footer className="p-8 bg-black/10 border-t border-white/10 flex items-center justify-between">
+            <footer className="p-6 md:p-8 bg-white border-t border-slate-200 flex items-center justify-between shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
                 <div className="flex items-center gap-4">
-                    <div className="flex -space-x-3">
+                    <div className="hidden sm:flex -space-x-2">
                         {[1, 2, 3].map(i => (
-                            <div key={i} className="w-8 h-8 rounded-full bg-white/20 border-2 border-rose-600 flex items-center justify-center text-[8px] font-black text-white uppercase italic">
+                            <div key={i} className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-[7px] md:text-[8px] font-black text-slate-400 uppercase italic">
                                 S
                             </div>
                         ))}
                     </div>
-                    <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">You are live with other students.</p>
+                    <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">Live with classmates</p>
                 </div>
-                <div className="text-right">
-                    <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Your Score</p>
-                    <p className="text-2xl font-black text-white italic tracking-tighter">
-                        {myResponses.reduce((acc, r) => acc + r.marksObtained, 0)} <span className="text-xs opacity-40 ml-1">POINTS</span>
-                    </p>
+                <div className="text-right flex items-center gap-4 md:gap-8">
+                    <div>
+                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Your Score</p>
+                        <p className="text-xl md:text-2xl font-black text-slate-900 italic tracking-tighter">
+                            {myResponses.reduce((acc, r) => acc + r.marksObtained, 0)} <span className="text-xs opacity-40 ml-1">PTS</span>
+                        </p>
+                    </div>
+                    <button onClick={onExit} className="p-3 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border border-slate-100">
+                        <X className="w-5 h-5" />
+                    </button>
                 </div>
             </footer>
         </div>

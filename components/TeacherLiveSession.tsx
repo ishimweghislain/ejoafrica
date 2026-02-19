@@ -15,6 +15,7 @@ interface TeacherLiveSessionProps {
 export default function TeacherLiveSession({ assessment: initialAssessment, onExit }: TeacherLiveSessionProps) {
     const [assessment, setAssessment] = useState(initialAssessment);
     const [responses, setResponses] = useState<any[]>([]);
+    const [classStudents, setClassStudents] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [releasing, setReleasing] = useState(false);
 
@@ -22,20 +23,25 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
 
     const fetchLiveDetails = async () => {
         try {
-            const [aRes, rRes] = await Promise.all([
+            const [aRes, rRes, sRes] = await Promise.all([
                 fetch(`/api/live-assessments/${assessment.id}`),
-                fetch(`/api/live-assessments/${assessment.id}/responses`)
+                fetch(`/api/live-assessments/${assessment.id}/responses`),
+                fetch(`/api/users?role=STUDENT&classId=${assessment.classId}`)
             ]);
             const aData = await aRes.json();
             const rData = await rRes.json();
+            const sData = await sRes.json();
+
             setAssessment(aData);
             setResponses(rData);
+            setClassStudents(Array.isArray(sData) ? sData : []);
         } catch (err) {
             console.error("Failed to poll live details");
         }
     };
 
     useEffect(() => {
+        fetchLiveDetails();
         const interval = setInterval(fetchLiveDetails, 3000); // Poll every 3 seconds
         return () => clearInterval(interval);
     }, []);
@@ -185,35 +191,38 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                     </div>
 
                     <div className="flex-grow overflow-y-auto p-4 custom-scrollbar space-y-3">
-                        {uniqueStudents.length === 0 ? (
+                        {classStudents.length === 0 ? (
                             <div className="py-20 flex flex-col items-center gap-4 text-white/20">
                                 <Activity className="w-12 h-12" />
-                                <p className="text-[10px] font-black uppercase tracking-widest">Waiting for students...</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest">No students found in class.</p>
                             </div>
                         ) : (
-                            uniqueStudents.sort((aId, bId) => {
-                                const scoreA = responses.filter(r => r.studentId === aId).reduce((acc, r) => acc + r.marksObtained, 0);
-                                const scoreB = responses.filter(r => r.studentId === bId).reduce((acc, r) => acc + r.marksObtained, 0);
+                            [...classStudents].sort((a, b) => {
+                                const scoreA = responses.filter(r => r.studentId === a.id).reduce((acc, r) => acc + r.marksObtained, 0);
+                                const scoreB = responses.filter(r => r.studentId === b.id).reduce((acc, r) => acc + r.marksObtained, 0);
                                 return scoreB - scoreA;
-                            }).map((sid: string) => {
-                                const studentRes = responses.filter(r => r.studentId === sid);
-                                const student = studentRes[0]?.student;
+                            }).map((student: any) => {
+                                const studentRes = responses.filter(r => r.studentId === student.id);
                                 const totalScore = studentRes.reduce((acc, r) => acc + r.marksObtained, 0);
                                 const correctCount = studentRes.filter(r => r.isCorrect).length;
+                                const hasJoined = studentRes.length > 0;
 
                                 return (
-                                    <div key={sid} className="bg-white/5 p-5 rounded-3xl border border-white/5 flex items-center justify-between group hover:bg-white/[0.08] transition-all">
+                                    <div key={student.id} className={`p-5 rounded-3xl border flex items-center justify-between group transition-all ${hasJoined ? 'bg-white/5 border-white/5 hover:bg-white/[0.08]' : 'bg-white/[0.02] border-white/[0.02] opacity-40'}`}>
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-[10px] font-black text-white uppercase border border-white/10 italic">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black text-white uppercase border italic ${hasJoined ? 'bg-slate-900 border-white/10' : 'bg-slate-800 border-white/5'}`}>
                                                 {student?.firstName[0]}{student?.lastName[0]}
                                             </div>
                                             <div>
-                                                <p className="text-[10px] font-black uppercase text-white mb-0.5">{student?.firstName} {student?.lastName}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-[10px] font-black uppercase text-white mb-0.5">{student?.firstName} {student?.lastName}</p>
+                                                    {!hasJoined && <span className="text-[7px] bg-white/10 px-1.5 py-0.5 rounded text-white/40 font-black uppercase">Not Joined</span>}
+                                                </div>
                                                 <p className="text-[8px] font-black uppercase text-white/40 tracking-widest">{correctCount} Correct • {studentRes.length} Answers</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-lg font-black text-emerald-500 italic">{totalScore}</p>
+                                            <p className={`text-lg font-black italic ${totalScore > 0 ? 'text-emerald-500' : 'text-white/20'}`}>{totalScore}</p>
                                             <p className="text-[8px] font-black uppercase text-white/30">Points</p>
                                         </div>
                                     </div>

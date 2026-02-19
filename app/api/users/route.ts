@@ -23,6 +23,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const role = searchParams.get("role");
     const parentId = searchParams.get("parentId");
+    const classId = searchParams.get("classId");
 
     try {
         const where: any = {};
@@ -30,6 +31,7 @@ export async function GET(request: Request) {
         if (parentId) {
             where.parents = { some: { id: parentId } };
         }
+        if (classId) where.classId = classId;
 
         const users = await prisma.user.findMany({
             where,

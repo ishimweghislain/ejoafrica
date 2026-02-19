@@ -71,71 +71,87 @@ export default function LiveAssessmentsPage() {
     const isStudent = user?.role === "STUDENT";
     const isDOS = user?.role === "DOS" || user?.role === "SCHOOL_ADMIN";
 
-    const printReport = (a: any) => {
-        const printWindow = window.open('', '_blank');
-        if (!printWindow) return;
+    const printReport = async (a: any) => {
+        const tid = toast.loading("Preparing report...");
+        try {
+            const sRes = await fetch(`/api/users?role=STUDENT&classId=${a.classId}`);
+            const students = await sRes.json();
 
-        // Group responses by student
-        const studentResponses: any = {};
-        a.responses.forEach((r: any) => {
-            if (!studentResponses[r.studentId]) {
-                studentResponses[r.studentId] = {
-                    student: r.student,
-                    score: 0,
-                    correct: 0,
-                    total: 0
-                };
-            }
-            studentResponses[r.studentId].score += r.marksObtained;
-            if (r.isCorrect) studentResponses[r.studentId].correct++;
-            studentResponses[r.studentId].total++;
-        });
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) return;
 
-        const rowsHtml = Object.values(studentResponses).map((s: any) => `
-            <tr style="border-bottom: 1px solid #eee;">
-                <td style="padding: 12px; font-size: 14px;">${s.student.firstName} ${s.student.lastName}</td>
-                <td style="padding: 12px; font-size: 14px;">${s.score} Pts</td>
-                <td style="padding: 12px; font-size: 14px;">${s.correct} / ${a.questions.length}</td>
-                <td style="padding: 12px; font-size: 14px; font-weight: bold; color: ${s.correct === a.questions.length ? 'emerald' : 'slate-900'}">
-                    ${Math.round((s.correct / a.questions.length) * 100)}%
-                </td>
-            </tr>
-        `).join('');
+            // Group responses by student
+            const studentResponses: any = {};
+            a.responses.forEach((r: any) => {
+                if (!studentResponses[r.studentId]) {
+                    studentResponses[r.studentId] = {
+                        score: 0,
+                        correct: 0,
+                        total: 0
+                    };
+                }
+                studentResponses[r.studentId].score += r.marksObtained;
+                if (r.isCorrect) studentResponses[r.studentId].correct++;
+                studentResponses[r.studentId].total++;
+            });
 
-        printWindow.document.write(`
-            <html>
-                <head>
-                    <title>Live Assessment Report - ${a.title}</title>
-                    <style>
-                        body { font-family: sans-serif; padding: 40px; color: #334155; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid #e2e8f0; font-size: 12px; text-transform: uppercase; }
-                        .header { margin-bottom: 40px; border-bottom: 4px solid #e11d48; padding-bottom: 20px; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1 style="margin: 0; text-transform: uppercase; letter-spacing: -1px;">Live Assessment Report</h1>
-                        <p style="color: #64748b; font-weight: bold; margin-top: 5px;">${a.title} | ${a.course.title} | ${a.class.name}</p>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Student Name</th>
-                                <th>Score</th>
-                                <th>Correct</th>
-                                <th>Percentage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${rowsHtml}
-                        </tbody>
-                    </table>
-                </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
+            const rowsHtml = students.map((std: any) => {
+                const s = studentResponses[std.id] || { score: 0, correct: 0, total: 0 };
+                const attended = !!studentResponses[std.id];
+
+                return `
+                    <tr style="border-bottom: 1px solid #eee; ${!attended ? 'background: #fffafa;' : ''}">
+                        <td style="padding: 12px; font-size: 14px;">
+                            ${std.firstName} ${std.lastName}
+                            ${!attended ? '<br><span style="font-size: 10px; color: #f43f5e; font-weight: bold;">(DID NOT ATTEND)</span>' : ''}
+                        </td>
+                        <td style="padding: 12px; font-size: 14px;">${s.score} Pts</td>
+                        <td style="padding: 12px; font-size: 14px;">${s.correct} / ${a.questions.length}</td>
+                        <td style="padding: 12px; font-size: 14px; font-weight: bold; color: ${s.correct === a.questions.length ? '#10b981' : '#1e293b'}">
+                            ${Math.round((s.correct / a.questions.length) * 100)}%
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Live Assessment Report - ${a.title}</title>
+                        <style>
+                            body { font-family: sans-serif; padding: 40px; color: #334155; }
+                            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                            th { background: #f8fafc; text-align: left; padding: 12px; border-bottom: 2px solid #e2e8f0; font-size: 12px; text-transform: uppercase; }
+                            .header { margin-bottom: 40px; border-bottom: 4px solid #e11d48; padding-bottom: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1 style="margin: 0; text-transform: uppercase; letter-spacing: -1px;">Live Assessment Report</h1>
+                            <p style="color: #64748b; font-weight: bold; margin-top: 5px;">${a.title} | ${a.course.title} | ${a.class.name}</p>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student Name</th>
+                                    <th>Score</th>
+                                    <th>Correct</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+            toast.dismiss(tid);
+        } catch (err) {
+            toast.error("Failed to generate report", { id: tid });
+        }
     };
 
     const startSession = (assessment: any) => {
