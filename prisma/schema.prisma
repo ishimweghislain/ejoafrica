@@ -51,6 +51,10 @@ model User {
   // Question Bank Relations
   createdQuestions  Question[] @relation("TeacherQuestions")
   questionAnswers   QuestionAnswer[]
+
+  // Live Assessment Relations
+  liveAssessments   LiveAssessment[] @relation("TeacherLiveAssessments")
+  liveResponses     LiveResponse[] @relation("StudentLiveResponses")
 }
 
 model AcademicYear {
@@ -94,6 +98,7 @@ model Class {
   schemes    SchemeOfWork[]
   questions  Question[]
   assignments Assignment[]
+  liveAssessments LiveAssessment[]
 }
 
 model Course {
@@ -128,6 +133,7 @@ model Course {
   schemes         SchemeOfWork[]
   questions       Question[]
   assignments     Assignment[]
+  liveAssessments LiveAssessment[]
 }
 
 model Topic {
@@ -289,6 +295,63 @@ model Question {
   updatedAt     DateTime    @updatedAt
 
   answers       QuestionAnswer[]
+
+}
+
+model LiveAssessment {
+  id                  String       @id @default(uuid())
+  title               String
+  description         String?
+  status              LiveStatus   @default(DRAFT)
+  currentQuestionIndex Int         @default(-1)
+  deadline            DateTime?
+  classId             String
+  class               Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
+  courseId            String
+  course              Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  teacherId           String
+  teacher             User         @relation("TeacherLiveAssessments", fields: [teacherId], references: [id], onDelete: Cascade)
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  questions           LiveQuestion[]
+  responses           LiveResponse[]
+}
+
+enum LiveStatus {
+  DRAFT
+  LIVE
+  COMPLETED
+}
+
+model LiveQuestion {
+  id             String         @id @default(uuid())
+  assessmentId   String
+  assessment     LiveAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  text           String
+  options        String[]
+  correctAnswer  String
+  marks          Int            @default(1)
+  timer          Int?           // Seconds for this question
+  order          Int
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  responses      LiveResponse[]
+}
+
+model LiveResponse {
+  id             String         @id @default(uuid())
+  assessmentId   String
+  assessment     LiveAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  studentId      String
+  student        User           @relation("StudentLiveResponses", fields: [studentId], references: [id], onDelete: Cascade)
+  questionId     String
+  question       LiveQuestion   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answer         String
+  isCorrect      Boolean
+  marksObtained  Int
+  createdAt      DateTime       @default(now())
 }
 
 model QuestionAnswer {
