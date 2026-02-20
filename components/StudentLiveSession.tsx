@@ -204,7 +204,7 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                             </div>
                             <div className="flex justify-center">
                                 <button onClick={() => fetchStatus()} className="px-8 py-3 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest italic hover:bg-emerald-600 transition-all flex items-center gap-3">
-                                    <RefreshCcw className="w-3.5 h-3.5" /> Synchronize System
+                                    <RefreshCcw className="w-3.5 h-3.5" /> Refresh Status
                                 </button>
                             </div>
                         </div>
@@ -221,7 +221,7 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                             </h1>
                             <div className="pt-8 border-t border-slate-50">
                                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4 italic">Teacher Instructions</p>
-                                <p className="text-xs text-slate-500 font-medium leading-relaxed italic opacity-60">"Select the most appropriate answer as discussed in class. Time nodes are active."</p>
+                                <p className="text-xs text-slate-500 font-medium leading-relaxed italic opacity-60">"Select the best answer from the options provided. Good luck!"</p>
                             </div>
                         </div>
 
@@ -238,7 +238,7 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                                             }`}
                                     >
                                         <div className="flex items-center justify-between mb-4">
-                                            <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${selectedAnswer === opt ? 'text-rose-600' : 'text-slate-300'}`}>Node {String.fromCharCode(65 + idx)}</span>
+                                            <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${selectedAnswer === opt ? 'text-rose-600' : 'text-slate-300'}`}>Option {String.fromCharCode(65 + idx)}</span>
                                             <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${selectedAnswer === opt ? 'bg-rose-600 border-rose-600 rotate-45' : 'border-slate-100'}`}>
                                                 {selectedAnswer === opt && <div className="w-2 h-2 bg-white rounded-sm"></div>}
                                             </div>
@@ -266,7 +266,7 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                         {/* Panel 3: Right - Timer/Stats */}
                         <div className="w-full lg:w-1/3 p-10 bg-white border-l border-slate-100 flex flex-col items-center justify-center space-y-10">
                             <div className="text-center space-y-4">
-                                <p className="text-[10px] font-black text-rose-600 uppercase tracking-[0.4em] italic">Time Matrix</p>
+                                <p className="text-[10px] font-black text-rose-600 uppercase tracking-[0.4em] italic">Timer</p>
                                 <div className={`text-7xl md:text-8xl font-black italic tracking-tighter tabular-nums transition-all ${timeLeft !== null && timeLeft <= 5 ? 'text-rose-600 animate-ping' : 'text-slate-900'}`}>
                                     {timeLeft !== null ? timeLeft : "--"}
                                 </div>
@@ -276,8 +276,8 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                             <div className="w-full space-y-4">
                                 <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center gap-2">
                                     <Zap className="w-5 h-5 text-yellow-500" />
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global Status</p>
-                                    <p className="text-xs font-black text-slate-900 uppercase italic">Active Connection</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</p>
+                                    <p className="text-xs font-black text-slate-900 uppercase italic">Online</p>
                                 </div>
                             </div>
                         </div>
@@ -285,7 +285,7 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-white">
                         <AlertCircle className="w-16 h-16 opacity-20 mb-4" />
-                        <p className="font-black uppercase tracking-widest text-[10px]">Data Sync Fragmented</p>
+                        <p className="font-black uppercase tracking-widest text-[10px]">Loading Data...</p>
                     </div>
                 )}
             </main>
@@ -300,7 +300,7 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                             </div>
                         ))}
                     </div>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] italic">Synchronized with Node Classmates</p>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] italic">In class with other students</p>
                 </div>
                 <div className="flex items-center gap-8">
                     <div className="text-right">

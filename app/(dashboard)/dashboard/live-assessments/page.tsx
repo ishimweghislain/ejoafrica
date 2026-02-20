@@ -143,7 +143,7 @@ export default function LiveAssessmentsPage() {
                     <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase italic">Digital Assessments</h1>
                     <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest italic">Node-to-Node Real-time Testing Environment.</p>
+                        <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest italic">Real-time Online Classroom Environment.</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -156,7 +156,7 @@ export default function LiveAssessmentsPage() {
                             className="bg-slate-900 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[9px] shadow-xl hover:bg-emerald-600 transition-all flex items-center gap-3"
                         >
                             <Zap className="w-4 h-4 text-yellow-400" />
-                            Create Session
+                            Create Assessment
                         </button>
                     )}
                 </div>
@@ -178,7 +178,7 @@ export default function LiveAssessmentsPage() {
                 {loading ? (
                     <div className="col-span-full py-32 flex flex-col items-center gap-4">
                         <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
-                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic">Synchronizing Node Data...</p>
+                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic">Updating Dashboard...</p>
                     </div>
                 ) : filteredAssessments.length > 0 ? (
                     filteredAssessments.map(a => (
@@ -230,14 +230,14 @@ export default function LiveAssessmentsPage() {
                             <div className="mt-auto">
                                 {a.status === 'LIVE' ? (
                                     <button onClick={() => setActiveSession(a)} className="w-full bg-rose-600 text-white p-4 rounded-xl flex items-center justify-between group shadow-lg hover:bg-rose-700 transition-all italic">
-                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] ml-2">Connect to Node</span>
+                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] ml-2">Join Assessment</span>
                                         <RefreshCcw className="w-4 h-4 group-hover:rotate-180 transition-all duration-700" />
                                     </button>
                                 ) : a.status === 'COMPLETED' ? (
                                     <div className="flex gap-3">
                                         <div className="flex-grow bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
                                             <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                                            <span className="text-[8px] font-black uppercase text-slate-500 italic">Sync Complete</span>
+                                            <span className="text-[8px] font-black uppercase text-slate-500 italic">Finished</span>
                                         </div>
                                         <button onClick={() => printReport(a)} className="p-4 bg-emerald-600 text-white rounded-xl shadow-lg hover:bg-emerald-700 transition-all"><Printer className="w-5 h-5" /></button>
                                     </div>
@@ -245,13 +245,13 @@ export default function LiveAssessmentsPage() {
                                     isTeacher && (
                                         <button
                                             onClick={() => {
-                                                if (confirm("Initialize live broadcast?")) {
+                                                if (confirm("Start this live assessment now?")) {
                                                     fetch(`/api/live-assessments/${a.id}`, { method: 'PATCH', body: JSON.stringify({ status: 'LIVE', currentQuestionIndex: 0 }) }).then(() => fetchData());
                                                 }
                                             }}
                                             className="w-full bg-slate-900 text-white p-4 rounded-xl flex items-center justify-between hover:bg-emerald-600 transition-all italic"
                                         >
-                                            <span className="text-[9px] font-black uppercase tracking-[0.2em] ml-2">Launch Protocol</span>
+                                            <span className="text-[9px] font-black uppercase tracking-[0.2em] ml-2">Start Assessment</span>
                                             <Zap className="w-4 h-4 fill-current text-yellow-400" />
                                         </button>
                                     )
@@ -263,10 +263,10 @@ export default function LiveAssessmentsPage() {
                     <div className="col-span-full py-32 bg-white rounded-[3rem] border border-dashed border-slate-100 flex flex-col items-center justify-center text-center space-y-6">
                         <Radio className="w-12 h-12 text-slate-100" />
                         <div className="space-y-1">
-                            <h3 className="text-xl font-black text-slate-900 uppercase italic tracking-tighter">No Active Nodes</h3>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-loose">Schedule a session to initialize real-time interaction.</p>
+                            <h3 className="text-xl font-black text-slate-900 uppercase italic tracking-tighter">No assessments found</h3>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-loose">Create an assessment to start real-time tests.</p>
                         </div>
-                        {isTeacher && <button onClick={() => setIsAddModalOpen(true)} className="bg-slate-900 text-white px-10 py-4 rounded-xl font-black uppercase text-[9px] hover:bg-emerald-600 transition-all shadow-xl">Initialize Now</button>}
+                        {isTeacher && <button onClick={() => setIsAddModalOpen(true)} className="bg-slate-900 text-white px-10 py-4 rounded-xl font-black uppercase text-[9px] hover:bg-emerald-600 transition-all shadow-xl">Create Now</button>}
                     </div>
                 )}
             </div>
