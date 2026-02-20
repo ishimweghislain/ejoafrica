@@ -36,19 +36,26 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
         async function fetchUnits() {
             setFetching(true);
             try {
-                // We'll fetch units via the course details API
                 const res = await fetch(`/api/courses/${courseId}`);
+                if (!res.ok) throw new Error("Failed to fetch course details");
                 const data = await res.json();
+
                 const allUnits: any[] = [];
-                data.topics.forEach((t: any) => {
-                    t.subtopics.forEach((s: any) => {
-                        s.units.forEach((u: any) => {
-                            allUnits.push({ ...u, subtopicTitle: s.title });
+                // Safer extraction with optional chaining and fallback to empty arrays
+                (data.topics || []).forEach((t: any) => {
+                    (t.subtopics || []).forEach((s: any) => {
+                        (s.units || []).forEach((u: any) => {
+                            allUnits.push({
+                                ...u,
+                                subtopicTitle: s.title,
+                                topicTitle: t.title
+                            });
                         });
                     });
                 });
                 setUnits(allUnits);
             } catch (err) {
+                console.error("Fetch error:", err);
                 toast.error("Failed to load units.");
             } finally {
                 setFetching(false);
@@ -120,7 +127,7 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
                                 <option value="">Select unit</option>
                                 {units.map(u => (
                                     <option key={u.id} value={u.id}>
-                                        {u.title}
+                                        {u.topicTitle} &gt; {u.subtopicTitle} &gt; {u.title} ({u.periods}p)
                                     </option>
                                 ))}
                             </select>
