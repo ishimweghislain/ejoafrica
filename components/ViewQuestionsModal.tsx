@@ -48,9 +48,9 @@ export default function ViewQuestionsModal({
                 onClick={onClose}
             />
 
-            <div className="relative bg-white w-full max-w-4xl max-h-[90vh] rounded-[3rem] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in slide-in-from-bottom-8 duration-500">
+            <div className="relative bg-white w-full max-w-2xl max-h-[85vh] rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in slide-in-from-bottom-8 duration-500">
                 {/* Header */}
-                <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white">
                     <div>
                         <h2 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">{title}</h2>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Reviewing questions and performance.</p>
@@ -64,14 +64,14 @@ export default function ViewQuestionsModal({
                 </div>
 
                 {/* Content */}
-                <div className="flex-grow overflow-y-auto p-8 space-y-10 custom-scrollbar">
+                <div className="flex-grow overflow-y-auto p-6 space-y-6 custom-scrollbar">
                     {questions.map((q, idx) => {
                         const studentResponse = responses?.find(r => r.questionId === q.id);
 
                         return (
-                            <div key={q.id} className="space-y-6 p-8 rounded-[2rem] bg-slate-50/50 border border-slate-100 relative group">
-                                <div className="flex items-start gap-6">
-                                    <div className="w-12 h-12 bg-slate-900 text-white rounded-2xl flex-shrink-0 flex items-center justify-center font-black text-lg italic shadow-lg">
+                            <div key={q.id} className="space-y-4 p-6 rounded-[1.5rem] bg-slate-50/50 border border-slate-100 relative group">
+                                <div className="flex items-start gap-4">
+                                    <div className="w-10 h-10 bg-slate-900 text-white rounded-xl flex-shrink-0 flex items-center justify-center font-black text-sm italic shadow-lg">
                                         {idx + 1}
                                     </div>
                                     <div className="flex-grow space-y-6">
@@ -135,7 +135,7 @@ export default function ViewQuestionsModal({
                 </div>
 
                 {/* Footer */}
-                <div className="p-8 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <div className="p-6 border-t border-slate-100 bg-white flex items-center justify-between">
                     <div className="flex items-center gap-6">
                         {responses && (
                             <>
