@@ -29,8 +29,12 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
             } catch (err) { }
         }
         fetchNotifCount();
-        const interval = setInterval(fetchNotifCount, 30000); // refresh every 30s
-        return () => clearInterval(interval);
+        const interval = setInterval(fetchNotifCount, 10000); // refresh every 10s
+        window.addEventListener('refreshNotifications', fetchNotifCount);
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('refreshNotifications', fetchNotifCount);
+        };
     }, []);
 
     const menuItems = [
@@ -76,7 +80,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
             <div className="p-6">
                 <Link href="/dashboard" className="flex items-center gap-2 font-black text-2xl tracking-tight text-emerald-600">
                     <GraduationCap className="w-8 h-8" />
-                    <span>Eshuri</span>
+                    <span>eShuri</span>
                 </Link>
             </div>
 

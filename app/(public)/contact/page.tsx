@@ -64,14 +64,14 @@ export default function ContactPage() {
                         <ContactCard icon={<Mail className="w-5 h-5" />} label="Email" value="ishimweghislain82@gmail.com" sub="Available 24/7" color="text-emerald-500" />
                         <ContactCard icon={<Phone className="w-5 h-5" />} label="Phone" value="+250 788 000 000" sub="General Support" color="text-blue-500" />
                         <ContactCard icon={<MapPin className="w-5 h-5" />} label="Office" value="Kigali, Rwanda" sub="Innovation District" color="text-rose-500" />
-                        <ContactCard icon={<Globe className="w-5 h-5" />} label="Website" value="ejoafrica.rw" sub="Main Portal" color="text-indigo-500" />
+                        <ContactCard icon={<Globe className="w-5 h-5" />} label="Website" value="eshuri.rw" sub="Main Portal" color="text-indigo-500" />
                     </div>
 
                     <div className="p-10 bg-slate-900 text-white rounded-[3rem] space-y-6 shadow-2xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
                         <h3 className="text-xl font-black italic uppercase tracking-tighter">School Support</h3>
                         <p className="text-xs md:text-sm text-slate-400 font-medium italic leading-relaxed opacity-80">
-                            Our team provides dedicated support for all schools using the Ejo Africa platform.
+                            Our team provides dedicated support for all schools using the eShuri platform.
                         </p>
                         <div className="pt-4">
                             <button className="flex items-center gap-3 text-emerald-400 text-[10px] font-black uppercase tracking-widest hover:text-emerald-300 transition-all italic">

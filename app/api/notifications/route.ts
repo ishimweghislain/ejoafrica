@@ -40,12 +40,23 @@ export async function PUT(request: Request) {
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     try {
+        const { id } = await request.json().catch(() => ({}));
+
+        if (id) {
+            // @ts-ignore
+            await prisma.notification.update({
+                where: { id, userId: session.userId as string },
+                data: { read: true }
+            });
+            return NextResponse.json({ message: "Notification marked as read" });
+        }
+
         // @ts-ignore
         await prisma.notification.updateMany({
             where: { userId: session.userId as string, read: false },
             data: { read: true }
         });
-        return NextResponse.json({ message: "Notifications marked as read" });
+        return NextResponse.json({ message: "All notifications marked as read" });
     } catch (error) {
         return NextResponse.json({ error: "Failed to update notifications" }, { status: 500 });
     }

@@ -43,7 +43,7 @@ export default function PublicLayout({
                         <div className="bg-emerald-500 p-1.5 rounded-lg shadow-lg shadow-emerald-500/20 group-hover:rotate-12 transition-transform">
                             <GraduationCap className="w-5 h-5 text-white" />
                         </div>
-                        <span className="hidden sm:inline">Ejo Africa</span>
+                        <span className="hidden sm:inline">eShuri</span>
                     </Link>
 
                     <nav className="hidden md:flex items-center gap-8 text-[9px] font-black uppercase tracking-[0.2em] text-gray-300">
@@ -68,7 +68,7 @@ export default function PublicLayout({
                     <div className="flex items-center gap-4">
                         <Link href="/login" className="bg-white text-slate-900 px-6 py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2 transition-all hover:bg-emerald-500 hover:text-white hover:scale-105 active:scale-95 shadow-xl shadow-white/5">
                             <LogIn className="w-3.5 h-3.5" />
-                            <span>Portal</span>
+                            <span>System Portal</span>
                         </Link>
                     </div>
                 </div>
@@ -105,10 +105,10 @@ export default function PublicLayout({
                             <div className="bg-emerald-500 p-2 rounded-xl">
                                 <GraduationCap className="w-5 h-5" />
                             </div>
-                            <span>Ejo Africa</span>
+                            <span>eShuri</span>
                         </div>
                         <p className="text-xs text-gray-400 font-bold leading-relaxed opacity-70">
-                            Engineering the next generation of African education through smart management tools.
+                            Engineering the next generation of African education through smart management tools with eShuri.
                         </p>
                     </div>
 
@@ -124,7 +124,7 @@ export default function PublicLayout({
                     <div>
                         <h4 className="font-black mb-6 text-[9px] uppercase tracking-[0.3em] text-emerald-500">Tech Node</h4>
                         <ul className="space-y-3 text-[10px] font-bold text-gray-400">
-                            <li>support@ejoafrica.edu</li>
+                            <li>support@eshuri.rw</li>
                             <li>24/7 Monitoring</li>
                             <li>Status: Online</li>
                         </ul>
@@ -140,7 +140,7 @@ export default function PublicLayout({
                     </div>
                 </div>
                 <div className="max-w-7xl mx-auto px-4 mt-16 pt-10 border-t border-white/5 text-center text-[8px] font-black uppercase tracking-[0.5em] text-gray-600">
-                    © {new Date().getFullYear()} Ejo Africa Technology. Excellence Engineered.
+                    © {new Date().getFullYear()} eShuri Technology. Excellence Engineered.
                 </div>
             </footer>
         </div>

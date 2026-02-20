@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import {
-    Radio, Zap, Activity, LayoutDashboard, Clock, BarChart3, ArrowRight
+    Radio, Zap, Activity, LayoutDashboard, Clock, BarChart3, ArrowRight,
+    BookOpen, ShieldAlert, Calendar, FileText
 } from "lucide-react";
 import Link from "next/link";
 
@@ -60,6 +61,35 @@ export default function FeaturesPage() {
             description: "Understand performance trends with easy-to-read academic data and charts.",
             color: "text-cyan-600",
             bg: "bg-cyan-50"
+        },
+        {
+            icon: <BookOpen className="w-5 h-5" />,
+            title: "Curriculum Manager",
+            description: "Manage courses, topics, and subtopics with high-level academic precision.",
+            color: "text-purple-600",
+            bg: "bg-purple-50"
+        },
+        {
+            icon: <ShieldAlert className="w-5 h-5" />,
+            title: "Discipline System",
+            description: "Track student behavior and maintain institutional integrity with digital reports.",
+            color: "text-red-600",
+            bg: "bg-red-50",
+            dark: true
+        },
+        {
+            icon: <Calendar className="w-5 h-5" />,
+            title: "Smart Timetable",
+            description: "Automated scheduling for classes, teachers, and school activities.",
+            color: "text-amber-600",
+            bg: "bg-amber-50"
+        },
+        {
+            icon: <FileText className="w-5 h-5" />,
+            title: "Academic Reports",
+            description: "Generate beautiful, comprehensive student report cards and school analytics.",
+            color: "text-emerald-600",
+            bg: "bg-emerald-50"
         }
     ];
 
@@ -112,10 +142,10 @@ export default function FeaturesPage() {
                 className="bg-emerald-600 rounded-[4rem] p-16 text-center text-white space-y-10 shadow-2xl relative overflow-hidden"
             >
                 <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -ml-32 -mt-32 blur-3xl"></div>
-                <h2 className="text-3xl font-black uppercase italic tracking-tighter leading-none relative z-10">Ready to transform your school?</h2>
+                <h2 className="text-3xl font-black uppercase italic tracking-tighter leading-none relative z-10">Start your journey with eShuri</h2>
                 <div className="flex justify-center relative z-10">
-                    <Link href="/register" className="bg-slate-900 text-white px-12 py-5 rounded-2xl font-black uppercase text-xs tracking-[0.3em] hover:bg-black transition-all hover:scale-105 shadow-2xl flex items-center gap-4 italic group">
-                        Sign Up Now
+                    <Link href="/login" className="bg-slate-900 text-white px-12 py-5 rounded-2xl font-black uppercase text-xs tracking-[0.3em] hover:bg-black transition-all hover:scale-105 shadow-2xl flex items-center gap-4 italic group">
+                        System Portal
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-all" />
                     </Link>
                 </div>

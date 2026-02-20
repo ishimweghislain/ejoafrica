@@ -39,7 +39,7 @@ export default function WelcomePage() {
                     <div className="flex justify-between items-center h-16">
                         <div className="flex items-center">
                             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                EJO Africa
+                                eShuri
                             </h1>
                         </div>
                         <div className="flex items-center space-x-4">
@@ -65,7 +65,7 @@ export default function WelcomePage() {
                 {/* Welcome Hero */}
                 <div className="text-center mb-12">
                     <h2 className="text-5xl font-bold text-gray-900 mb-4">
-                        Welcome to EJO Africa! 🎉
+                        Welcome to eShuri! 🎉
                     </h2>
                     <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                         Your journey with us begins here. Explore our platform and discover amazing opportunities.
@@ -173,7 +173,7 @@ export default function WelcomePage() {
             <footer className="bg-white border-t border-gray-200 mt-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                     <p className="text-center text-gray-600">
-                        © 2024 EJO Africa. All rights reserved.
+                        © 2024 eShuri. All rights reserved.
                     </p>
                 </div>
             </footer>

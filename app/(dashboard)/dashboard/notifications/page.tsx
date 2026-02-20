@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import {
     Bell, Info, CheckCircle2, AlertTriangle,
-    XCircle, Clock, Check, Loader2, Trash2
+    XCircle, Clock, Check, Loader2, Trash2, ArrowRight
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import Link from "next/link";
 
 export default function NotificationsPage() {
     const [notifications, setNotifications] = useState<any[]>([]);
@@ -27,13 +28,28 @@ export default function NotificationsPage() {
         fetchNotifications();
     }, []);
 
+    const markRead = async (id: string) => {
+        try {
+            await fetch("/api/notifications", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id })
+            });
+            fetchNotifications();
+            window.dispatchEvent(new Event('refreshNotifications'));
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     const markAllRead = async () => {
         try {
             await fetch("/api/notifications", { method: "PUT" });
             fetchNotifications();
-            toast.success("Synchronized: All alerts verified.");
+            window.dispatchEvent(new Event('refreshNotifications'));
+            toast.success("All alerts cleared.");
         } catch (err) {
-            toast.error("Protocol sync failed.");
+            toast.error("Process failed.");
         }
     };
 
@@ -51,7 +67,7 @@ export default function NotificationsPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="space-y-1">
                     <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase tracking-tighter italic">Notifications</h1>
-                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest text-emerald-600">Centralized system alerts and operational status updates.</p>
+                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest text-emerald-600">Centralized system alerts and operational status updates for eShuri.</p>
                 </div>
                 <button
                     onClick={markAllRead}
@@ -83,14 +99,42 @@ export default function NotificationsPage() {
                                         <h4 className={`text-lg font-black tracking-tighter uppercase italic ${!n.read ? 'text-slate-900' : 'text-slate-500'}`}>
                                             {n.title}
                                         </h4>
-                                        <div className="flex items-center gap-2 text-slate-400">
-                                            <Clock className="w-3.5 h-3.5" />
-                                            <span className="text-[9px] font-black uppercase tracking-widest">{new Date(n.createdAt).toLocaleString()}</span>
+                                        <div className="flex items-center gap-4">
+                                            <div className="flex items-center gap-2 text-slate-400">
+                                                <Clock className="w-3.5 h-3.5" />
+                                                <span className="text-[9px] font-black uppercase tracking-widest">{new Date(n.createdAt).toLocaleString()}</span>
+                                            </div>
+                                            {!n.read && (
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); markRead(n.id); }}
+                                                    className="p-2 transition-all hover:bg-emerald-100 rounded-lg text-emerald-600"
+                                                    title="Mark as read"
+                                                >
+                                                    <Check className="w-4 h-4" />
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
-                                    <p className={`text-[11px] font-bold leading-relaxed uppercase tracking-wide max-w-4xl ${!n.read ? 'text-slate-600' : 'text-slate-400'}`}>
-                                        {n.message}
-                                    </p>
+                                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                                        <p className={`text-[11px] font-bold leading-relaxed uppercase tracking-wide max-w-4xl ${!n.read ? 'text-slate-600' : 'text-slate-400'}`}>
+                                            {n.message}
+                                        </p>
+                                        {(n.message.toLowerCase().includes("assessment") || n.title.toLowerCase().includes("assessment")) ? (
+                                            <Link
+                                                href="/dashboard/live-assessments"
+                                                className="flex-shrink-0 flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg"
+                                            >
+                                                Check Assessment <ArrowRight className="w-3 h-3" />
+                                            </Link>
+                                        ) : (n.message.toLowerCase().includes("assignment") || n.message.toLowerCase().includes("submitted") || n.title.toLowerCase().includes("assignment")) && (
+                                            <Link
+                                                href="/dashboard/assignments"
+                                                className="flex-shrink-0 flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg"
+                                            >
+                                                View Assignment <ArrowRight className="w-3 h-3" />
+                                            </Link>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         ))}

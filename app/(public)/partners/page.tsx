@@ -19,7 +19,7 @@ export default function PartnersPage() {
         {
             school: "Elite Science Academy",
             role: "Science Excellence",
-            message: "Ejo Africa has changed how we handle school work. It's much easier to manage everything now.",
+            message: "eShuri has changed how we handle school work. It's much easier to manage everything now.",
             principal: "Head of Institution"
         }
     ];
@@ -127,7 +127,7 @@ export default function PartnersPage() {
                         </div>
                         <div className="space-y-4">
                             <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic leading-none">Join our Network</h2>
-                            <p className="text-xs font-black uppercase tracking-[0.5em] text-white/40 italic">Start your school's journey with Ejo Africa.</p>
+                            <p className="text-xs font-black uppercase tracking-[0.5em] text-white/40 italic">Start your school's journey with eShuri.</p>
                         </div>
                         <div className="flex justify-center pt-4">
                             <Link href="/contact" className="bg-emerald-600 text-white px-12 py-5 rounded-2xl font-black uppercase text-xs tracking-[0.3em] hover:bg-emerald-700 transition-all hover:scale-105 shadow-2xl flex items-center gap-4 italic group">
