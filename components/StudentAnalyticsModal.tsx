@@ -86,12 +86,12 @@ export default function StudentAnalyticsModal({
                     onClick={onClose}
                 />
 
-                <div className="relative bg-white w-full max-w-5xl max-h-[90vh] rounded-[3rem] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in slide-in-from-bottom-8 duration-500">
+                <div className="relative bg-white w-full max-w-4xl max-h-[85vh] rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in slide-in-from-bottom-8 duration-500">
                     {/* Header */}
-                    <div className="p-10 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                        <div className="flex items-center gap-6">
-                            <div className="w-16 h-16 bg-slate-900 text-white rounded-[1.5rem] flex items-center justify-center shadow-xl">
-                                <TrendingUp className="w-8 h-8" />
+                    <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-white">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-slate-900 text-white rounded-xl flex items-center justify-center shadow-xl">
+                                <TrendingUp className="w-6 h-6" />
                             </div>
                             <div>
                                 <h2 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">{assessment.title}</h2>
@@ -107,7 +107,7 @@ export default function StudentAnalyticsModal({
                     </div>
 
                     {/* Meta Stats Row */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 bg-white">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-white">
                         <div className="bg-slate-50 p-6 rounded-[2rem] flex items-center gap-5 border border-slate-100">
                             <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-emerald-600 shadow-sm"><Trophy className="w-6 h-6" /></div>
                             <div>
@@ -134,7 +134,7 @@ export default function StudentAnalyticsModal({
                     </div>
 
                     {/* Students List */}
-                    <div className="flex-grow overflow-y-auto p-8 pt-0 custom-scrollbar">
+                    <div className="flex-grow overflow-y-auto p-6 pt-0 custom-scrollbar">
                         <table className="w-full border-separate border-spacing-y-4">
                             <thead>
                                 <tr className="text-[10px] font-black uppercase text-slate-400 tracking-widest text-left">
@@ -192,7 +192,7 @@ export default function StudentAnalyticsModal({
                     </div>
 
                     {/* Footer */}
-                    <div className="p-10 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                    <div className="p-8 border-t border-slate-100 bg-white flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-relaxed">System syncing student response data in real-time.</p>
