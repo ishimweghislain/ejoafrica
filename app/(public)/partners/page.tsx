@@ -18,8 +18,8 @@ export default function PartnersPage() {
     const testimonials = [
         {
             school: "Elite Science Academy",
-            role: "STEM Excellence Node",
-            message: "The transition to Ejo Africa has been transformative for our administrative workflows. The depth of the curriculum management system allows us to maintain the high standards our institution is known for.",
+            role: "Science Excellence",
+            message: "Ejo Africa has changed how we handle school work. It's much easier to manage everything now.",
             principal: "Head of Institution"
         }
     ];
@@ -35,14 +35,14 @@ export default function PartnersPage() {
                 >
                     <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-[0.3em] border border-emerald-100 italic shadow-sm">
                         <School className="w-4 h-4" />
-                        <span>System Network Node</span>
+                        <span>Our Schools</span>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic text-slate-900 leading-[1.1]">
                         TRUSTED BY <br />
                         <span className="text-emerald-600">ELITE SCHOOLS</span>
                     </h1>
                     <p className="text-slate-400 max-w-2xl mx-auto font-black uppercase tracking-[0.2em] text-xs leading-relaxed opacity-80">
-                        Redefining the digital standards of African institutional management and academic integrity.
+                        Setting new standards for school management in Africa.
                     </p>
                 </motion.div>
 
@@ -78,8 +78,8 @@ export default function PartnersPage() {
 
                 <div className="max-w-7xl mx-auto px-8 relative z-10">
                     <div className="text-center mb-20 space-y-4">
-                        <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-400 italic">Institutional Proof</h2>
-                        <h3 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter">The Node Feedback</h3>
+                        <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-emerald-400 italic">User Testimonials</h2>
+                        <h3 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter">What they say</h3>
                     </div>
 
                     <div className="max-w-4xl mx-auto">
@@ -126,12 +126,12 @@ export default function PartnersPage() {
                             <ShieldCheck className="w-10 h-10 text-emerald-500" />
                         </div>
                         <div className="space-y-4">
-                            <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic leading-none">Join the Elite Network</h2>
-                            <p className="text-xs font-black uppercase tracking-[0.5em] text-white/40 italic">Initialize partnership protocol with Ejo Africa.</p>
+                            <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic leading-none">Join our Network</h2>
+                            <p className="text-xs font-black uppercase tracking-[0.5em] text-white/40 italic">Start your school's journey with Ejo Africa.</p>
                         </div>
                         <div className="flex justify-center pt-4">
                             <Link href="/contact" className="bg-emerald-600 text-white px-12 py-5 rounded-2xl font-black uppercase text-xs tracking-[0.3em] hover:bg-emerald-700 transition-all hover:scale-105 shadow-2xl flex items-center gap-4 italic group">
-                                Request Partnership
+                                Contact Us
                                 <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-all" />
                             </Link>
                         </div>

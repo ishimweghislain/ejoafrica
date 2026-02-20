@@ -111,7 +111,7 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
         }
 
         setLoading(true);
-        const tid = toast.loading(initialData ? "Updating system record..." : "Initializing session record...");
+        const tid = toast.loading(initialData ? "Updating assessment..." : "Creating assessment...");
 
         try {
             const url = initialData ? `/api/live-assessments/${initialData.id}` : "/api/live-assessments";
@@ -123,7 +123,7 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
                 body: JSON.stringify({ ...formData, questions }),
             });
 
-            if (!res.ok) throw new Error("Failed to process node request");
+            if (!res.ok) throw new Error("Failed to process request");
 
             toast.success(initialData ? "Assessment updated" : "Live Assessment created", { id: tid });
             onSuccess();
@@ -152,8 +152,8 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
                             <Zap className="w-5 h-5 text-yellow-400" />
                         </div>
                         <div>
-                            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter italic">{initialData ? "Modify System Nodes" : "Configure Live Session"}</h3>
-                            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-emerald-600">Protocol Initialization Module</p>
+                            <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter italic">{initialData ? "Edit Assessment" : "Create Live Assessment"}</h3>
+                            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-emerald-600">Enter details below</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-3 hover:bg-slate-100 rounded-xl transition-all">
@@ -166,27 +166,27 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
                     {fetchingData ? (
                         <div className="py-20 flex flex-col items-center gap-5">
                             <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
-                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic">Syncing Central Portals...</p>
+                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic">Loading data...</p>
                         </div>
                     ) : (
                         <>
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                 <div className="lg:col-span-2 space-y-6">
                                     <div className="space-y-4">
-                                        <label className={labelClass}>Transmission Title</label>
+                                        <label className={labelClass}>Assessment Title</label>
                                         <input
                                             required
                                             className={inputClass}
-                                            placeholder="e.g. Mathematics Node A-1: Differential Equations"
+                                            placeholder="e.g. Mathematics Test 1"
                                             value={formData.title}
                                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                         />
                                     </div>
                                     <div className="space-y-4">
-                                        <label className={labelClass}>Operational Briefing</label>
+                                        <label className={labelClass}>Instructions</label>
                                         <textarea
                                             className={`${inputClass} h-28 resize-none`}
-                                            placeholder="Provide specific session instructions for the students..."
+                                            placeholder="Provide instructions for the students..."
                                             value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                         />
@@ -195,14 +195,14 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
                                 <div className="space-y-6">
                                     <div className="p-6 bg-slate-50/50 rounded-3xl border border-slate-100 space-y-6 shadow-sm">
                                         <div>
-                                            <label className={labelClass}>Class Designation</label>
+                                            <label className={labelClass}>Class</label>
                                             <select required className={inputClass} value={formData.classId} onChange={(e) => setFormData({ ...formData, classId: e.target.value })}>
-                                                <option value="">Select Target Class</option>
+                                                <option value="">Select Class</option>
                                                 {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                             </select>
                                         </div>
                                         <div>
-                                            <label className={labelClass}>Subject Matrix</label>
+                                            <label className={labelClass}>Course</label>
                                             <select required className={inputClass} value={formData.courseId} onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}>
                                                 <option value="">Select Course</option>
                                                 {courses.filter(c => !formData.classId || c.classId === formData.classId).map(c => (
@@ -230,9 +230,9 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
                                 <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                                     <div className="flex items-center gap-4">
                                         <div className="w-1.5 h-6 bg-emerald-500 rounded-full"></div>
-                                        <h4 className="text-xl font-black text-slate-900 uppercase tracking-tighter italic">Assessment Nodes</h4>
+                                        <h4 className="text-xl font-black text-slate-900 uppercase tracking-tighter italic">Assessment Questions</h4>
                                     </div>
-                                    <span className="bg-emerald-50 px-4 py-2 rounded-xl text-[8px] font-black uppercase text-emerald-600 tracking-widest border border-emerald-100 italic">{questions.length} Items Configured</span>
+                                    <span className="bg-emerald-50 px-4 py-2 rounded-xl text-[8px] font-black uppercase text-emerald-600 tracking-widest border border-emerald-100 italic">{questions.length} Questions</span>
                                 </div>
 
                                 <div className="space-y-10">
@@ -253,14 +253,15 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
                                             <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
                                                 <div className="xl:col-span-3 space-y-6">
                                                     <div>
-                                                        <label className={labelClass}>Node Question</label>
+                                                        <label className={labelClass}>Question Text</label>
                                                         <input
                                                             className={`${inputClass} text-base py-4 border-none bg-slate-50/50`}
-                                                            placeholder="State the analytical question..."
+                                                            placeholder="Enter your question here..."
                                                             value={q.text}
                                                             onChange={(e) => handleQuestionChange(qIdx, 'text', e.target.value)}
                                                         />
                                                     </div>
+                                                    Lower
 
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                         {q.options.map((opt, oIdx) => {
@@ -269,7 +270,7 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
                                                                 <div key={oIdx} className="relative group/opt">
                                                                     <input
                                                                         className={`${inputClass} pr-12 ${isCorrect ? 'border-emerald-500 bg-emerald-50/20 ring-4 ring-emerald-500/5' : ''}`}
-                                                                        placeholder={`Node Option ${String.fromCharCode(65 + oIdx)}`}
+                                                                        placeholder={`Option ${String.fromCharCode(65 + oIdx)}`}
                                                                         value={opt}
                                                                         onChange={(e) => handleOptionChange(qIdx, oIdx, e.target.value)}
                                                                     />
@@ -288,7 +289,7 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
 
                                                 <div className="space-y-6 bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
                                                     <div>
-                                                        <label className={labelClass}>Weight (Points)</label>
+                                                        <label className={labelClass}>Points</label>
                                                         <input
                                                             type="number"
                                                             className={inputClass}
@@ -297,7 +298,7 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
                                                         />
                                                     </div>
                                                     <div>
-                                                        <label className={labelClass}>Node Timer</label>
+                                                        <label className={labelClass}>Question Timer</label>
                                                         <div className="relative">
                                                             <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
                                                             <input
@@ -322,7 +323,7 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
                                         <div className="p-4 bg-slate-50 rounded-2xl group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
                                             <Plus className="w-6 h-6" />
                                         </div>
-                                        <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Join New Analytical Node</span>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">Add New Question</span>
                                     </button>
                                 </div>
                             </div>
@@ -334,10 +335,10 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
                 <div className="px-10 py-8 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
                     <div className="flex items-center gap-4 text-slate-400">
                         <Info className="w-4 h-4" />
-                        <p className="text-[9px] font-black uppercase tracking-widest italic opacity-60 line-clamp-1">Deployment logic requires exact time nodes for synchronized student entry.</p>
+                        <p className="text-[9px] font-black uppercase tracking-widest italic opacity-60 line-clamp-1">Ensure you select the correct Class and Course before saving.</p>
                     </div>
                     <div className="flex gap-4">
-                        <button type="button" onClick={onClose} className="px-8 py-4 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 hover:bg-white transition-all italic">Abort Protocol</button>
+                        <button type="button" onClick={onClose} className="px-8 py-4 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 hover:bg-white transition-all italic">Cancel</button>
                         <button
                             type="submit"
                             onClick={handleSubmit}
@@ -347,7 +348,7 @@ export default function LiveAssessmentModal({ isOpen, initialData, onClose, onSu
                             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                                 <>
                                     <Zap className="w-4 h-4 text-yellow-400" />
-                                    <span>{initialData ? "Update System" : "Finalize Protocol"}</span>
+                                    <span>{initialData ? "Save Changes" : "Create Assessment"}</span>
                                 </>
                             )}
                         </button>

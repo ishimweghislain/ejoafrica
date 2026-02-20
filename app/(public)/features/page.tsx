@@ -21,43 +21,43 @@ export default function FeaturesPage() {
         {
             icon: <Radio className="w-5 h-5" />,
             title: "Live Assessments",
-            description: "Synchronized classroom testing nodes with real-time participation tracking and instant feedback loops.",
+            description: "Real-time classroom testing with instant feedback for students and teachers.",
             color: "text-rose-600",
             bg: "bg-rose-50"
         },
         {
             icon: <Zap className="w-5 h-5" />,
             title: "Auto-Scoring",
-            description: "Advanced analytical scoring engine that delivers results instantly to dashboards with complete accuracy.",
+            description: "Get results immediately. Our system grades tests automatically with perfect accuracy.",
             color: "text-emerald-400",
             bg: "bg-emerald-50/10",
             dark: true
         },
         {
             icon: <Activity className="w-5 h-5" />,
-            title: "Monitoring",
-            description: "Deep engagement tracking across all institutional portals, ensuring student activity is always optimized.",
+            title: "Student Tracking",
+            description: "Keep track of student progress and engagement across all school activities.",
             color: "text-blue-600",
             bg: "bg-blue-50"
         },
         {
             icon: <LayoutDashboard className="w-5 h-5" />,
-            title: "Smart Portals",
-            description: "Custom role-based dashboard architectures for Administrators, Teachers, Students, and Parents.",
+            title: "User Portals",
+            description: "Dedicated dashboards for Teachers, Students, Parents, and School Leaders.",
             color: "text-indigo-600",
             bg: "bg-indigo-50"
         },
         {
             icon: <Clock className="w-5 h-5" />,
-            title: "Automation",
-            description: "Automated administrative protocols that handle scheduling, reporting, and curriculum management.",
+            title: "Work Automation",
+            description: "Save time with automated scheduling, report generation, and school management.",
             color: "text-orange-600",
             bg: "bg-orange-50"
         },
         {
             icon: <BarChart3 className="w-5 h-5" />,
-            title: "Analytics",
-            description: "Multi-layered academic performance metrics that provide insights into institutional excellence trends.",
+            title: "Smart Analytics",
+            description: "Understand performance trends with easy-to-read academic data and charts.",
             color: "text-cyan-600",
             bg: "bg-cyan-50"
         }
@@ -72,13 +72,13 @@ export default function FeaturesPage() {
             >
                 <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.3em] italic shadow-lg">
                     <Zap className="w-4 h-4 text-yellow-400" />
-                    <span>Capability Architecture</span>
+                    <span>System Features</span>
                 </div>
                 <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic text-slate-900 leading-[1.1]">
-                    SYSTEM <span className="text-emerald-600 text-5xl md:text-7xl">NODES</span>
+                    PLATFORM <span className="text-emerald-600 text-5xl md:text-7xl">POWER</span>
                 </h1>
                 <p className="text-xs md:text-sm text-slate-400 font-black uppercase tracking-[0.3em] max-w-2xl mx-auto italic leading-relaxed">
-                    The core infrastructure powering the next generation of African education.
+                    The core tools powering the next generation of African education.
                 </p>
             </motion.div>
 
@@ -112,10 +112,10 @@ export default function FeaturesPage() {
                 className="bg-emerald-600 rounded-[4rem] p-16 text-center text-white space-y-10 shadow-2xl relative overflow-hidden"
             >
                 <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -ml-32 -mt-32 blur-3xl"></div>
-                <h2 className="text-3xl font-black uppercase italic tracking-tighter leading-none relative z-10">Initialize System Deployment?</h2>
+                <h2 className="text-3xl font-black uppercase italic tracking-tighter leading-none relative z-10">Ready to transform your school?</h2>
                 <div className="flex justify-center relative z-10">
                     <Link href="/register" className="bg-slate-900 text-white px-12 py-5 rounded-2xl font-black uppercase text-xs tracking-[0.3em] hover:bg-black transition-all hover:scale-105 shadow-2xl flex items-center gap-4 italic group">
-                        Launch Now
+                        Sign Up Now
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-all" />
                     </Link>
                 </div>

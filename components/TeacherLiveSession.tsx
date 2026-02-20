@@ -56,11 +56,11 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                 body: JSON.stringify({ currentQuestionIndex: assessment.currentQuestionIndex + 1 })
             });
             if (res.ok) {
-                toast.success("Node updated: Question released!");
+                toast.success("Question released!");
                 fetchLiveDetails();
             }
         } catch (err) {
-            toast.error("Failed to release next node");
+            toast.error("Failed to release next question");
         } finally {
             setReleasing(false);
         }
@@ -75,7 +75,7 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                 body: JSON.stringify({ status: 'COMPLETED' })
             });
             if (res.ok) {
-                toast.success("Live broadcast terminated successfully!");
+                toast.success("Live assessment ended successfully!");
                 onExit();
             }
         } catch (err) {
@@ -109,13 +109,13 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                     <div className="flex items-center gap-4 bg-white/5 px-6 py-3 rounded-xl border border-white/10">
                         <Users className="w-4 h-4 text-emerald-400" />
                         <div>
-                            <p className="text-[7px] font-black uppercase text-white/30 tracking-widest">Connected Nodes</p>
+                            <p className="text-[7px] font-black uppercase text-white/30 tracking-widest">Active Students</p>
                             <p className="text-xl font-black text-emerald-400 italic leading-none">{uniqueStudents.length}</p>
                         </div>
                     </div>
                     {assessment.deadline && (
                         <div className="hidden lg:flex flex-col items-end">
-                            <p className="text-[7px] font-black text-white/30 uppercase tracking-widest mb-1 italic">Due Node</p>
+                            <p className="text-[7px] font-black text-white/30 uppercase tracking-widest mb-1 italic">Due Time</p>
                             <span className="text-[9px] font-black text-rose-500 uppercase italic tracking-widest">
                                 {new Date(assessment.deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
@@ -125,7 +125,7 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                         onClick={endSession}
                         className="bg-rose-600/10 text-rose-500 border border-rose-500/20 px-8 py-3.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all italic shadow-xl shadow-rose-950/20"
                     >
-                        Terminate Node
+                        End Session
                     </button>
                 </div>
             </header>
@@ -138,13 +138,13 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                         <div className="space-y-12 max-w-5xl">
                             <div className="space-y-8">
                                 <div className="flex flex-wrap items-center gap-4">
-                                    <span className="bg-rose-600 text-white px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest italic shadow-lg">Current Node {assessment.currentQuestionIndex + 1} / {assessment.questions.length}</span>
+                                    <span className="bg-rose-600 text-white px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest italic shadow-lg">Question {assessment.currentQuestionIndex + 1} / {assessment.questions.length}</span>
                                     <div className="px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border border-white/10 text-white/60 italic">
-                                        Received: {questionResponses.length} / {classStudents.length} Students
+                                        Submissions: {questionResponses.length} / {classStudents.length} Students
                                     </div>
                                     <div className="flex items-center gap-2 text-white/30 text-[9px] font-black uppercase tracking-widest italic">
                                         <Clock className="w-4 h-4" />
-                                        <span>Node Timer: {currentQuestion.timer}s</span>
+                                        <span>Timer: {currentQuestion.timer}s</span>
                                     </div>
                                 </div>
                                 <h1 className="text-3xl lg:text-5xl font-black text-white leading-tight uppercase italic tracking-tighter">
@@ -162,12 +162,12 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                                         <div key={idx} className={`p-6 rounded-3xl border transition-all relative overflow-hidden group ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-white/5 border-white/5'}`}>
                                             <div className="absolute top-0 left-0 h-full bg-emerald-500/10 transition-all duration-1000" style={{ width: `${percentage}%` }}></div>
                                             <div className="relative flex items-center justify-between pb-4 border-b border-white/5 mb-6">
-                                                <span className="text-white/20 text-[9px] font-black uppercase tracking-widest italic">Option Matrix {String.fromCharCode(65 + idx)}</span>
+                                                <span className="text-white/20 text-[9px] font-black uppercase tracking-widest italic">Option {String.fromCharCode(65 + idx)}</span>
                                                 {isCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
                                             </div>
                                             <p className={`relative text-xl font-black italic uppercase ${isCorrect ? 'text-emerald-500' : 'text-white/80'}`}>{opt}</p>
                                             <div className="relative mt-6 flex justify-between items-end">
-                                                <p className="text-[8px] font-black uppercase text-white/30 tracking-widest italic">{count} Analysis Choices</p>
+                                                <p className="text-[8px] font-black uppercase text-white/30 tracking-widest italic">{count} Answers</p>
                                                 <p className="text-2xl font-black text-white italic tracking-tighter">{Math.round(percentage)}%</p>
                                             </div>
                                         </div>
@@ -181,8 +181,8 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                                 <Zap className="w-16 h-16 text-emerald-500 fill-current" />
                             </div>
                             <div className="space-y-3">
-                                <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">Initialize Link</h2>
-                                <p className="text-white/30 text-[9px] font-black uppercase tracking-[0.4em] italic leading-relaxed">System ready for broadcast node deployment.</p>
+                                <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">Ready to Start</h2>
+                                <p className="text-white/30 text-[9px] font-black uppercase tracking-[0.4em] italic leading-relaxed">System ready to display questions to students.</p>
                             </div>
                         </div>
                     )}
@@ -193,16 +193,16 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                     <div className="p-10 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
                         <div className="flex items-center gap-3">
                             <Users className="w-4 h-4 text-white/30" />
-                            <h3 className="text-[10px] font-black uppercase text-white/30 tracking-[0.3em] italic">Live Ranking Nodes</h3>
+                            <h3 className="text-[10px] font-black uppercase text-white/30 tracking-[0.3em] italic">Leaderboard</h3>
                         </div>
-                        <span className="text-[7px] font-black text-emerald-500 uppercase tracking-widest italic px-2 py-1 bg-emerald-500/10 rounded">Real-time Stream</span>
+                        <span className="text-[7px] font-black text-emerald-500 uppercase tracking-widest italic px-2 py-1 bg-emerald-500/10 rounded">Live Results</span>
                     </div>
 
                     <div className="flex-grow overflow-y-auto p-6 custom-scrollbar space-y-3">
                         {classStudents.length === 0 ? (
                             <div className="py-24 flex flex-col items-center gap-5 text-white/10">
                                 <Radio className="w-16 h-16 opacity-20" />
-                                <p className="text-[9px] font-black uppercase tracking-widest italic">No Registered Node Signatures.</p>
+                                <p className="text-[9px] font-black uppercase tracking-widest italic">No students joined yet.</p>
                             </div>
                         ) : (
                             [...classStudents].sort((a, b) => {
@@ -224,7 +224,7 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                                             <div>
                                                 <p className="text-[10px] font-black uppercase text-white mb-0.5">{student?.firstName} {student?.lastName}</p>
                                                 <div className="flex items-center gap-3">
-                                                    <p className="text-[8px] font-black uppercase text-white/40 tracking-widest italic">{correctCount} Correct • {studentRes.length} Nodes</p>
+                                                    <p className="text-[8px] font-black uppercase text-white/40 tracking-widest italic">{correctCount} Correct • {studentRes.length} Answers</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -245,7 +245,7 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                             className="w-full bg-rose-600 text-white p-5 rounded-xl flex items-center justify-between group transition-all disabled:opacity-50 shadow-2xl hover:bg-rose-700 italic"
                         >
                             <span className="text-[10px] font-black uppercase tracking-[0.2em] ml-2">
-                                {assessment.currentQuestionIndex >= assessment.questions.length - 1 ? "Terminate Session" : (assessment.currentQuestionIndex === -1 ? "Launch Protocol" : "Release Next Node")}
+                                {assessment.currentQuestionIndex >= assessment.questions.length - 1 ? "End Assessment" : (assessment.currentQuestionIndex === -1 ? "Start Assessment" : "Next Question")}
                             </span>
                             {releasing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5 fill-current" />}
                         </button>

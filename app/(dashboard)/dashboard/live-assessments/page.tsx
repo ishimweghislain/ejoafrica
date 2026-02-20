@@ -44,13 +44,13 @@ export default function LiveAssessmentsPage() {
         fetchData();
         const interval = setInterval(() => {
             if (user?.role === "STUDENT") {
-                fetch("/api/live-assessments?status=LIVE")
+                fetch("/api/live-assessments")
                     .then(res => res.json())
                     .then(data => {
-                        // Polling for live status
+                        if (Array.isArray(data)) setAssessments(data);
                     });
             }
-        }, 15000);
+        }, 5000); // 5-second polling for students
 
         return () => clearInterval(interval);
     }, [user?.role]);
@@ -143,7 +143,7 @@ export default function LiveAssessmentsPage() {
                     <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase italic">Digital Assessments</h1>
                     <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                        <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest italic">Real-time Online Classroom Environment.</p>
+                        <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest italic">Live Classroom Tests.</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -195,7 +195,7 @@ export default function LiveAssessmentsPage() {
                                 </div>
                                 {a.status === 'LIVE' ? (
                                     <span className="bg-rose-50 text-rose-600 text-[7px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest border border-rose-100 italic">Running Now</span>
-                                ) : isTeacher && (a.status === 'DRAFT' || a.status === 'COMPLETED' === false) && (
+                                ) : isTeacher && a.status !== 'LIVE' && a.status !== 'COMPLETED' && (
                                     <div className="flex gap-2">
                                         <button onClick={() => { setEditData(a); setIsAddModalOpen(true); }} className="p-2.5 bg-slate-50 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl border border-slate-100 transition-all"><Edit3 className="w-4 h-4" /></button>
                                         <button onClick={() => deleteAssessment(a.id)} className="p-2.5 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl border border-slate-100 transition-all"><Trash2 className="w-4 h-4" /></button>
@@ -213,13 +213,13 @@ export default function LiveAssessmentsPage() {
                                         </div>
                                     )}
                                 </div>
-                                <p className="text-slate-400 text-[10px] font-black uppercase leading-relaxed line-clamp-2 italic">{a.description || "No specific briefing provided for this session."}</p>
+                                <p className="text-slate-400 text-[10px] font-black uppercase leading-relaxed line-clamp-2 italic">{a.description || "No instructions provided for this session."}</p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-3 pb-4">
                                 <div className="bg-slate-50 p-3.5 rounded-2xl flex items-center gap-3">
                                     <FileText className="w-3.5 h-3.5 text-emerald-500" />
-                                    <div><p className="text-[7px] font-black uppercase text-slate-400">Items</p><p className="text-[9px] font-black text-slate-900">{a.questions.length}</p></div>
+                                    <div><p className="text-[7px] font-black uppercase text-slate-400">Questions</p><p className="text-[9px] font-black text-slate-900">{a.questions.length}</p></div>
                                 </div>
                                 <div className="bg-slate-50 p-3.5 rounded-2xl flex items-center gap-3">
                                     <User className="w-3.5 h-3.5 text-blue-500" />
