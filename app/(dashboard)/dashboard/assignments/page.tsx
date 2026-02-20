@@ -284,7 +284,7 @@ export default function AssignmentsPage() {
                                                 <Clock className="w-4 h-4" />
                                             </div>
                                             <div className="space-y-0.5">
-                                                <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Deadline</p>
+                                                <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Due Date</p>
                                                 <p className="text-[10px] font-black text-slate-900 uppercase">
                                                     {a.deadline ? new Date(a.deadline).toLocaleDateString('en-GB') : "No Limit"}
                                                 </p>

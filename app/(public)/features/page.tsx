@@ -2,86 +2,87 @@
 
 import { motion } from "framer-motion";
 import {
-    Radio, Zap, Activity, LayoutDashboard, Clock, BarChart3
+    Radio, Zap, Activity, LayoutDashboard, Clock, BarChart3, ArrowRight
 } from "lucide-react";
+import Link from "next/link";
 
 const slideInLeft = {
     hidden: { opacity: 0, x: -30 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
+    visible: { opacity: 1, x: 0, transition: { duration: 0.7 } }
 };
 
 const slideInRight = {
     hidden: { opacity: 0, x: 30 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
+    visible: { opacity: 1, x: 0, transition: { duration: 0.7 } }
 };
 
 export default function FeaturesPage() {
     const features = [
         {
-            icon: <Radio className="w-4 h-4" />,
+            icon: <Radio className="w-5 h-5" />,
             title: "Live Assessments",
-            description: "Synchronized classroom testing.",
+            description: "Synchronized classroom testing nodes with real-time participation tracking and instant feedback loops.",
             color: "text-rose-600",
             bg: "bg-rose-50"
         },
         {
-            icon: <Zap className="w-4 h-4" />,
+            icon: <Zap className="w-5 h-5" />,
             title: "Auto-Scoring",
-            description: "Results delivered instantly.",
-            color: "text-emerald-600",
-            bg: "bg-emerald-50",
+            description: "Advanced analytical scoring engine that delivers results instantly to dashboards with complete accuracy.",
+            color: "text-emerald-400",
+            bg: "bg-emerald-50/10",
             dark: true
         },
         {
-            icon: <Activity className="w-4 h-4" />,
+            icon: <Activity className="w-5 h-5" />,
             title: "Monitoring",
-            description: "Real-time engagement tracking.",
+            description: "Deep engagement tracking across all institutional portals, ensuring student activity is always optimized.",
             color: "text-blue-600",
             bg: "bg-blue-50"
         },
         {
-            icon: <LayoutDashboard className="w-4 h-4" />,
+            icon: <LayoutDashboard className="w-5 h-5" />,
             title: "Smart Portals",
-            description: "Custom role-based dashboards.",
+            description: "Custom role-based dashboard architectures for Administrators, Teachers, Students, and Parents.",
             color: "text-indigo-600",
             bg: "bg-indigo-50"
         },
         {
-            icon: <Clock className="w-4 h-4" />,
+            icon: <Clock className="w-5 h-5" />,
             title: "Automation",
-            description: "Automated institutional workflows.",
+            description: "Automated administrative protocols that handle scheduling, reporting, and curriculum management.",
             color: "text-orange-600",
             bg: "bg-orange-50"
         },
         {
-            icon: <BarChart3 className="w-4 h-4" />,
+            icon: <BarChart3 className="w-5 h-5" />,
             title: "Analytics",
-            description: "Deep academic performance metrics.",
+            description: "Multi-layered academic performance metrics that provide insights into institutional excellence trends.",
             color: "text-cyan-600",
             bg: "bg-cyan-50"
         }
     ];
 
     return (
-        <div className="py-12 px-6 max-w-4xl mx-auto bg-white min-h-screen">
+        <div className="py-24 px-8 max-w-6xl mx-auto bg-white min-h-screen space-y-24">
             <motion.div
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-center space-y-2 mb-12"
+                className="text-center space-y-6"
             >
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-[7px] font-black uppercase tracking-widest italic">
-                    <Zap className="w-2.5 h-2.5 text-yellow-400" />
-                    <span>System Node</span>
+                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.3em] italic shadow-lg">
+                    <Zap className="w-4 h-4 text-yellow-400" />
+                    <span>Capability Architecture</span>
                 </div>
-                <h1 className="text-xl md:text-3xl font-black tracking-tight uppercase italic text-slate-900 mb-1">
-                    SYSTEM <span className="text-emerald-600">CAPABILITIES</span>
+                <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic text-slate-900 leading-[1.1]">
+                    SYSTEM <span className="text-emerald-600 text-5xl md:text-7xl">NODES</span>
                 </h1>
-                <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest max-w-xs mx-auto">
-                    Advanced Digital Institutional Tools.
+                <p className="text-xs md:text-sm text-slate-400 font-black uppercase tracking-[0.3em] max-w-2xl mx-auto italic leading-relaxed">
+                    The core infrastructure powering the next generation of African education.
                 </p>
             </motion.div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {features.map((f, idx) => (
                     <motion.div
                         key={idx}
@@ -89,14 +90,14 @@ export default function FeaturesPage() {
                         whileInView="visible"
                         viewport={{ once: true }}
                         variants={idx % 2 === 0 ? slideInLeft : slideInRight}
-                        className={`p-5 rounded-xl border transition-all ${f.dark ? 'bg-slate-900 border-slate-800 text-white shadow-lg' : 'bg-white border-slate-50 text-slate-900 shadow-sm'}`}
+                        className={`p-10 rounded-[3rem] border transition-all duration-500 group hover:shadow-2xl hover:-translate-y-2 ${f.dark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-100 text-slate-900'}`}
                     >
-                        <div className={`p-2.5 rounded-lg w-fit ${f.bg} ${f.color} mb-4`}>
+                        <div className={`p-4 rounded-2xl w-fit ${f.bg} ${f.color} mb-8 shadow-sm group-hover:scale-110 transition-transform`}>
                             {f.icon}
                         </div>
-                        <div className="space-y-1">
-                            <h3 className="text-[11px] font-black italic uppercase tracking-tighter">{f.title}</h3>
-                            <p className={`text-[9px] font-bold leading-tight ${f.dark ? 'text-slate-500' : 'text-slate-400'}`}>
+                        <div className="space-y-4">
+                            <h3 className="text-xl font-black italic uppercase tracking-tighter leading-none">{f.title}</h3>
+                            <p className={`text-xs md:text-sm font-medium leading-relaxed italic ${f.dark ? 'text-slate-400' : 'text-slate-500'}`}>
                                 {f.description}
                             </p>
                         </div>
@@ -105,16 +106,18 @@ export default function FeaturesPage() {
             </div>
 
             <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="mt-12 bg-emerald-600 rounded-xl p-8 text-center text-white space-y-4"
+                className="bg-emerald-600 rounded-[4rem] p-16 text-center text-white space-y-10 shadow-2xl relative overflow-hidden"
             >
-                <h2 className="text-lg font-black uppercase italic tracking-tighter">Ready for deployment?</h2>
-                <div className="flex justify-center">
-                    <button className="bg-slate-900 text-white px-6 py-2.5 rounded-lg font-black uppercase text-[8px] tracking-widest hover:scale-105 transition-all">
-                        Connect Now
-                    </button>
+                <div className="absolute top-0 left-0 w-64 h-64 bg-white/5 rounded-full -ml-32 -mt-32 blur-3xl"></div>
+                <h2 className="text-3xl font-black uppercase italic tracking-tighter leading-none relative z-10">Initialize System Deployment?</h2>
+                <div className="flex justify-center relative z-10">
+                    <Link href="/register" className="bg-slate-900 text-white px-12 py-5 rounded-2xl font-black uppercase text-xs tracking-[0.3em] hover:bg-black transition-all hover:scale-105 shadow-2xl flex items-center gap-4 italic group">
+                        Launch Now
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-all" />
+                    </Link>
                 </div>
             </motion.div>
         </div>

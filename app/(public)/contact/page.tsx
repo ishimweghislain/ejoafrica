@@ -1,130 +1,127 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Send, MessageSquare, Sparkles } from "lucide-react";
+import {
+    Send, MapPin, Mail, Phone, Globe, ExternalLink, Zap
+} from "lucide-react";
 import { toast } from "react-hot-toast";
 
 const slideInLeft = {
     hidden: { opacity: 0, x: -30 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
+    visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: "easeOut" } }
 };
 
 const slideInRight = {
     hidden: { opacity: 0, x: 30 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
+    visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: "easeOut" } }
 };
 
 export default function ContactPage() {
-    async function handleSubmit(e: React.FormEvent) {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        toast.success("Message Sent.", { icon: "🚀" });
-        (e.target as HTMLFormElement).reset();
-    }
+        toast.success("Operational link established. We will respond shortly.", {
+            icon: '🚀',
+            style: {
+                borderRadius: '1rem',
+                background: '#0f172a',
+                color: '#fff',
+                fontFamily: 'inherit',
+                fontWeight: '900',
+                fontSize: '11px',
+                textTransform: 'uppercase'
+            }
+        });
+    };
 
     return (
-        <div className="flex flex-col gap-12 py-12 md:py-20 bg-white overflow-hidden min-h-screen">
-            {/* Header */}
-            <section className="max-w-4xl mx-auto px-6 w-full text-center space-y-3">
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-600 text-white text-[8px] font-black uppercase tracking-widest italic"
-                >
-                    <Sparkles className="w-2 h-2" />
-                    <span>Communication Hub</span>
-                </motion.div>
-                <motion.h1
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 uppercase italic"
-                >
-                    CONNECT WITH <span className="text-emerald-600 underline text-3xl">US</span>
-                </motion.h1>
-                <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest max-w-sm mx-auto">
-                    Institutional communication channels.
+        <div className="py-24 px-8 max-w-7xl mx-auto bg-white min-h-screen">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center space-y-8 mb-24"
+            >
+                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-[0.3em] italic border border-emerald-100 shadow-sm">
+                    <Zap className="w-4 h-4 text-emerald-500" />
+                    <span>Communications Node</span>
+                </div>
+                <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic text-slate-900 leading-[1.1]">
+                    ESTABLISH <span className="text-emerald-600">LINK</span>
+                </h1>
+                <p className="text-xs md:text-sm text-slate-400 font-black uppercase tracking-[0.3em] max-w-2xl mx-auto italic leading-relaxed opacity-80">
+                    Connect with our technical architects for institutional deployment queries.
                 </p>
-            </section>
+            </motion.div>
 
-            {/* Content Grid */}
-            <section className="max-w-5xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                {/* Left: Info */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                {/* Contact Info */}
                 <motion.div
+                    initial="hidden"
+                    animate="visible"
                     variants={slideInLeft}
-                    initial="hidden"
-                    animate="visible"
-                    className="lg:col-span-4 space-y-4"
+                    className="space-y-12"
                 >
-                    <div className="space-y-3">
-                        <ContactInfoCard icon={<Mail className="w-4 h-4" />} label="Email" value="info@ejoafrica.edu" />
-                        <ContactInfoCard icon={<Phone className="w-4 h-4" />} label="Voice" value="+250 788 123 456" />
-                        <ContactInfoCard icon={<MapPin className="w-4 h-4" />} label="Geo" value="Kigali, Rwanda" />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <ContactCard icon={<Mail className="w-5 h-5" />} label="Digital Node" value="ishimweghislain82@gmail.com" sub="Active 24/7" color="text-emerald-500" />
+                        <ContactCard icon={<Phone className="w-5 h-5" />} label="Terminal" value="+250 788 000 000" sub="System Support" color="text-blue-500" />
+                        <ContactCard icon={<MapPin className="w-5 h-5" />} label="Node HQ" value="Kigali, Rwanda" sub="Innovation District" color="text-rose-500" />
+                        <ContactCard icon={<Globe className="w-5 h-5" />} label="Global Mesh" value="ejoafrica.rw" sub="Secondary Node" color="text-indigo-500" />
                     </div>
 
-                    <div className="rounded-2xl border-2 border-slate-50 overflow-hidden shadow-lg aspect-[3/2] lg:aspect-square">
-                        <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15949.72147137452!2d30.0573932871582!3d-1.94411649999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca4294ed05f63%3A0xe6ceccf50e95cb1d!2sInnovation%20Village!5e0!3m2!1sen!2srw!4v1700000000000!5m2!1sen!2srw"
-                            width="100%"
-                            height="100%"
-                            style={{ border: 0, filter: 'grayscale(0.3)' }}
-                            allowFullScreen
-                            loading="lazy"
-                        ></iframe>
-                    </div>
-                </motion.div>
-
-                {/* Right: Form */}
-                <motion.div
-                    variants={slideInRight}
-                    initial="hidden"
-                    animate="visible"
-                    className="lg:col-span-8"
-                >
-                    <div className="bg-slate-50 p-6 md:p-8 rounded-2xl border border-slate-100 flex flex-col gap-6 shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-slate-900 p-3 rounded-xl text-white shadow-lg">
-                                <MessageSquare className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-black text-slate-900 uppercase italic tracking-tighter">System Message</h3>
-                                <p className="text-[8px] font-black uppercase text-emerald-600">Secure Protocol</p>
-                            </div>
+                    <div className="p-10 bg-slate-900 text-white rounded-[3rem] space-y-6 shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                        <h3 className="text-xl font-black italic uppercase tracking-tighter">Institutional Support</h3>
+                        <p className="text-xs md:text-sm text-slate-400 font-medium italic leading-relaxed opacity-80">
+                            Our team provides dedicated priority integration support for all institutions deploying the Ejo Africa framework.
+                        </p>
+                        <div className="pt-4">
+                            <button className="flex items-center gap-3 text-emerald-400 text-[10px] font-black uppercase tracking-widest hover:text-emerald-300 transition-all italic">
+                                Technical Documentation <ExternalLink className="w-3.5 h-3.5" />
+                            </button>
                         </div>
-
-                        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <InputField label="Name" placeholder="Full name" />
-                            <InputField label="Email Link" placeholder="email@address.com" type="email" />
-                            <div className="md:col-span-2 space-y-1.5">
-                                <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest block ml-1">Payload</label>
-                                <textarea
-                                    required
-                                    rows={4}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-emerald-600 transition-all font-bold text-slate-900 text-[11px] resize-none shadow-sm"
-                                    placeholder="Tell us about your institutional requirements..."
-                                ></textarea>
-                            </div>
-
-                            <div className="md:col-span-2 pt-2">
-                                <button type="submit" className="w-full bg-slate-900 text-white rounded-xl py-4 font-black uppercase tracking-[0.3em] shadow-lg hover:bg-emerald-600 hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-3 text-[10px]">
-                                    Execute <Send className="w-3 h-3" />
-                                </button>
-                            </div>
-                        </form>
                     </div>
                 </motion.div>
-            </section>
+
+                {/* Contact Form */}
+                <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={slideInRight}
+                    className="bg-white p-10 md:p-14 rounded-[4rem] border border-slate-100 shadow-2xl relative"
+                >
+                    <div className="absolute top-0 left-0 w-full h-1.5 bg-emerald-600 rounded-t-full"></div>
+                    <form onSubmit={handleSubmit} className="space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <InputField label="Entity Identification" placeholder="Full Name / Principal" />
+                            <InputField label="Node Address" placeholder="email@institution.com" type="email" />
+                        </div>
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] block ml-1 italic">Analytical Requirements</label>
+                            <textarea
+                                required
+                                rows={5}
+                                className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 outline-none focus:bg-white focus:ring-8 focus:ring-emerald-500/5 transition-all font-bold text-slate-900 text-sm italic resize-none shadow-inner"
+                                placeholder="Describe your institutional deployment requirements..."
+                            ></textarea>
+                        </div>
+                        <button className="w-full bg-slate-900 text-white p-6 rounded-2xl font-black uppercase tracking-[0.3em] hover:bg-emerald-600 transition-all hover:scale-105 active:scale-95 shadow-2xl text-[10px] flex items-center justify-center gap-4 italic group">
+                            Synchronize Message
+                            <Send className="w-4 h-4 group-hover:translate-x-2 group-hover:-translate-y-2 transition-all duration-500" />
+                        </button>
+                    </form>
+                </motion.div>
+            </div>
         </div>
     );
 }
 
-function ContactInfoCard({ icon, label, value }: { icon: any, label: string, value: string }) {
+function ContactCard({ icon, label, value, sub, color }: { icon: any, label: string, value: string, sub: string, color: string }) {
     return (
-        <div className="flex items-center gap-4 group">
-            <div className="bg-white border border-slate-100 p-3 rounded-xl text-emerald-600 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all">
-                {icon}
-            </div>
-            <div>
-                <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 leading-none mb-0.5">{label}</p>
-                <h4 className="font-black text-xs text-slate-900 tracking-tight">{value}</h4>
+        <div className="p-8 bg-slate-50/50 rounded-3xl border border-slate-50 group hover:bg-white hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+            <div className={`p-3.5 rounded-xl w-fit ${color} bg-white shadow-sm mb-6 group-hover:scale-110 transition-transform`}>{icon}</div>
+            <div className="space-y-1">
+                <p className="text-[8px] font-black uppercase text-slate-300 tracking-[0.3em] italic">{label}</p>
+                <p className="text-xs font-black text-slate-900 uppercase italic truncate">{value}</p>
+                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic opacity-50">{sub}</p>
             </div>
         </div>
     );
@@ -132,12 +129,12 @@ function ContactInfoCard({ icon, label, value }: { icon: any, label: string, val
 
 function InputField({ label, placeholder, type = "text" }: { label: string, placeholder: string, type?: string }) {
     return (
-        <div className="space-y-1.5">
-            <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest block ml-1">{label}</label>
+        <div className="space-y-4">
+            <label className="text-[10px] font-black uppercase text-slate-400 tracking-[0.3em] block ml-1 italic">{label}</label>
             <input
                 required
                 type={type}
-                className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 outline-none focus:border-emerald-600 transition-all font-bold text-slate-900 text-[11px] shadow-sm"
+                className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-4.5 outline-none focus:bg-white focus:ring-8 focus:ring-emerald-500/5 transition-all font-bold text-slate-900 text-sm italic shadow-inner"
                 placeholder={placeholder}
             />
         </div>

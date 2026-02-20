@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import {
-    X, Users, Radio, ArrowRight, CheckCircle2,
-    Loader2, Zap, Award, BarChart3, Clock, Play, RefreshCcw
+    X, Radio, ArrowRight, CheckCircle2,
+    Loader2, Zap, Clock, Play, RefreshCcw, Users
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -16,7 +16,6 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
     const [assessment, setAssessment] = useState(initialAssessment);
     const [responses, setResponses] = useState<any[]>([]);
     const [classStudents, setClassStudents] = useState<any[]>([]);
-    const [loading, setLoading] = useState(false);
     const [releasing, setReleasing] = useState(false);
 
     const currentQuestion = assessment.questions[assessment.currentQuestionIndex];
@@ -42,13 +41,12 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
 
     useEffect(() => {
         fetchLiveDetails();
-        const interval = setInterval(fetchLiveDetails, 3000); // Poll every 3 seconds
+        const interval = setInterval(fetchLiveDetails, 4000);
         return () => clearInterval(interval);
     }, []);
 
     const releaseNext = async () => {
         if (assessment.currentQuestionIndex >= assessment.questions.length - 1) {
-            // End session
             return endSession();
         }
         setReleasing(true);
@@ -58,11 +56,11 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                 body: JSON.stringify({ currentQuestionIndex: assessment.currentQuestionIndex + 1 })
             });
             if (res.ok) {
-                toast.success("Next question released!");
+                toast.success("Node updated: Question released!");
                 fetchLiveDetails();
             }
         } catch (err) {
-            toast.error("Failed to release next question");
+            toast.error("Failed to release next node");
         } finally {
             setReleasing(false);
         }
@@ -77,7 +75,7 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                 body: JSON.stringify({ status: 'COMPLETED' })
             });
             if (res.ok) {
-                toast.success("Live assessment completed!");
+                toast.success("Live broadcast terminated successfully!");
                 onExit();
             }
         } catch (err) {
@@ -91,88 +89,86 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
     const uniqueStudents = [...new Set(responses.map(r => r.studentId))];
 
     return (
-        <div className="fixed inset-0 z-[70] bg-slate-900 flex flex-col animate-in fade-in zoom-in duration-300">
+        <div className="fixed inset-0 z-[70] bg-slate-900 flex flex-col animate-in fade-in duration-500 overflow-hidden">
             {/* Header */}
-            <header className="p-8 border-b border-white/10 flex items-center justify-between">
+            <header className="px-10 py-6 border-b border-white/10 flex items-center justify-between bg-slate-950/50">
                 <div className="flex items-center gap-6">
-                    <button
-                        onClick={onExit}
-                        className="p-4 bg-white/5 hover:bg-white/10 text-white rounded-2xl transition-all"
-                    >
-                        <X className="w-6 h-6" />
+                    <button onClick={onExit} className="p-3.5 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all border border-white/5">
+                        <X className="w-5 h-5" />
                     </button>
                     <div>
-                        <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">Live: {assessment.title}</h2>
+                        <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter">Live Monitor: {assessment.title}</h2>
                         <div className="flex items-center gap-3 mt-1">
-                            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                            <p className="text-[10px] font-black uppercase text-white/50 tracking-widest">{assessment.course.title} • {assessment.class.name}</p>
+                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></div>
+                            <p className="text-[9px] font-black uppercase text-white/40 tracking-[0.3em] italic">{assessment.course.title} • {assessment.class.name}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-10">
-                    <button
-                        onClick={() => fetchLiveDetails()}
-                        className="p-3 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all group"
-                        title="Refresh Status"
-                    >
-                        <RefreshCcw className="w-5 h-5 group-hover:rotate-180 transition-all duration-500" />
-                    </button>
-                    <div className="flex items-center gap-4 bg-white/5 px-6 py-3 rounded-2xl">
-                        <Users className="w-5 h-5 text-emerald-500" />
+                <div className="flex items-center gap-8">
+                    <div className="flex items-center gap-4 bg-white/5 px-6 py-3 rounded-xl border border-white/10">
+                        <Users className="w-4 h-4 text-emerald-400" />
                         <div>
-                            <p className="text-[8px] font-black uppercase text-white/40">Active Students</p>
-                            <p className="text-lg font-black text-emerald-500 italic">{uniqueStudents.length}</p>
+                            <p className="text-[7px] font-black uppercase text-white/30 tracking-widest">Connected Nodes</p>
+                            <p className="text-xl font-black text-emerald-400 italic leading-none">{uniqueStudents.length}</p>
                         </div>
                     </div>
+                    {assessment.deadline && (
+                        <div className="hidden lg:flex flex-col items-end">
+                            <p className="text-[7px] font-black text-white/30 uppercase tracking-widest mb-1 italic">Due Node</p>
+                            <span className="text-[9px] font-black text-rose-500 uppercase italic tracking-widest">
+                                {new Date(assessment.deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                        </div>
+                    )}
                     <button
                         onClick={endSession}
-                        className="bg-rose-600/20 text-rose-500 border border-rose-500/30 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all shadow-xl shadow-rose-900/20"
+                        className="bg-rose-600/10 text-rose-500 border border-rose-500/20 px-8 py-3.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all italic shadow-xl shadow-rose-950/20"
                     >
-                        End Session
+                        Terminate Node
                     </button>
                 </div>
             </header>
 
             {/* Main Section */}
-            <main className="flex-grow overflow-hidden flex flex-col md:flex-row">
-                {/* Left: Current Question Area */}
-                <div className="flex-grow p-12 overflow-y-auto space-y-12">
+            <main className="flex-grow flex flex-col lg:flex-row overflow-hidden">
+                {/* Left: Active Question Console */}
+                <div className="flex-grow p-12 overflow-y-auto space-y-12 bg-slate-900">
                     {currentQuestion ? (
-                        <div className="space-y-12">
-                            <div className="space-y-6">
-                                <div className="flex items-center gap-3">
-                                    <span className="bg-rose-600 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest italic">Question {assessment.currentQuestionIndex + 1} of {assessment.questions.length}</span>
-                                    <div className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border transition-all ${questionResponses.length === classStudents.length ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-white/5 border-white/10 text-white'}`}>
-                                        Submitted: {questionResponses.length} / {classStudents.length}
+                        <div className="space-y-12 max-w-5xl">
+                            <div className="space-y-8">
+                                <div className="flex flex-wrap items-center gap-4">
+                                    <span className="bg-rose-600 text-white px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest italic shadow-lg">Current Node {assessment.currentQuestionIndex + 1} / {assessment.questions.length}</span>
+                                    <div className="px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border border-white/10 text-white/60 italic">
+                                        Received: {questionResponses.length} / {classStudents.length} Students
                                     </div>
-                                    <div className="flex items-center gap-2 text-white/40 text-[10px] font-black uppercase tracking-widest">
+                                    <div className="flex items-center gap-2 text-white/30 text-[9px] font-black uppercase tracking-widest italic">
                                         <Clock className="w-4 h-4" />
-                                        <span>{currentQuestion.timer}s Limit</span>
+                                        <span>Node Timer: {currentQuestion.timer}s</span>
                                     </div>
                                 </div>
-                                <h1 className="text-3xl md:text-4xl font-black text-white leading-tight uppercase italic tracking-tighter">
+                                <h1 className="text-3xl lg:text-5xl font-black text-white leading-tight uppercase italic tracking-tighter">
                                     {currentQuestion.text}
                                 </h1>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {currentQuestion.options.map((opt: string, idx: number) => {
                                     const isCorrect = opt === currentQuestion.correctAnswer;
                                     const count = questionResponses.filter(r => r.answer === opt).length;
                                     const percentage = questionResponses.length > 0 ? (count / questionResponses.length) * 100 : 0;
 
                                     return (
-                                        <div key={idx} className={`p-5 rounded-3xl border transition-all relative overflow-hidden ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-white/5 border-white/10'}`}>
-                                            <div className="absolute top-0 left-0 h-full bg-emerald-500/5 transition-all duration-1000" style={{ width: `${percentage}%` }}></div>
-                                            <div className="relative flex items-center justify-between pb-4 border-b border-white/5 mb-4">
-                                                <span className="text-white/20 text-[10px] font-black uppercase tracking-widest">Option {String.fromCharCode(65 + idx)}</span>
+                                        <div key={idx} className={`p-6 rounded-3xl border transition-all relative overflow-hidden group ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-white/5 border-white/5'}`}>
+                                            <div className="absolute top-0 left-0 h-full bg-emerald-500/10 transition-all duration-1000" style={{ width: `${percentage}%` }}></div>
+                                            <div className="relative flex items-center justify-between pb-4 border-b border-white/5 mb-6">
+                                                <span className="text-white/20 text-[9px] font-black uppercase tracking-widest italic">Option Matrix {String.fromCharCode(65 + idx)}</span>
                                                 {isCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
                                             </div>
                                             <p className={`relative text-xl font-black italic uppercase ${isCorrect ? 'text-emerald-500' : 'text-white/80'}`}>{opt}</p>
-                                            <div className="relative mt-4 flex justify-between items-end">
-                                                <p className="text-[9px] font-black uppercase text-white/40 tracking-widest">{count} Choices</p>
-                                                <p className="text-xl font-black text-white italic">{Math.round(percentage)}%</p>
+                                            <div className="relative mt-6 flex justify-between items-end">
+                                                <p className="text-[8px] font-black uppercase text-white/30 tracking-widest italic">{count} Analysis Choices</p>
+                                                <p className="text-2xl font-black text-white italic tracking-tighter">{Math.round(percentage)}%</p>
                                             </div>
                                         </div>
                                     );
@@ -180,31 +176,33 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                             </div>
                         </div>
                     ) : (
-                        <div className="h-full flex flex-col items-center justify-center text-center space-y-8">
-                            <Zap className="w-24 h-24 text-rose-600 animate-bounce" />
-                            <div>
-                                <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">Prepare to Launch</h2>
-                                <p className="text-white/40 text-[10px] font-black uppercase tracking-widest mt-2">The session is ready. Click below to release the first question.</p>
+                        <div className="h-full flex flex-col items-center justify-center text-center space-y-10">
+                            <div className="w-32 h-32 bg-white/5 rounded-[3rem] border border-white/10 flex items-center justify-center animate-pulse">
+                                <Zap className="w-16 h-16 text-emerald-500 fill-current" />
+                            </div>
+                            <div className="space-y-3">
+                                <h2 className="text-4xl font-black text-white uppercase italic tracking-tighter">Initialize Link</h2>
+                                <p className="text-white/30 text-[9px] font-black uppercase tracking-[0.4em] italic leading-relaxed">System ready for broadcast node deployment.</p>
                             </div>
                         </div>
                     )}
                 </div>
 
-                {/* Right: Sidebar / Participation Panel */}
-                <div className="w-full md:w-[400px] bg-white/5 border-l border-white/10 overflow-hidden flex flex-col">
-                    <div className="p-8 border-b border-white/10 flex items-center justify-between">
+                {/* Right: Leaderboard / Statistics Panel */}
+                <div className="w-full lg:w-[450px] bg-slate-950/80 border-l border-white/10 overflow-hidden flex flex-col">
+                    <div className="p-10 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
                         <div className="flex items-center gap-3">
-                            <Users className="w-5 h-5 text-white/40" />
-                            <h3 className="text-[10px] font-black uppercase text-white/40 tracking-widest">Leaderboard</h3>
+                            <Users className="w-4 h-4 text-white/30" />
+                            <h3 className="text-[10px] font-black uppercase text-white/30 tracking-[0.3em] italic">Live Ranking Nodes</h3>
                         </div>
-                        <span className="text-[10px] font-black text-emerald-500 uppercase italic">Real-time Data</span>
+                        <span className="text-[7px] font-black text-emerald-500 uppercase tracking-widest italic px-2 py-1 bg-emerald-500/10 rounded">Real-time Stream</span>
                     </div>
 
-                    <div className="flex-grow overflow-y-auto p-4 custom-scrollbar space-y-3">
+                    <div className="flex-grow overflow-y-auto p-6 custom-scrollbar space-y-3">
                         {classStudents.length === 0 ? (
-                            <div className="py-20 flex flex-col items-center gap-4 text-white/20">
-                                <Activity className="w-12 h-12" />
-                                <p className="text-[10px] font-black uppercase tracking-widest">No students found in class.</p>
+                            <div className="py-24 flex flex-col items-center gap-5 text-white/10">
+                                <Radio className="w-16 h-16 opacity-20" />
+                                <p className="text-[9px] font-black uppercase tracking-widest italic">No Registered Node Signatures.</p>
                             </div>
                         ) : (
                             [...classStudents].sort((a, b) => {
@@ -218,22 +216,21 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                                 const hasJoined = studentRes.length > 0;
 
                                 return (
-                                    <div key={student.id} className={`p-3.5 rounded-2xl border flex items-center justify-between group transition-all ${hasJoined ? 'bg-white/5 border-white/5 hover:bg-white/[0.08]' : 'bg-white/[0.02] border-white/[0.02] opacity-40'}`}>
+                                    <div key={student.id} className={`p-4 rounded-2xl border transition-all flex items-center justify-between group ${hasJoined ? 'bg-white/[0.04] border-white/10 hover:bg-white/[0.08]' : 'bg-white/[0.01] border-white/[0.01] opacity-30'}`}>
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black text-white uppercase border italic ${hasJoined ? 'bg-slate-900 border-white/10' : 'bg-slate-800 border-white/5'}`}>
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-[9px] font-black text-white uppercase border italic ${hasJoined ? 'bg-emerald-600 border-white/20' : 'bg-slate-800 border-white/5'}`}>
                                                 {student?.firstName[0]}{student?.lastName[0]}
                                             </div>
                                             <div>
-                                                <div className="flex items-center gap-2">
-                                                    <p className="text-[10px] font-black uppercase text-white mb-0.5">{student?.firstName} {student?.lastName}</p>
-                                                    {!hasJoined && <span className="text-[7px] bg-white/10 px-1.5 py-0.5 rounded text-white/40 font-black uppercase">Not Joined</span>}
+                                                <p className="text-[10px] font-black uppercase text-white mb-0.5">{student?.firstName} {student?.lastName}</p>
+                                                <div className="flex items-center gap-3">
+                                                    <p className="text-[8px] font-black uppercase text-white/40 tracking-widest italic">{correctCount} Correct • {studentRes.length} Nodes</p>
                                                 </div>
-                                                <p className="text-[8px] font-black uppercase text-white/40 tracking-widest">{correctCount} Correct • {studentRes.length} Answers</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className={`text-lg font-black italic ${totalScore > 0 ? 'text-emerald-500' : 'text-white/20'}`}>{totalScore}</p>
-                                            <p className="text-[8px] font-black uppercase text-white/30">Points</p>
+                                            <p className={`text-xl font-black italic ${totalScore > 0 ? 'text-emerald-400' : 'text-white/20'}`}>{totalScore}</p>
+                                            <p className="text-[7px] font-black uppercase text-white/20 tracking-widest italic">Points</p>
                                         </div>
                                     </div>
                                 );
@@ -241,14 +238,14 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                         )}
                     </div>
 
-                    <div className="p-8 bg-slate-900 border-t border-white/10">
+                    <div className="p-10 bg-black/40 border-t border-white/10">
                         <button
                             disabled={releasing}
                             onClick={releaseNext}
-                            className="w-full bg-rose-600 text-white p-5 rounded-2xl flex items-center justify-between group shadow-xl shadow-rose-900/40 hover:bg-rose-700 transition-all disabled:opacity-50"
+                            className="w-full bg-rose-600 text-white p-5 rounded-xl flex items-center justify-between group transition-all disabled:opacity-50 shadow-2xl hover:bg-rose-700 italic"
                         >
-                            <span className="text-[9px] font-black uppercase tracking-[0.2em] ml-2 italic">
-                                {assessment.currentQuestionIndex >= assessment.questions.length - 1 ? "Finish Session" : (assessment.currentQuestionIndex === -1 ? "Start Session" : "Release Next")}
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] ml-2">
+                                {assessment.currentQuestionIndex >= assessment.questions.length - 1 ? "Terminate Session" : (assessment.currentQuestionIndex === -1 ? "Launch Protocol" : "Release Next Node")}
                             </span>
                             {releasing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5 fill-current" />}
                         </button>
@@ -257,8 +254,4 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
             </main>
         </div>
     );
-}
-
-function Activity({ className }: { className?: string }) {
-    return <Radio className={className} />;
 }
