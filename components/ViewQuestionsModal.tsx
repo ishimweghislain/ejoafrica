@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { X, CheckCircle2, XCircle, Info } from "lucide-react";
 
 interface Question {
@@ -33,11 +35,20 @@ export default function ViewQuestionsModal({
     responses,
     showCorrectAnswers
 }: ViewQuestionsModalProps) {
-    if (!isOpen) return null;
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
 
-    return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm">
-            <div className="bg-white w-full max-w-4xl max-h-[90vh] rounded-[3rem] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+    if (!isOpen || !mounted) return null;
+
+    return createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+            {/* Light Overlay */}
+            <div
+                className="absolute inset-0 bg-slate-900/20 backdrop-blur-md animate-in fade-in duration-500"
+                onClick={onClose}
+            />
+
+            <div className="relative bg-white w-full max-w-4xl max-h-[90vh] rounded-[3rem] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in slide-in-from-bottom-8 duration-500">
                 {/* Header */}
                 <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <div>
@@ -46,14 +57,14 @@ export default function ViewQuestionsModal({
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-3 bg-white text-slate-400 hover:text-rose-600 rounded-2xl border border-slate-100 transition-all shadow-sm"
+                        className="p-3 bg-white text-slate-400 hover:text-rose-600 rounded-2xl border border-slate-100 transition-all shadow-sm active:scale-90"
                     >
                         <X className="w-6 h-6" />
                     </button>
                 </div>
 
                 {/* Content */}
-                <div className="flex-grow overflow-y-auto p-8 space-y-10">
+                <div className="flex-grow overflow-y-auto p-8 space-y-10 custom-scrollbar">
                     {questions.map((q, idx) => {
                         const studentResponse = responses?.find(r => r.questionId === q.id);
 
@@ -136,7 +147,7 @@ export default function ViewQuestionsModal({
                                 <div>
                                     <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Total Score</p>
                                     <p className="text-xl font-black text-slate-900 italic leading-none">
-                                        {responses.reduce((acc, r) => acc + (r.isCorrect ? questions.find(q => q.id === r.questionId)?.marks || 0 : 0), 0)} PTS
+                                        {responses.reduce((acc, r) => acc + (r.isCorrect ? questions.find((q: any) => q.id === r.questionId)?.marks || 0 : 0), 0)} PTS
                                     </p>
                                 </div>
                             </>
@@ -144,12 +155,13 @@ export default function ViewQuestionsModal({
                     </div>
                     <button
                         onClick={onClose}
-                        className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl hover:bg-emerald-600 transition-all transition-transform active:scale-95"
+                        className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl hover:bg-emerald-600 transition-all transition-transform active:scale-95 italic"
                     >
                         Close View
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

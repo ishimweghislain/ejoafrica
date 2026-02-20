@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, User, CheckCircle2, Eye, Search, TrendingUp, Trophy } from "lucide-react";
 import ViewQuestionsModal from "./ViewQuestionsModal";
 
@@ -17,10 +18,13 @@ export default function StudentAnalyticsModal({
     assessment,
     type
 }: StudentAnalyticsModalProps) {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStudentAnswers, setSelectedStudentAnswers] = useState<any>(null);
 
-    if (!isOpen) return null;
+    if (!isOpen || !mounted) return null;
 
     // Normalize responses/submissions to a common format
     const results = (type === "ASSESSMENT" ? assessment.responses : assessment.submissions).map((r: any) => {
@@ -73,10 +77,16 @@ export default function StudentAnalyticsModal({
         ? uniqueResults.reduce((acc: number, cur: any) => acc + cur.score, 0) / uniqueResults.length
         : 0;
 
-    return (
+    return createPortal(
         <>
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm">
-                <div className="bg-white w-full max-w-5xl max-h-[90vh] rounded-[3rem] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+                {/* Lighter Overlay */}
+                <div
+                    className="absolute inset-0 bg-slate-900/20 backdrop-blur-md animate-in fade-in duration-500"
+                    onClick={onClose}
+                />
+
+                <div className="relative bg-white w-full max-w-5xl max-h-[90vh] rounded-[3rem] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in slide-in-from-bottom-8 duration-500">
                     {/* Header */}
                     <div className="p-10 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                         <div className="flex items-center gap-6">
@@ -124,7 +134,7 @@ export default function StudentAnalyticsModal({
                     </div>
 
                     {/* Students List */}
-                    <div className="flex-grow overflow-y-auto p-8 pt-0">
+                    <div className="flex-grow overflow-y-auto p-8 pt-0 custom-scrollbar">
                         <table className="w-full border-separate border-spacing-y-4">
                             <thead>
                                 <tr className="text-[10px] font-black uppercase text-slate-400 tracking-widest text-left">
@@ -208,6 +218,7 @@ export default function StudentAnalyticsModal({
                     showCorrectAnswers={true}
                 />
             )}
-        </>
+        </>,
+        document.body
     );
 }
