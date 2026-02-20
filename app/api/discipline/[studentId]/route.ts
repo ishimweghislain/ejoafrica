@@ -29,17 +29,20 @@ export async function GET(
 
     // Check if the requester is the student themselves, their parent, or staff
     let authorized = false;
-    if (session.userId === studentId) {
+    const role = session.role as string;
+    const userId = session.userId as string;
+
+    if (userId === studentId) {
         authorized = true;
-    } else if (session.role === "PARENT") {
+    } else if (role === "PARENT") {
         const parent = await prisma.user.findUnique({
-            where: { id: session.userId as string },
+            where: { id: userId },
             include: { children: { select: { id: true } } }
         });
         if (parent?.children.some(c => c.id === studentId)) {
             authorized = true;
         }
-    } else if (["SCHOOL_ADMIN", "DOS", "DOD", "TEACHER"].includes(session.role)) {
+    } else if (["SCHOOL_ADMIN", "DOS", "DOD", "TEACHER"].includes(role)) {
         authorized = true;
     }
 

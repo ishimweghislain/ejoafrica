@@ -18,13 +18,13 @@ export default function ChildrenDisciplinePage() {
 
             if (user.role === "STUDENT") {
                 // For students, their "children" list is just themselves
-                const selfRes = await fetch(`/api/users/${user.userId}`);
+                const selfRes = await fetch(`/api/users/${user.id}`);
                 const selfData = await selfRes.json();
                 setChildren([selfData]);
                 handleSelectChild(selfData);
             } else {
                 // Re-fetch parent with children expanded
-                const parentRes = await fetch(`/api/users/${user.userId}`);
+                const parentRes = await fetch(`/api/users/${user.id}`);
                 const parentData = await parentRes.json();
 
                 setChildren(parentData.children || []);
