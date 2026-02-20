@@ -175,9 +175,16 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                     >
                         <RefreshCcw className={`w-3.5 h-3.5 ${submitting ? 'animate-spin' : ''}`} />
                     </button>
-                    <div className="hidden sm:flex bg-slate-900 text-white px-5 py-2.5 rounded-2xl border border-slate-800 items-center gap-3 font-black text-[9px] uppercase italic shadow-lg shadow-slate-200">
-                        <Zap className="w-4 h-4 text-yellow-400" />
-                        LIVE SESSION
+                    <div className="hidden sm:flex flex-col items-end gap-1">
+                        <div className="bg-slate-900 text-white px-5 py-2.5 rounded-2xl border border-slate-800 flex items-center gap-3 font-black text-[9px] uppercase italic shadow-lg shadow-slate-200">
+                            <Zap className="w-4 h-4 text-yellow-400" />
+                            LIVE SESSION
+                        </div>
+                        {assessment.deadline && (
+                            <span className="text-[7.5px] font-black uppercase text-rose-500 tracking-[0.2em] animate-pulse">
+                                Deadline: {new Date(assessment.deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                        )}
                     </div>
                 </div>
             </header>
