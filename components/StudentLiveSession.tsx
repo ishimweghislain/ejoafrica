@@ -163,17 +163,17 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                         <Radio className="w-5 h-5 md:w-6 md:h-6 animate-pulse" />
                     </div>
                     <div>
-                        <h2 className="text-lg md:text-xl font-black text-slate-900 italic uppercase tracking-tighter line-clamp-1">{assessment.title}</h2>
-                        <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest leading-none mt-1">{assessment.course.title} • Teacher {assessment.teacher.firstName}</p>
+                        <h2 className="text-base md:text-lg font-black text-slate-900 italic uppercase tracking-tighter line-clamp-1">{assessment.title}</h2>
+                        <p className="text-[7.5px] font-black uppercase text-slate-400 tracking-widest leading-none mt-0.5">{assessment.course.title} • Teacher {assessment.teacher.firstName}</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => fetchStatus()}
-                        className="p-3 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border border-slate-100"
+                        className="p-2.5 bg-slate-50 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border border-slate-100"
                         title="Refresh Status"
                     >
-                        <RefreshCcw className={`w-4 h-4 ${submitting ? 'animate-spin' : ''}`} />
+                        <RefreshCcw className={`w-3.5 h-3.5 ${submitting ? 'animate-spin' : ''}`} />
                     </button>
                     <div className="hidden sm:flex bg-slate-900 text-white px-5 py-2.5 rounded-2xl border border-slate-800 items-center gap-3 font-black text-[9px] uppercase italic shadow-lg shadow-slate-200">
                         <Zap className="w-4 h-4 text-yellow-400" />
@@ -229,12 +229,12 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                                     <span className="tabular-nums">{timeLeft !== null ? `${timeLeft}s Remaining` : `No Time Limit`}</span>
                                 </div>
                             </div>
-                            <h1 className="text-3xl md:text-5xl font-black text-slate-900 leading-tight uppercase italic tracking-tighter text-center py-6">
+                            <h1 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight uppercase italic tracking-tighter text-center py-4">
                                 {currentQuestion.text}
                             </h1>
                             {timeLeft !== null && timeLeft <= 10 && !hasAnsweredCurrent && (
-                                <div className="flex justify-center -mt-6 mb-6">
-                                    <div className={`text-6xl md:text-8xl font-black italic tracking-tighter tabular-nums ${timeLeft <= 5 ? 'text-rose-600 animate-ping' : 'text-slate-200'}`}>
+                                <div className="flex justify-center -mt-4 mb-4">
+                                    <div className={`text-5xl md:text-6xl font-black italic tracking-tighter tabular-nums ${timeLeft <= 5 ? 'text-rose-600 animate-ping' : 'text-slate-200'}`}>
                                         {timeLeft}
                                     </div>
                                 </div>
@@ -246,8 +246,8 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                                 <button
                                     key={idx}
                                     onClick={() => setSelectedAnswer(opt)}
-                                    className={`p-6 md:p-8 rounded-[2rem] border-2 text-left transition-all relative overflow-hidden group ${selectedAnswer === opt
-                                        ? 'bg-white border-rose-600 scale-[1.02] shadow-2xl'
+                                    className={`p-4 md:p-5 rounded-2xl border-2 text-left transition-all relative overflow-hidden group ${selectedAnswer === opt
+                                        ? 'bg-white border-rose-600 scale-[1.01] shadow-xl'
                                         : 'bg-white border-slate-100 text-slate-600 hover:border-rose-200 hover:bg-slate-50'
                                         }`}
                                 >
@@ -265,13 +265,13 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
                         <button
                             disabled={!selectedAnswer || submitting}
                             onClick={() => submitAnswer()}
-                            className={`w-full p-6 md:p-7 rounded-[2rem] flex items-center justify-between group transition-all shadow-xl ${selectedAnswer
+                            className={`w-full p-4 md:p-5 rounded-2xl flex items-center justify-between group transition-all shadow-lg ${selectedAnswer
                                 ? 'bg-slate-900 text-white hover:bg-black scale-[1.01]'
                                 : 'bg-slate-100 text-slate-300 cursor-not-allowed border border-slate-200'
                                 }`}
                         >
-                            <span className="text-lg md:text-xl font-black uppercase tracking-[0.2em] ml-4 italic">Submit Answer</span>
-                            {submitting ? <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin" /> : <Send className="w-6 h-6 md:w-8 md:h-8 group-hover:translate-x-2 transition-all" />}
+                            <span className="text-base md:text-lg font-black uppercase tracking-[0.2em] ml-2 italic">Submit Answer</span>
+                            {submitting ? <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" /> : <Send className="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-1 transition-all" />}
                         </button>
                     </div>
                 ) : (

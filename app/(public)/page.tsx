@@ -1,150 +1,232 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Users, BookOpen, Calendar, ShieldCheck, Sparkles, GraduationCap } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+    ArrowRight, CheckCircle2, Users, BookOpen, Calendar,
+    ShieldCheck, Sparkles, GraduationCap, Radio, Zap, Activity,
+    Trophy, BarChart3, Globe, Rocket
+} from "lucide-react";
+
+const heroImages = [
+    "/images/education.jpg",
+    "https://images.unsplash.com/photo-1523050335392-9385117942d4?q=80&w=2070&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1503676260728-1c00da07bb5e?q=80&w=2026&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1509062522246-3755967927d7?q=80&w=2070&auto=format&fit=crop"
+];
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+};
 
 export default function HomePage() {
+    const [currentImage, setCurrentImage] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentImage((prev) => (prev + 1) % heroImages.length);
+        }, 2000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const words = "Future-Proof Education Management".split(" ");
+
     return (
-        <div className="flex flex-col gap-12 md:gap-24 pb-20 overflow-x-hidden">
+        <div className="flex flex-col gap-12 md:gap-24 pb-20 overflow-x-hidden bg-white">
             {/* Hero Section */}
-            <section className="relative min-h-[85vh] flex items-center overflow-hidden pt-12 md:pt-0">
-                <div className="absolute inset-0 z-0 scale-110 animate-pulse-slow">
-                    <Image
-                        src="/images/education.jpg"
-                        alt="Students learning"
-                        fill
-                        className="object-cover brightness-[0.35]"
-                        priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-950/20 to-black/80"></div>
-                </div>
+            <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={currentImage}
+                        initial={{ opacity: 0, scale: 1.1 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1.5 }}
+                        className="absolute inset-0 z-0"
+                    >
+                        <Image
+                            src={heroImages[currentImage]}
+                            alt="Education at Ejo Africa"
+                            fill
+                            className="object-cover brightness-[0.3]"
+                            priority
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-white"></div>
+                    </motion.div>
+                </AnimatePresence>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
-                    <div className="max-w-2xl space-y-6">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-md text-emerald-400 text-xs font-black uppercase tracking-widest animate-fade-in">
+                    <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="max-w-3xl space-y-8"
+                    >
+                        <motion.div
+                            variants={itemVariants}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-md text-emerald-400 text-xs font-black uppercase tracking-[0.2em]"
+                        >
                             <Sparkles className="w-3 h-3" />
-                            <span>Next-Gen Education</span>
-                        </div>
+                            <span>Africa's Leading Learning Hub</span>
+                        </motion.div>
 
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] animate-fade-up">
-                            Future-Proof <span className="text-emerald-400">Education</span> Management
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[1] tracking-tighter">
+                            {words.map((word, i) => (
+                                <motion.span
+                                    key={i}
+                                    variants={itemVariants}
+                                    className="inline-block mr-3"
+                                >
+                                    {word === "Education" ? (
+                                        <span className="text-emerald-400 italic">Education</span>
+                                    ) : word}
+                                </motion.span>
+                            ))}
                         </h1>
 
-                        <p className="text-base md:text-lg text-gray-300 leading-relaxed max-w-xl animate-fade-up delay-100">
-                            Streamline your school administrative workflows, empower teachers, and engage parents with Africa's most advanced management platform.
-                        </p>
+                        <motion.p
+                            variants={itemVariants}
+                            className="text-lg md:text-xl text-gray-300 leading-relaxed max-w-2xl font-medium"
+                        >
+                            Revolutionize your classroom with real-time assessments, automated grading, and comprehensive school management tools tailored for the African continent.
+                        </motion.p>
 
-                        <div className="flex flex-wrap gap-4 pt-6 animate-fade-up delay-200">
-                            <Link href="/login" className="btn-primary group flex items-center gap-2">
-                                Launch Portal
-                                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        <motion.div
+                            variants={itemVariants}
+                            className="flex flex-wrap gap-4 pt-4"
+                        >
+                            <Link href="/login" className="bg-emerald-500 text-white px-10 py-5 rounded-2xl font-black hover:bg-emerald-400 transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-emerald-500/20 text-sm uppercase tracking-widest flex items-center gap-3">
+                                Get Started
+                                <ArrowRight className="w-5 h-5" />
                             </Link>
-                            <Link href="/features" className="px-6 py-3 rounded-xl font-bold border border-white/20 text-white backdrop-blur-md transition-all hover:bg-white/10 text-sm">
+                            <Link href="/features" className="px-10 py-5 rounded-2xl font-black border border-white/20 text-white backdrop-blur-md transition-all hover:bg-white/10 text-sm uppercase tracking-widest">
                                 Explore Features
                             </Link>
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 </div>
             </section>
 
-            {/* Partners section - Lycee De Kigali Focus */}
-            <section className="max-w-7xl mx-auto px-6 w-full text-center space-y-8">
-                <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 opacity-60">Trusted Educational Partners</h2>
-                <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
-                    <div className="flex items-center gap-3 text-lg md:text-xl font-black text-gray-600">
-                        <GraduationCap className="w-6 h-6" />
-                        <span>LYCÉE DE KIGALI</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-lg md:text-xl font-black text-gray-600">
-                        <BookOpen className="w-6 h-6" />
-                        <span>GREEN HILLS</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-lg md:text-xl font-black text-gray-600">
-                        <Users className="w-6 h-6" />
-                        <span>RIVIERA HS</span>
-                    </div>
-                </div>
-            </section>
-
-            {/* Core Features - Bubbling Up Style */}
-            <section className="bg-gray-50/50 dark:bg-gray-900/30 py-20 md:py-32">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="text-center max-w-xl mx-auto mb-16 space-y-4">
-                        <h2 className="text-3xl md:text-4xl font-black tracking-tight">Everything Bubbling Up</h2>
-                        <p className="text-sm text-gray-500 font-medium">Modern education demands modern tools. We've got you covered.</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-                        <FeatureCard
-                            icon={<ShieldCheck className="w-8 h-8 text-emerald-500" />}
-                            title="Secure Roles"
-                            description="Custom permissions for Admin, Teachers, Students, and Parents."
-                            delay="0s"
-                        />
-                        <FeatureCard
-                            icon={<Calendar className="w-8 h-8 text-blue-500" />}
-                            title="Smart Planning"
-                            description="Manage years, terms, and timetables with automated conflict detection."
-                            delay="0.1s"
-                        />
-                        <FeatureCard
-                            icon={<BookOpen className="w-8 h-8 text-orange-500" />}
-                            title="Deep Curriculum"
-                            description="Hierarchical syllabus management from subtopics to lesson plans."
-                            delay="0.2s"
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* Lycee De Kigali Testimonial section */}
-            <section className="max-w-7xl mx-auto px-6 w-full py-12 md:py-20 lg:py-32 border-t">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    <div className="relative aspect-square md:aspect-video lg:aspect-square bg-emerald-600 rounded-[3rem] overflow-hidden shadow-2xl animate-bubble">
-                        <div className="absolute inset-0 p-12 flex flex-col justify-end text-white space-y-4 z-10">
-                            <div className="bg-white/20 backdrop-blur-md w-fit p-4 rounded-[2rem] border border-white/10 mb-4">
-                                <GraduationCap className="w-12 h-12" />
-                            </div>
-                            <h3 className="text-3xl font-black">Lycee De Kigali</h3>
-                            <p className="text-emerald-100 font-medium italic">"The digital backbone of our excellence."</p>
+            {/* Feature Highlights - Live & Auto Grading */}
+            <section className="max-w-7xl mx-auto px-6 w-full -mt-20 relative z-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <motion.div
+                        whileHover={{ y: -10 }}
+                        className="bg-white p-10 rounded-[3rem] shadow-2xl border border-slate-100 flex flex-col gap-6"
+                    >
+                        <div className="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600">
+                            <Radio className="w-8 h-8 animate-pulse" />
                         </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                        {/* Using a school themed icon placeholder since I don't have an image path for LDK */}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <GraduationCap className="w-64 h-64 text-white/5" />
-                        </div>
-                    </div>
-
-                    <div className="space-y-8">
-                        <div className="space-y-4">
-                            <span className="text-emerald-600 font-black text-xs uppercase tracking-widest">Partner Spotlight</span>
-                            <h2 className="text-4xl font-black leading-tight text-gray-900">Elevating Standards at <span className="text-emerald-600">Lycée De Kigali</span></h2>
-                            <p className="text-gray-500 leading-relaxed font-medium">
-                                As one of Rwanda's top-performing schools, Lycée De Kigali needed a system that could match their rigorous academic standards. Eshuri provided the perfect solution for managing complex course hierarchies and detailed student disciplinary tracking.
+                        <div className="space-y-3">
+                            <h3 className="text-3xl font-black italic tracking-tighter uppercase">Live Assessments</h3>
+                            <p className="text-slate-500 font-medium leading-relaxed">
+                                Engage students in real-time with our interactive live sessions. Teachers control the pace, and students respond instantly from any device.
                             </p>
                         </div>
-
-                        <div className="bg-gray-50 p-8 rounded-[2rem] border border-gray-100 italic font-medium text-gray-700 relative">
-                            "Switching to Eshuri was the best decision for our administrative staff. The time saved on timetable generation and report processing is unprecedented. It has truly modernized our teaching environment."
-                            <footer className="mt-4 not-italic font-black text-sm text-gray-900">— Principal, Lycée De Kigali</footer>
+                        <div className="flex items-center gap-2 text-rose-600 font-black text-xs uppercase tracking-widest">
+                            <div className="w-2 h-2 rounded-full bg-rose-600 animate-ping" />
+                            Real-time Interaction
                         </div>
-                    </div>
+                    </motion.div>
+
+                    <motion.div
+                        whileHover={{ y: -10 }}
+                        className="bg-slate-900 p-10 rounded-[3rem] shadow-2xl flex flex-col gap-6 text-white"
+                    >
+                        <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-emerald-400">
+                            <Zap className="w-8 h-8" />
+                        </div>
+                        <div className="space-y-3">
+                            <h3 className="text-3xl font-black italic tracking-tighter uppercase">Automatic Grading</h3>
+                            <p className="text-slate-400 font-medium leading-relaxed">
+                                Eliminate the manual labor. Our advanced system grades submissions instantly as they arrive, providing immediate feedback and detailed analytics.
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-2 text-emerald-400 font-black text-xs uppercase tracking-widest">
+                            <CheckCircle2 className="w-4 h-4" />
+                            Zero Manual Work
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 
-            {/* CTA Section */}
-            <section className="max-w-7xl mx-auto px-6 w-full mb-12">
-                <div className="bg-gray-900 rounded-[2.5rem] p-8 md:p-20 text-center text-white space-y-8 relative overflow-hidden shadow-2xl">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-[100px] -mr-48 -mt-48"></div>
-                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] -ml-48 -mb-48"></div>
+            {/* Core Features Grid */}
+            <section className="max-w-7xl mx-auto px-6 w-full py-20">
+                <div className="text-center max-w-2xl mx-auto mb-20 space-y-4">
+                    <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-600 italic">Advanced Capabilities</h2>
+                    <h3 className="text-4xl md:text-5xl font-black tracking-tighter uppercase italic">Built for Excellence</h3>
+                    <p className="text-slate-500 font-medium leading-relaxed underline decoration-emerald-200 decoration-4 underline-offset-8">Everything you need to run a modern educational institution in one place.</p>
+                </div>
 
-                    <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">Ready for a <span className="text-emerald-400">Live Demo</span>?</h2>
-                    <p className="text-gray-400 text-sm md:text-base font-medium max-w-xl mx-auto">
-                        Experience how Eshuri can transform your institution. Contact us to request your administrative access.
-                    </p>
-                    <div className="flex justify-center pt-8">
-                        <Link href="/contact" className="bg-emerald-500 text-white px-10 py-4 rounded-2xl font-black hover:bg-emerald-400 transition-all hover:scale-105 active:scale-95 shadow-xl shadow-emerald-500/20 text-sm uppercase tracking-widest">
-                            Contact Sales
-                        </Link>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <CoreFeature
+                        icon={<Activity className="w-6 h-6" />}
+                        title="Live Tracking"
+                        desc="Monitor student progress in real-time during every assessment session."
+                        color="text-rose-500"
+                    />
+                    <CoreFeature
+                        icon={<BarChart3 className="w-6 h-6" />}
+                        title="Deep Analytics"
+                        desc="Detailed reports and performance charts for every single student."
+                        color="text-blue-500"
+                    />
+                    <CoreFeature
+                        icon={<Trophy className="w-6 h-6" />}
+                        title="Auto-Ranking"
+                        desc="Instant position calculation and digital award generation."
+                        color="text-amber-500"
+                    />
+                    <CoreFeature
+                        icon={<Globe className="w-6 h-6" />}
+                        title="Parent Portal"
+                        desc="Real-time access for parents to track their children's educational journey."
+                        color="text-emerald-500"
+                    />
+                </div>
+            </section>
+
+            {/* Interactive Stats Section */}
+            <section className="max-w-7xl mx-auto px-6 w-full mb-20">
+                <div className="bg-emerald-600 rounded-[4rem] p-12 md:p-20 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[100px] -mr-48 -mt-48 transition-all group-hover:bg-white/20"></div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div className="space-y-8 text-white relative z-10">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 border border-white/20 backdrop-blur-md uppercase text-[10px] font-black tracking-widest">
+                                <Rocket className="w-4 h-4" />
+                                Scalable Infrastructure
+                            </div>
+                            <h2 className="text-4xl md:text-6xl font-black leading-none italic tracking-tighter">JOIN THE FUTURE OF <span className="underline decoration-white/30 decoration-8 underline-offset-10">RWANDA'S</span> SCHOOLS</h2>
+                            <p className="text-emerald-50 font-medium text-lg leading-relaxed">
+                                Join hundreds of schools across the continent transitioning to the Ejo Africa digital ecosystem. Standardize your curriculum, empower your teachers, and delight your parents.
+                            </p>
+                            <Link href="/register" className="inline-flex items-center gap-10 bg-white text-emerald-900 px-12 py-6 rounded-[2rem] font-black uppercase text-xs tracking-[0.3em] hover:bg-emerald-50 transition-all hover:scale-105 shadow-2xl">
+                                Join Us Now
+                                <ArrowRight className="w-6 h-6" />
+                            </Link>
+                        </div>
+                        <div className="relative aspect-square md:aspect-video lg:aspect-square bg-white/5 rounded-[3.5rem] p-8 backdrop-blur-sm border border-white/10">
+                            <div className="grid grid-cols-2 gap-8 h-full">
+                                <StatItem label="Active Users" value="25K+" desc="Across Rwanda" />
+                                <StatItem label="Assessments" value="1M+" desc="Graded Automatically" />
+                                <StatItem label="Success Rate" value="99%" desc="Digital Adoption" />
+                                <StatItem label="Schools" value="400+" desc="Trusted Partners" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -152,15 +234,29 @@ export default function HomePage() {
     );
 }
 
-function FeatureCard({ icon, title, description, delay }: { icon: React.ReactNode, title: string, description: string, delay: string }) {
+function CoreFeature({ icon, title, desc, color }: { icon: any, title: string, desc: string, color: string }) {
     return (
-        <div
-            className="bg-white dark:bg-gray-800 p-10 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm transition-all hover:shadow-2xl hover:-translate-y-2 group animate-bubble"
-            style={{ animationDelay: delay }}
+        <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all flex flex-col gap-6"
         >
-            <div className="mb-8 w-16 h-16 rounded-[1.5rem] bg-gray-50 dark:bg-gray-900 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">{icon}</div>
-            <h3 className="text-xl font-black mb-4 tracking-tight">{title}</h3>
-            <p className="text-gray-500 text-sm leading-relaxed font-medium">{description}</p>
+            <div className={`w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center ${color}`}>
+                {icon}
+            </div>
+            <div className="space-y-3">
+                <h4 className="font-black uppercase italic tracking-tighter text-lg">{title}</h4>
+                <p className="text-slate-500 text-[11px] leading-relaxed font-medium">{desc}</p>
+            </div>
+        </motion.div>
+    );
+}
+
+function StatItem({ label, value, desc }: { label: string, value: string, desc: string }) {
+    return (
+        <div className="flex flex-col justify-center items-center text-center p-6 bg-white/5 rounded-[2.5rem] border border-white/10">
+            <p className="text-[9px] font-black uppercase text-emerald-200 tracking-[0.2em] mb-2">{label}</p>
+            <p className="text-5xl font-black text-white italic tracking-tighter mb-2">{value}</p>
+            <p className="text-[10px] text-emerald-100/60 font-medium uppercase tracking-widest">{desc}</p>
         </div>
     );
 }

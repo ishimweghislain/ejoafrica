@@ -151,7 +151,7 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                                         <span>{currentQuestion.timer}s Limit</span>
                                     </div>
                                 </div>
-                                <h1 className="text-5xl font-black text-white leading-tight uppercase italic tracking-tighter">
+                                <h1 className="text-3xl md:text-4xl font-black text-white leading-tight uppercase italic tracking-tighter">
                                     {currentQuestion.text}
                                 </h1>
                             </div>
@@ -163,16 +163,16 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                                     const percentage = questionResponses.length > 0 ? (count / questionResponses.length) * 100 : 0;
 
                                     return (
-                                        <div key={idx} className={`p-8 rounded-[2.5rem] border transition-all relative overflow-hidden ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-white/5 border-white/10'}`}>
+                                        <div key={idx} className={`p-5 rounded-3xl border transition-all relative overflow-hidden ${isCorrect ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-white/5 border-white/10'}`}>
                                             <div className="absolute top-0 left-0 h-full bg-emerald-500/5 transition-all duration-1000" style={{ width: `${percentage}%` }}></div>
                                             <div className="relative flex items-center justify-between pb-4 border-b border-white/5 mb-4">
                                                 <span className="text-white/20 text-[10px] font-black uppercase tracking-widest">Option {String.fromCharCode(65 + idx)}</span>
                                                 {isCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
                                             </div>
                                             <p className={`relative text-xl font-black italic uppercase ${isCorrect ? 'text-emerald-500' : 'text-white/80'}`}>{opt}</p>
-                                            <div className="relative mt-6 flex justify-between items-end">
-                                                <p className="text-[10px] font-black uppercase text-white/40 tracking-widest">{count} Choices</p>
-                                                <p className="text-2xl font-black text-white italic">{Math.round(percentage)}%</p>
+                                            <div className="relative mt-4 flex justify-between items-end">
+                                                <p className="text-[9px] font-black uppercase text-white/40 tracking-widest">{count} Choices</p>
+                                                <p className="text-xl font-black text-white italic">{Math.round(percentage)}%</p>
                                             </div>
                                         </div>
                                     );
@@ -218,7 +218,7 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                                 const hasJoined = studentRes.length > 0;
 
                                 return (
-                                    <div key={student.id} className={`p-5 rounded-3xl border flex items-center justify-between group transition-all ${hasJoined ? 'bg-white/5 border-white/5 hover:bg-white/[0.08]' : 'bg-white/[0.02] border-white/[0.02] opacity-40'}`}>
+                                    <div key={student.id} className={`p-3.5 rounded-2xl border flex items-center justify-between group transition-all ${hasJoined ? 'bg-white/5 border-white/5 hover:bg-white/[0.08]' : 'bg-white/[0.02] border-white/[0.02] opacity-40'}`}>
                                         <div className="flex items-center gap-4">
                                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black text-white uppercase border italic ${hasJoined ? 'bg-slate-900 border-white/10' : 'bg-slate-800 border-white/5'}`}>
                                                 {student?.firstName[0]}{student?.lastName[0]}
@@ -245,10 +245,10 @@ export default function TeacherLiveSession({ assessment: initialAssessment, onEx
                         <button
                             disabled={releasing}
                             onClick={releaseNext}
-                            className="w-full bg-rose-600 text-white p-6 rounded-[2rem] flex items-center justify-between group shadow-2xl shadow-rose-900/40 hover:bg-rose-700 transition-all disabled:opacity-50"
+                            className="w-full bg-rose-600 text-white p-5 rounded-2xl flex items-center justify-between group shadow-xl shadow-rose-900/40 hover:bg-rose-700 transition-all disabled:opacity-50"
                         >
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] ml-4 italic">
-                                {assessment.currentQuestionIndex >= assessment.questions.length - 1 ? "Finish Session" : (assessment.currentQuestionIndex === -1 ? "Start Assessment" : "Release Next")}
+                            <span className="text-[9px] font-black uppercase tracking-[0.2em] ml-2 italic">
+                                {assessment.currentQuestionIndex >= assessment.questions.length - 1 ? "Finish Session" : (assessment.currentQuestionIndex === -1 ? "Start Session" : "Release Next")}
                             </span>
                             {releasing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5 fill-current" />}
                         </button>

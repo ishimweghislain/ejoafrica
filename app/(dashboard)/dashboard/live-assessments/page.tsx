@@ -264,14 +264,14 @@ export default function LiveAssessmentsPage() {
                     </div>
                 ) : filteredAssessments.length > 0 ? (
                     filteredAssessments.map(a => (
-                        <div key={a.id} className="bg-white p-8 rounded-[3.5rem] border border-slate-100 shadow-sm hover:shadow-2xl transition-all group relative overflow-hidden flex flex-col gap-8">
-                            <div className={`absolute top-0 right-0 w-32 h-32 ${a.status === 'LIVE' ? 'bg-rose-500/10' : 'bg-slate-900/[0.02]'} rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform`}></div>
+                        <div key={a.id} className="bg-white p-5 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group relative overflow-hidden flex flex-col gap-6">
+                            <div className={`absolute top-0 right-0 w-24 h-24 ${a.status === 'LIVE' ? 'bg-rose-500/10' : 'bg-slate-900/[0.02]'} rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform`}></div>
 
                             <div className="space-y-6 flex-grow">
                                 <div className="flex items-start justify-between">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`w-14 h-14 ${a.status === 'LIVE' ? 'bg-rose-600 text-white animate-pulse' : 'bg-slate-900 text-white'} rounded-[1.5rem] flex items-center justify-center shadow-xl`}>
-                                            <Radio className="w-7 h-7" />
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-10 h-10 ${a.status === 'LIVE' ? 'bg-rose-600 text-white animate-pulse' : 'bg-slate-900 text-white'} rounded-xl flex items-center justify-center shadow-lg`}>
+                                            <Radio className="w-5 h-5" />
                                         </div>
                                         <div>
                                             <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-600 mb-1">{a.course.title}</h4>
@@ -295,8 +295,8 @@ export default function LiveAssessmentsPage() {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-2xl font-black text-slate-900 leading-tight uppercase italic tracking-tighter">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <h3 className="text-lg font-black text-slate-900 leading-tight uppercase italic tracking-tighter line-clamp-1">
                                             {a.title}
                                         </h3>
                                         {a.deadline && (
@@ -335,10 +335,10 @@ export default function LiveAssessmentsPage() {
                                 {a.status === 'LIVE' ? (
                                     <button
                                         onClick={() => startSession(a)}
-                                        className="w-full bg-rose-600 text-white p-5 rounded-[2rem] flex items-center justify-between group/live hover:bg-rose-700 transition-all shadow-xl shadow-rose-200"
+                                        className="w-full bg-rose-600 text-white p-4 rounded-2xl flex items-center justify-between group/live hover:bg-rose-700 transition-all shadow-lg shadow-rose-200"
                                     >
-                                        <span className="text-[10px] font-black uppercase tracking-[0.3em] ml-4">Join Session</span>
-                                        <Play className="w-5 h-5 fill-current" />
+                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] ml-2">Join Session</span>
+                                        <Play className="w-4 h-4 fill-current" />
                                     </button>
                                 ) : a.status === 'COMPLETED' ? (
                                     <div className="bg-emerald-50 p-6 rounded-[2rem] border border-emerald-100 flex items-center justify-between">
@@ -369,10 +369,10 @@ export default function LiveAssessmentsPage() {
                                                     }).then(() => fetchData());
                                                 }
                                             }}
-                                            className="w-full bg-slate-900 text-white p-5 rounded-[2rem] flex items-center justify-between hover:bg-rose-600 transition-all shadow-xl"
+                                            className="w-full bg-slate-900 text-white p-4 rounded-2xl flex items-center justify-between hover:bg-rose-600 transition-all shadow-lg"
                                         >
-                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] ml-4">Go Live</span>
-                                            <Zap className="w-5 h-5 fill-current text-yellow-400" />
+                                            <span className="text-[9px] font-black uppercase tracking-[0.2em] ml-2">Go Live</span>
+                                            <Zap className="w-4 h-4 fill-current text-yellow-400" />
                                         </button>
                                     )
                                 )}
