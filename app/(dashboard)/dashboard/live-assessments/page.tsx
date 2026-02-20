@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import {
     Plus, Search, Radio, Clock,
     Loader2, User, CheckCircle2, Eye, Printer, FileText,
-    Zap, RefreshCcw, Edit3, Trash2
+    Zap, RefreshCcw, Edit3, Trash2, TrendingUp
 } from "lucide-react";
 import LiveAssessmentModal from "@/components/LiveAssessmentModal";
 import TeacherLiveSession from "@/components/TeacherLiveSession";
 import StudentLiveSession from "@/components/StudentLiveSession";
+import ViewQuestionsModal from "@/components/ViewQuestionsModal";
+import StudentAnalyticsModal from "@/components/StudentAnalyticsModal";
 import { toast } from "react-hot-toast";
 
 export default function LiveAssessmentsPage() {
@@ -20,6 +22,8 @@ export default function LiveAssessmentsPage() {
     const [user, setUser] = useState<any>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterBy, setFilterBy] = useState("ALL");
+    const [viewQuestionsData, setViewQuestionsData] = useState<any>(null);
+    const [viewAnalyticsData, setViewAnalyticsData] = useState<any>(null);
 
     async function fetchData() {
         setLoading(true);
@@ -235,9 +239,29 @@ export default function LiveAssessmentsPage() {
                                     </button>
                                 ) : a.status === 'COMPLETED' ? (
                                     <div className="flex gap-3">
-                                        <div className="flex-grow bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
-                                            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                                            <span className="text-[8px] font-black uppercase text-slate-500 italic">Finished</span>
+                                        <div className="flex-grow flex gap-2">
+                                            <div className="flex-grow bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center gap-3">
+                                                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                                <span className="text-[8px] font-black uppercase text-slate-500 italic">Finished</span>
+                                            </div>
+                                            {isTeacher && (
+                                                <button
+                                                    onClick={() => setViewAnalyticsData(a)}
+                                                    className="p-4 bg-slate-900 text-white rounded-xl shadow-lg hover:bg-emerald-600 transition-all"
+                                                    title="Student Analytics"
+                                                >
+                                                    <TrendingUp className="w-5 h-5" />
+                                                </button>
+                                            )}
+                                            {(isTeacher || isStudent) && (
+                                                <button
+                                                    onClick={() => setViewQuestionsData(a)}
+                                                    className="p-4 bg-indigo-600 text-white rounded-xl shadow-lg hover:bg-indigo-700 transition-all"
+                                                    title="View Questions"
+                                                >
+                                                    <Eye className="w-5 h-5" />
+                                                </button>
+                                            )}
                                         </div>
                                         <button onClick={() => printReport(a)} className="p-4 bg-emerald-600 text-white rounded-xl shadow-lg hover:bg-emerald-700 transition-all"><Printer className="w-5 h-5" /></button>
                                     </div>
@@ -277,6 +301,30 @@ export default function LiveAssessmentsPage() {
                 onClose={() => { setIsAddModalOpen(false); setEditData(null); }}
                 onSuccess={fetchData}
             />
-        </div>
+
+            {
+                viewQuestionsData && (
+                    <ViewQuestionsModal
+                        isOpen={true}
+                        onClose={() => setViewQuestionsData(null)}
+                        title={viewQuestionsData.title}
+                        questions={viewQuestionsData.questions}
+                        responses={isStudent ? viewQuestionsData.responses.filter((r: any) => r.studentId === user.id) : undefined}
+                        showCorrectAnswers={true}
+                    />
+                )
+            }
+
+            {
+                viewAnalyticsData && (
+                    <StudentAnalyticsModal
+                        isOpen={true}
+                        onClose={() => setViewAnalyticsData(null)}
+                        assessment={viewAnalyticsData}
+                        type="ASSESSMENT"
+                    />
+                )
+            }
+        </div >
     );
 }

@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import AssignmentModal from "@/components/AssignmentModal";
 import TakeAssignmentModal from "@/components/TakeAssignmentModal";
+import ViewQuestionsModal from "@/components/ViewQuestionsModal";
+import StudentAnalyticsModal from "@/components/StudentAnalyticsModal";
 import { toast } from "react-hot-toast";
 
 export default function AssignmentsPage() {
@@ -20,6 +22,8 @@ export default function AssignmentsPage() {
     const [user, setUser] = useState<any>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterBy, setFilterBy] = useState("ALL");
+    const [viewQuestionsData, setViewQuestionsData] = useState<any>(null);
+    const [viewAnalyticsData, setViewAnalyticsData] = useState<any>(null);
 
     async function fetchData() {
         setLoading(true);
@@ -372,9 +376,26 @@ export default function AssignmentsPage() {
                                                                     </div>
                                                                 </div>
                                                                 {sub ? (
-                                                                    <div className="text-right">
-                                                                        <p className="text-sm font-black text-emerald-600 italic">{sub.score} Pts</p>
-                                                                        <p className="text-[8px] font-black text-slate-400 uppercase">{sub.status}</p>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <div className="text-right">
+                                                                            <p className="text-sm font-black text-emerald-600 italic">{sub.score} Pts</p>
+                                                                            <p className="text-[8px] font-black text-slate-400 uppercase">{sub.status}</p>
+                                                                        </div>
+                                                                        <button
+                                                                            onClick={() => {
+                                                                                const studentAnswers = a.questions.flatMap((q: any) =>
+                                                                                    q.answers.filter((ans: any) => ans.studentId === child.id).map((ans: any) => ({
+                                                                                        questionId: q.id,
+                                                                                        answer: ans.answer,
+                                                                                        isCorrect: ans.isCorrect
+                                                                                    }))
+                                                                                );
+                                                                                setViewQuestionsData({ ...a, studentAnswers });
+                                                                            }}
+                                                                            className="p-2 bg-white text-slate-400 hover:text-emerald-600 rounded-lg border border-slate-100 shadow-sm"
+                                                                        >
+                                                                            <Eye className="w-3.5 h-3.5" />
+                                                                        </button>
                                                                     </div>
                                                                 ) : (
                                                                     <p className="text-[9px] font-black text-red-400 uppercase italic">-- / --</p>
@@ -384,13 +405,40 @@ export default function AssignmentsPage() {
                                                     })}
                                                 </div>
                                             ) : (
-                                                <button
-                                                    onClick={() => printReports(a)}
-                                                    className="w-full bg-slate-50 text-slate-900 p-5 rounded-[2rem] flex items-center justify-between hover:bg-slate-900 hover:text-white transition-all group/view border border-slate-100"
-                                                >
-                                                    <span className="text-[10px] font-black uppercase tracking-widest ml-4 italic">View Reports</span>
-                                                    <ArrowRight className="w-5 h-5 transform group-hover/view:translate-x-2 transition-all" />
-                                                </button>
+                                                <div className="flex gap-3">
+                                                    <button
+                                                        onClick={() => printReports(a)}
+                                                        className="flex-grow bg-slate-50 text-slate-900 p-5 rounded-[2rem] flex items-center justify-between hover:bg-slate-900 hover:text-white transition-all group/view border border-slate-100"
+                                                    >
+                                                        <span className="text-[10px] font-black uppercase tracking-widest ml-4 italic">View Reports</span>
+                                                        <ArrowRight className="w-5 h-5 transform group-hover/view:translate-x-2 transition-all" />
+                                                    </button>
+                                                    {isTeacher && (
+                                                        <button
+                                                            onClick={() => setViewAnalyticsData(a)}
+                                                            className="p-5 bg-slate-900 text-white rounded-[2rem] shadow-xl hover:bg-emerald-600 transition-all"
+                                                        >
+                                                            <TrendingUp className="w-5 h-5" />
+                                                        </button>
+                                                    )}
+                                                    {(isTeacher || studentSubmission) && (
+                                                        <button
+                                                            onClick={() => {
+                                                                const studentAnswers = studentSubmission ? a.questions.flatMap((q: any) =>
+                                                                    q.answers.filter((ans: any) => ans.studentId === user.id).map((ans: any) => ({
+                                                                        questionId: q.id,
+                                                                        answer: ans.answer,
+                                                                        isCorrect: ans.isCorrect
+                                                                    }))
+                                                                ) : undefined;
+                                                                setViewQuestionsData({ ...a, studentAnswers });
+                                                            }}
+                                                            className="p-5 bg-indigo-600 text-white rounded-[2rem] shadow-xl hover:bg-indigo-700 transition-all"
+                                                        >
+                                                            <Eye className="w-5 h-5" />
+                                                        </button>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
                                     )}
@@ -431,6 +479,26 @@ export default function AssignmentsPage() {
                     onClose={() => setIsTakeModalOpen(false)}
                     assignment={selectedAssignment}
                     onComplete={fetchData}
+                />
+            )}
+
+            {viewQuestionsData && (
+                <ViewQuestionsModal
+                    isOpen={true}
+                    onClose={() => setViewQuestionsData(null)}
+                    title={viewQuestionsData.title}
+                    questions={viewQuestionsData.questions}
+                    responses={viewQuestionsData.studentAnswers}
+                    showCorrectAnswers={isTeacher || isDOS || (isParent && viewQuestionsData.studentAnswers !== undefined)}
+                />
+            )}
+
+            {viewAnalyticsData && (
+                <StudentAnalyticsModal
+                    isOpen={true}
+                    onClose={() => setViewAnalyticsData(null)}
+                    assessment={viewAnalyticsData}
+                    type="ASSIGNMENT"
                 />
             )}
         </div>

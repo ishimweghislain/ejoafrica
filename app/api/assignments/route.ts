@@ -48,7 +48,13 @@ export async function GET(request: Request) {
                 class: true,
                 course: true,
                 teacher: true,
-                questions: true,
+                questions: {
+                    include: {
+                        answers: {
+                            include: { student: true }
+                        }
+                    }
+                },
                 submissions: {
                     include: { student: true }
                 }
