@@ -43,9 +43,9 @@ export default function PerformancePage() {
 
     const isTeacher = user?.role === "TEACHER";
     const isDOS = user?.role === "DOS" || user?.role === "SCHOOL_ADMIN";
+    const isParent = user?.role === "PARENT";
     const isStudent = user?.role === "STUDENT";
 
-    // Logic for Student View
     const getStudentStats = (studentId: string) => {
         const studentSubmissions = assignments.flatMap(a =>
             a.submissions.filter((s: any) => s.studentId === studentId).map((s: any) => ({
@@ -87,38 +87,17 @@ export default function PerformancePage() {
 
     if (isStudent && user) {
         const stats = getStudentStats(user.id);
-
         return (
             <div className="space-y-12 animate-fade-up pb-20">
                 <div className="space-y-2">
                     <h1 className="text-4xl font-black tracking-tight text-slate-900 uppercase italic">My Performance</h1>
                     <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest italic">Academic growth and score analytics.</p>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <StatCard
-                        title="Assignment Average"
-                        value={`${Math.round(stats.assignmentAvg)}%`}
-                        sub={`${stats.submissionCount} Submissions`}
-                        icon={<ClipboardList className="w-6 h-6" />}
-                        color="emerald"
-                    />
-                    <StatCard
-                        title="Assessment Average"
-                        value={`${Math.round(stats.assessmentAvg)}%`}
-                        sub={`${stats.responseCount} Completed`}
-                        icon={<Radio className="w-6 h-6" />}
-                        color="blue"
-                    />
-                    <StatCard
-                        title="Overall Grade"
-                        value={`${Math.round(stats.combinedAvg)}%`}
-                        sub="Cumulative weighted score"
-                        icon={<Award className="w-6 h-6" />}
-                        color="indigo"
-                    />
+                    <StatCard title="Assignment Average" value={`${Math.round(stats.assignmentAvg)}%`} sub={`${stats.submissionCount} Submissions`} icon={<ClipboardList className="w-6 h-6" />} color="emerald" />
+                    <StatCard title="Assessment Average" value={`${Math.round(stats.assessmentAvg)}%`} sub={`${stats.responseCount} Completed`} icon={<Radio className="w-6 h-6" />} color="blue" />
+                    <StatCard title="Overall Grade" value={`${Math.round(stats.combinedAvg)}%`} sub="Cumulative weighted score" icon={<Award className="w-6 h-6" />} color="indigo" />
                 </div>
-
                 <div className="bg-white p-10 rounded-[3.5rem] border border-slate-100 shadow-xl overflow-hidden relative">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
                     <div className="flex items-center gap-6 mb-12">
@@ -130,7 +109,6 @@ export default function PerformancePage() {
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Performance breakdown across domains.</p>
                         </div>
                     </div>
-
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         <div className="space-y-8">
                             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 italic">Assignment Progress</h4>
@@ -153,7 +131,6 @@ export default function PerformancePage() {
                                 })}
                             </div>
                         </div>
-
                         <div className="space-y-8">
                             <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 italic">Assessment Precision</h4>
                             <div className="space-y-6">
@@ -182,16 +159,23 @@ export default function PerformancePage() {
         );
     }
 
-    // Teacher / DOS View: Student List with their Averages
-    if (isTeacher || isDOS) {
-        // Collect all unique students from submissions and responses
+    // Teacher / DOS / Parent View: Student List with their Averages
+    if (isTeacher || isDOS || isParent) {
+        // Collect students from submissions and responses
         const studentMap = new Map();
-        assignments.flatMap(a => a.submissions).forEach(s => {
-            if (!studentMap.has(s.studentId)) studentMap.set(s.studentId, s.student);
-        });
-        assessments.flatMap(a => a.responses).forEach(r => {
-            if (!studentMap.has(r.studentId)) studentMap.set(r.studentId, r.student);
-        });
+
+        if (isParent && user.children) {
+            // For parents, we start with their children
+            user.children.forEach((c: any) => studentMap.set(c.id, c));
+        } else {
+            // For staff, we collect everyone who has activity
+            assignments.flatMap(a => a.submissions).forEach(s => {
+                if (!studentMap.has(s.studentId)) studentMap.set(s.studentId, s.student);
+            });
+            assessments.flatMap(a => a.responses).forEach(r => {
+                if (!studentMap.has(r.studentId)) studentMap.set(r.studentId, r.student);
+            });
+        }
 
         const studentList = Array.from(studentMap.values()).map(s => ({
             ...s,
@@ -205,8 +189,12 @@ export default function PerformancePage() {
             <div className="space-y-12 animate-fade-up pb-20">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
                     <div className="space-y-2">
-                        <h1 className="text-4xl font-black tracking-tight text-slate-900 uppercase italic">Performance Hub</h1>
-                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest italic">Monitoring student growth and institutional standards.</p>
+                        <h1 className="text-4xl font-black tracking-tight text-slate-900 uppercase italic">
+                            {isParent ? "Children's Performance" : "Performance Hub"}
+                        </h1>
+                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest italic">
+                            {isParent ? "Monitoring academic growth of linked child nodes." : "Monitoring student growth and institutional standards."}
+                        </p>
                     </div>
                     <div className="relative w-full md:w-80">
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />

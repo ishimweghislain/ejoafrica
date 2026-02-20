@@ -20,11 +20,43 @@ async function getSession() {
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
-    const classId = searchParams.get("classId");
+    const classIdFromQuery = searchParams.get("classId");
+    const session = await getSession();
+
+    let where: any = {};
+
+    if (classIdFromQuery) {
+        where.classId = classIdFromQuery;
+    } else if (session) {
+        if (session.role === "STUDENT") {
+            // For students, only show their class timetable
+            const user = await prisma.user.findUnique({
+                where: { id: session.userId as string },
+                select: { classId: true }
+            });
+            if (user?.classId) {
+                where.classId = user.classId;
+            }
+        } else if (session.role === "PARENT") {
+            // For parents, show all their children's timetables
+            const parent = await prisma.user.findUnique({
+                where: { id: session.userId as string },
+                include: { children: { select: { classId: true } } }
+            });
+            const classIds = parent?.children.map(c => c.classId).filter(Boolean) as string[];
+            if (classIds && classIds.length > 0) {
+                where.classId = { in: classIds };
+            }
+        } else if (session.role === "TEACHER") {
+            // For teachers, optionally show their specific assignments if needed
+            // But usually teachers want to see the whole school or specific classes
+            // For now, let's allow teachers to see what they filter for, or all
+        }
+    }
 
     try {
         const timetables = await prisma.timetable.findMany({
-            where: classId ? { classId } : {},
+            where,
             include: {
                 course: true,
                 teacher: true,
@@ -32,7 +64,6 @@ export async function GET(request: Request) {
                 term: true,
                 academicYear: true,
             },
-     
             orderBy: [
                 { day: 'asc' },
                 { startTime: 'asc' }

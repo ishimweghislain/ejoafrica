@@ -19,6 +19,36 @@ async function getSession() {
     }
 }
 
+export async function GET(
+    request: Request,
+    { params }: { params: Promise<{ id: string }> }
+) {
+    const { id } = await params;
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id },
+            include: {
+                children: {
+                    include: {
+                        class: true,
+                    }
+                },
+                parents: true,
+                class: true,
+                studyingCourses: true,
+            }
+        });
+
+        if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+        // Remove password before returning
+        const { password, ...userWithoutPassword } = user;
+        return NextResponse.json(userWithoutPassword);
+    } catch (error) {
+        return NextResponse.json({ error: "Failed to fetch user" }, { status: 500 });
+    }
+}
+
 export async function PUT(
     request: Request,
     { params }: { params: Promise<{ id: string }> }

@@ -57,13 +57,17 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
         { icon: <ShieldAlert className="w-5 h-5" />, label: "Discipline Marks", href: "/dashboard/discipline-marks", roles: ["DOD"] },
         { icon: <MessageCircle className="w-5 h-5" />, label: "Parent Communication", href: "/dashboard/parent-comm", roles: ["DOD"] },
 
-        // Teacher specific
-        { icon: <Calendar className="w-5 h-5" />, label: "Timetable", href: "/dashboard/timetable", roles: ["TEACHER"] },
+        // Shared among staff
+        { icon: <Calendar className="w-5 h-5" />, label: "Timetable", href: "/dashboard/timetable", roles: ["TEACHER", "STUDENT", "PARENT", "DOS", "SCHOOL_ADMIN"] },
         { icon: <FileSpreadsheet className="w-5 h-5" />, label: "Scheme of Work", href: "/dashboard/scheme-of-work", roles: ["TEACHER"] },
         { icon: <BookMarked className="w-5 h-5" />, label: "Lesson Plan", href: "/dashboard/lesson-plan", roles: ["TEACHER"] },
+
+        // Results & Progress
         { icon: <ClipboardList className="w-5 h-5" />, label: "Assignments", href: "/dashboard/assignments", roles: ["TEACHER", "STUDENT", "PARENT"] },
         { icon: <Radio className="w-5 h-5" />, label: "Live Assessments", href: "/dashboard/live-assessments", roles: ["TEACHER", "STUDENT", "DOS", "SCHOOL_ADMIN", "PARENT"] },
         { icon: <TrendingUp className="w-5 h-5" />, label: "Performance", href: "/dashboard/performance", roles: ["TEACHER", "STUDENT", "DOS", "SCHOOL_ADMIN", "PARENT"] },
+        { icon: <ShieldAlert className="w-5 h-5" />, label: "Conduct & Discipline", href: "/dashboard/children-discipline", roles: ["PARENT", "STUDENT"] },
+
         { icon: <MessageCircle className="w-5 h-5" />, label: "Notifications", href: "/dashboard/notifications", roles: ["ALL"], badge: notifCount },
 
         // Parent specific

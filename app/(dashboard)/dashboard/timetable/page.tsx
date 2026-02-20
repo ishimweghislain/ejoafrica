@@ -21,6 +21,7 @@ export default function TimetablePage() {
     const [entries, setEntries] = useState<TimetableEntry[]>([]);
     const [classes, setClasses] = useState<any[]>([]);
     const [selectedClass, setSelectedClass] = useState("");
+    const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -28,13 +29,15 @@ export default function TimetablePage() {
         setLoading(true);
         try {
             const url = selectedClass ? `/api/timetables?classId=${selectedClass}` : "/api/timetables";
-            const [tRes, cRes] = await Promise.all([
+            const [tRes, cRes, uRes] = await Promise.all([
                 fetch(url),
-                fetch("/api/classes")
+                fetch("/api/classes"),
+                fetch("/api/auth/me")
             ]);
-            const [tData, cData] = await Promise.all([tRes.json(), cRes.json()]);
+            const [tData, cData, uData] = await Promise.all([tRes.json(), cRes.json(), uRes.json()]);
             setEntries(Array.isArray(tData) ? tData : []);
             setClasses(Array.isArray(cData) ? cData : []);
+            setUser(uData);
         } catch (err) {
             console.error(err);
         } finally {
@@ -67,21 +70,25 @@ export default function TimetablePage() {
                     <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest text-emerald-600">Weekly class and teacher schedules.</p>
                 </div>
                 <div className="flex gap-2">
-                    <select
-                        className="bg-white border border-slate-100 rounded-2xl px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-emerald-500/5 shadow-sm"
-                        value={selectedClass}
-                        onChange={(e) => setSelectedClass(e.target.value)}
-                    >
-                        <option value="">All Classes</option>
-                        {classes.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                    </select>
-                    <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="bg-slate-900 text-white rounded-2xl px-6 py-3 font-black uppercase tracking-widest text-[9px] hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-xl"
-                    >
-                        <Plus className="w-4 h-4" />
-                        <span>Add Session</span>
-                    </button>
+                    {(user?.role !== "STUDENT" && user?.role !== "PARENT") && (
+                        <>
+                            <select
+                                className="bg-white border border-slate-100 rounded-2xl px-4 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-emerald-500/5 shadow-sm"
+                                value={selectedClass}
+                                onChange={(e) => setSelectedClass(e.target.value)}
+                            >
+                                <option value="">All Classes</option>
+                                {classes.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            </select>
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="bg-slate-900 text-white rounded-2xl px-6 py-3 font-black uppercase tracking-widest text-[9px] hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-xl"
+                            >
+                                <Plus className="w-4 h-4" />
+                                <span>Add Session</span>
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
 
