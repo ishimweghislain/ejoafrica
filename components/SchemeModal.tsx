@@ -20,7 +20,6 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
     const [fetching, setFetching] = useState(true);
 
     const [years, setYears] = useState<any[]>([]);
-    const [terms, setTerms] = useState<any[]>([]);
     const [classes, setClasses] = useState<any[]>([]);
     const [courses, setCourses] = useState<any[]>([]);
 
@@ -48,7 +47,7 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
                 setClasses(cData);
                 setCourses(crsData);
             } catch (err) {
-                toast.error("Metadata sync failure.");
+                toast.error("Failed to load setup data.");
             } finally {
                 setFetching(false);
             }
@@ -73,7 +72,7 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setLoading(true);
-        const tid = toast.loading("Deploying curricular blueprint...");
+        const tid = toast.loading("Saving teaching plan...");
 
         try {
             const url = initialData ? `/api/schemes-of-work/${initialData.id}` : "/api/schemes-of-work";
@@ -88,13 +87,13 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
                 }),
             });
 
-            if (!res.ok) throw new Error("Protocol rejection.");
+            if (!res.ok) throw new Error("Could not save the plan.");
 
-            toast.success(`Blueprint ${initialData ? 'Updated' : 'Deployed'}.`, { id: tid, icon: "🗺️" });
+            toast.success(`Plan ${initialData ? 'Updated' : 'Created'}.`, { id: tid, icon: "🗺️" });
             onSuccess();
             onClose();
         } catch (err: any) {
-            toast.error(`DEPLOYMENT ERROR: ${err.message}`, { id: tid });
+            toast.error(`Error: ${err.message}`, { id: tid });
         } finally {
             setLoading(false);
         }
@@ -102,21 +101,21 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
 
     if (!isOpen || !mounted) return null;
 
-    const inputClass = "w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-xs font-bold focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all";
+    const inputClass = "w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-xs font-bold focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all placeholder:text-slate-300";
     const labelClass = "text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 block ml-2";
 
     return createPortal(
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative bg-white w-full max-w-xl rounded-[2.5rem] p-10 shadow-2xl animate-fade-up">
+            <div className="relative bg-white w-full max-w-xl rounded-[2.5rem] p-10 shadow-2xl animate-fade-up max-h-[90vh] overflow-y-auto">
                 <div className="flex items-center justify-between mb-10">
                     <div className="flex items-center gap-4">
                         <div className="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
                             <Layers className="w-8 h-8" />
                         </div>
                         <div>
-                            <h3 className="text-2xl font-black uppercase tracking-tighter leading-tight">Strategy Node</h3>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Curricular Engineering</p>
+                            <h3 className="text-2xl font-black uppercase tracking-tighter leading-tight">Teaching Plan</h3>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Plan details</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-3 hover:bg-slate-50 rounded-2xl transition-all"><X className="w-6 h-6 text-slate-400" /></button>
@@ -125,36 +124,36 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
                 {fetching ? (
                     <div className="py-20 flex flex-col items-center gap-4">
                         <Loader2 className="w-10 h-10 animate-spin text-emerald-600" />
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Syncing Knowledge Base...</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading details...</p>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="grid grid-cols-2 gap-6">
                             <div className="col-span-2 md:col-span-1">
-                                <label className={labelClass}>Target Course</label>
+                                <label className={labelClass}>Subject / Course</label>
                                 <select required className={inputClass} value={formData.courseId} onChange={e => setFormData({ ...formData, courseId: e.target.value })}>
-                                    <option value="">Select Resource</option>
+                                    <option value="">Select subject</option>
                                     {courses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
                                 </select>
                             </div>
                             <div className="col-span-2 md:col-span-1">
-                                <label className={labelClass}>Deployment Level</label>
+                                <label className={labelClass}>Class</label>
                                 <select required className={inputClass} value={formData.classId} onChange={e => setFormData({ ...formData, classId: e.target.value })}>
-                                    <option value="">Select Level</option>
+                                    <option value="">Select class</option>
                                     {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className={labelClass}>Academic Cycle</label>
+                                <label className={labelClass}>Academic Year</label>
                                 <select required className={inputClass} value={formData.academicYearId} onChange={e => setFormData({ ...formData, academicYearId: e.target.value, termId: "" })}>
-                                    <option value="">Select Cycle</option>
+                                    <option value="">Select year</option>
                                     {years.map(y => <option key={y.id} value={y.id}>{y.title}</option>)}
                                 </select>
                             </div>
                             <div>
-                                <label className={labelClass}>Phased Term</label>
+                                <label className={labelClass}>Term</label>
                                 <select required className={inputClass} value={formData.termId} onChange={e => setFormData({ ...formData, termId: e.target.value })}>
-                                    <option value="">Select Term</option>
+                                    <option value="">Select term</option>
                                     {availableTerms.map((t: any) => <option key={t.id} value={t.id}>{t.title}</option>)}
                                 </select>
                             </div>
@@ -163,13 +162,13 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
                                 <input type="number" required className={inputClass} value={formData.periodsPerWeek} onChange={e => setFormData({ ...formData, periodsPerWeek: e.target.value })} />
                             </div>
                             <div>
-                                <label className={labelClass}>Reference Text</label>
-                                <input className={inputClass} placeholder="e.g. CBC Syllabus 2024" value={formData.reference} onChange={e => setFormData({ ...formData, reference: e.target.value })} />
+                                <label className={labelClass}>Reference Syllabus</label>
+                                <input className={inputClass} placeholder="e.g. Primary 1 Syllabus" value={formData.reference} onChange={e => setFormData({ ...formData, reference: e.target.value })} />
                             </div>
                         </div>
 
                         <button disabled={loading} className="w-full bg-slate-900 text-white py-6 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-xl disabled:opacity-50">
-                            {loading ? "Committing Entry..." : "Finalize Strategem"}
+                            {loading ? "Saving..." : "Save Plan"}
                         </button>
                     </form>
                 )}
