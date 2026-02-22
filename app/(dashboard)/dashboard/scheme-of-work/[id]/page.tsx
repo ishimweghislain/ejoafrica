@@ -178,12 +178,24 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                             : "—",
                         color: "orange"
                     },
-                ].map(stat => (
-                    <div key={stat.label} className={`bg-${stat.color}-50 border border-${stat.color}-100 rounded-3xl p-5`}>
-                        <p className={`text-3xl font-black text-${stat.color}-600`}>{stat.value}</p>
-                        <p className={`text-[9px] font-black uppercase tracking-widest text-${stat.color}-400 mt-1`}>{stat.label}</p>
-                    </div>
-                ))}
+                ].map(stat => {
+                    const styleMap: Record<string, string> = {
+                        emerald: "bg-emerald-50 border-emerald-100 text-emerald-700 label-emerald-500",
+                        blue: "bg-blue-50 border-blue-100 text-blue-700 label-blue-500",
+                        violet: "bg-violet-50 border-violet-100 text-violet-700 label-violet-500",
+                        orange: "bg-orange-50 border-orange-100 text-orange-700 label-orange-500"
+                    };
+
+                    const style = styleMap[stat.color] || "bg-slate-50 border-slate-100 text-slate-700 label-slate-500";
+                    const [bg, border, text, label] = style.split(" ");
+
+                    return (
+                        <div key={stat.label} className={`${bg} border ${border} rounded-[2rem] p-7 shadow-sm transition-all hover:shadow-md`}>
+                            <p className={`text-4xl font-black ${text} tracking-tighter`}>{stat.value}</p>
+                            <p className={`text-[10px] font-black uppercase tracking-widest ${label.replace('label-', 'text-')} mt-2 opacity-80`}>{stat.label}</p>
+                        </div>
+                    );
+                })}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -197,7 +209,7 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                                 onClick={() => setActiveTab(tab)}
                                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab
                                     ? "bg-white text-slate-900 shadow-sm"
-                                    : "text-slate-400 hover:text-slate-600"
+                                    : "text-slate-500 hover:text-slate-700"
                                     }`}
                             >
                                 {tab === "lessons" ? `Lessons (${scheme.lessons.length})` : `Units (${allUnits.length})`}
@@ -210,7 +222,7 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                         <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
                             <div className="p-8 border-b border-slate-50 flex items-center justify-between">
                                 <h3 className="text-lg font-black uppercase tracking-tighter">Lessons Recorded</h3>
-                                <span className="bg-slate-50 text-slate-400 px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-slate-100">
+                                <span className="bg-slate-50 text-slate-500 px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-slate-100">
                                     {scheme.lessons.length} total
                                 </span>
                             </div>
@@ -237,7 +249,7 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                                         <div key={lesson.id} className="p-6 hover:bg-slate-50/50 transition-all group">
                                             <div className="flex items-start gap-4">
                                                 {/* Number badge */}
-                                                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[10px] font-black text-slate-300 border border-slate-100 group-hover:border-emerald-200 group-hover:text-emerald-500 transition-all shrink-0">
+                                                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[10px] font-black text-slate-500 border border-slate-100 group-hover:border-emerald-200 group-hover:text-emerald-500 transition-all shrink-0">
                                                     {idx + 1}
                                                 </div>
 
@@ -245,15 +257,15 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                                                     <h4 className="text-base font-black text-slate-900 uppercase tracking-tighter group-hover:text-emerald-600 transition-colors">
                                                         {lesson.title}
                                                     </h4>
-                                                    <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest italic mt-0.5">
+                                                    <p className="text-[10px] font-black uppercase text-slate-500 tracking-widest mt-1">
                                                         {lesson.unit.title}
                                                     </p>
                                                     <div className="flex flex-wrap items-center gap-4 mt-3">
-                                                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400">
+                                                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-500">
                                                             <Calendar className="w-3.5 h-3.5 text-emerald-500" />
                                                             {new Date(lesson.startDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                         </div>
-                                                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-400">
+                                                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-slate-500">
                                                             <Clock className="w-3.5 h-3.5 text-emerald-500" />
                                                             {new Date(lesson.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                         </div>
@@ -366,16 +378,16 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                         </div>
                         <div className="space-y-4">
                             <div>
-                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">School Year</p>
+                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">School Year</p>
                                 <p className="font-black text-sm mt-0.5">{scheme.academicYear.title}</p>
                             </div>
                             <div>
-                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Term</p>
+                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Term</p>
                                 <p className="font-black text-sm mt-0.5">{scheme.term.title}</p>
                             </div>
                             {scheme.teacher && (
                                 <div>
-                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Teacher</p>
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Teacher</p>
                                     <p className="font-black text-sm mt-0.5">{scheme.teacher.firstName} {scheme.teacher.lastName}</p>
                                 </div>
                             )}
