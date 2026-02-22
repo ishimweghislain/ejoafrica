@@ -10,13 +10,37 @@ export async function GET(
         const scheme = await prisma.schemeOfWork.findUnique({
             where: { id },
             include: {
-                course: true,
-                class: true,
+                course: {
+                    include: {
+                        topics: {
+                            include: {
+                                subtopics: {
+                                    include: { units: true }
+                                }
+                            },
+                            orderBy: { createdAt: 'asc' }
+                        }
+                    }
+                },
+                class: {
+                    include: {
+                        users: {
+                            where: { role: "STUDENT" },
+                            select: { id: true, firstName: true, lastName: true, profileImage: true }
+                        }
+                    }
+                },
                 academicYear: true,
                 term: true,
+                teacher: { select: { id: true, firstName: true, lastName: true } },
                 lessons: {
                     include: {
-                        unit: true
+                        unit: true,
+                        attendance: {
+                            include: {
+                                student: { select: { id: true, firstName: true, lastName: true } }
+                            }
+                        }
                     },
                     orderBy: { startDate: 'asc' }
                 }
@@ -27,6 +51,7 @@ export async function GET(
 
         return NextResponse.json(scheme);
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: "Failed to fetch scheme details" }, { status: 500 });
     }
 }

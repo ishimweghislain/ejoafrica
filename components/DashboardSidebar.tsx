@@ -7,7 +7,7 @@ import {
     Home, Users, BookOpen, Settings, Calendar, FileText,
     GraduationCap, ClipboardList, ShieldAlert, CalendarCheck,
     Briefcase, FileSpreadsheet, BookMarked, Users2, MessageCircle,
-    Fingerprint, Radio, TrendingUp
+    Fingerprint, Radio, TrendingUp, CalendarCheck2, UserCheck
 } from "lucide-react";
 import LogoutButton from "@/components/LogoutButton";
 
@@ -59,8 +59,9 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
 
         // Shared among staff
         { icon: <Calendar className="w-5 h-5" />, label: "Timetable", href: "/dashboard/timetable", roles: ["TEACHER", "STUDENT", "PARENT", "DOS", "SCHOOL_ADMIN"] },
-        { icon: <FileSpreadsheet className="w-5 h-5" />, label: "Scheme of Work", href: "/dashboard/scheme-of-work", roles: ["TEACHER"] },
+        { icon: <FileSpreadsheet className="w-5 h-5" />, label: "Scheme of Work", href: "/dashboard/scheme-of-work", roles: ["TEACHER", "DOS"] },
         { icon: <BookMarked className="w-5 h-5" />, label: "Lesson Plan", href: "/dashboard/lesson-plan", roles: ["TEACHER"] },
+        { icon: <UserCheck className="w-5 h-5" />, label: "Attendance Tracker", href: "/dashboard/attendance", roles: ["PARENT", "STUDENT", "TEACHER"] },
 
         // Results & Progress
         { icon: <ClipboardList className="w-5 h-5" />, label: "Assignments", href: "/dashboard/assignments", roles: ["TEACHER", "STUDENT", "PARENT"] },

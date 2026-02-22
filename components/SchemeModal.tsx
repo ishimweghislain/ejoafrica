@@ -30,7 +30,10 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
         courseId: "",
         periodsPerWeek: "4",
         reference: "",
+        teacherId: "",
     });
+    const [teachers, setTeachers] = useState<any[]>([]);
+    const [userRole, setUserRole] = useState<string>("");
 
     useEffect(() => {
         if (!isOpen) return;
@@ -43,9 +46,18 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
                     fetch("/api/courses")
                 ]);
                 const [yData, cData, crsData] = await Promise.all([yRes.json(), cRes.json(), crsRes.json()]);
-                setYears(yData);
-                setClasses(cData);
-                setCourses(crsData);
+                setYears(Array.isArray(yData) ? yData : []);
+                setClasses(Array.isArray(cData) ? cData : []);
+                setCourses(Array.isArray(crsData) ? crsData : []);
+
+                // Load teachers + user role
+                const [tRes, uRes] = await Promise.all([
+                    fetch("/api/users?role=TEACHER"),
+                    fetch("/api/auth/me")
+                ]);
+                const [tData, uData] = await Promise.all([tRes.json(), uRes.json()]);
+                setTeachers(Array.isArray(tData) ? tData : []);
+                setUserRole(uData.role || "");
             } catch (err) {
                 toast.error("Failed to load setup data.");
             } finally {
@@ -62,6 +74,7 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
                 courseId: initialData.courseId || "",
                 periodsPerWeek: initialData.periodsPerWeek?.toString() || "4",
                 reference: initialData.reference || "",
+                teacherId: initialData.teacherId || "",
             });
         }
     }, [isOpen, initialData]);
@@ -131,9 +144,22 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
                         <div className="grid grid-cols-2 gap-6">
                             <div className="col-span-2 md:col-span-1">
                                 <label className={labelClass}>Subject / Course</label>
-                                <select required className={inputClass} value={formData.courseId} onChange={e => setFormData({ ...formData, courseId: e.target.value })}>
+                                <select
+                                    required
+                                    className={inputClass}
+                                    value={formData.courseId}
+                                    onChange={e => {
+                                        const c = courses.find((x: any) => x.id === e.target.value);
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            courseId: e.target.value,
+                                            classId: c?.classId || prev.classId,
+                                            teacherId: c?.teacherId || prev.teacherId,
+                                        }));
+                                    }}
+                                >
                                     <option value="">Select subject</option>
-                                    {courses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
+                                    {courses.map(c => <option key={c.id} value={c.id}>{c.title} ({c.class?.name || "?"})</option>)}
                                 </select>
                             </div>
                             <div className="col-span-2 md:col-span-1">
@@ -157,6 +183,22 @@ export default function SchemeModal({ isOpen, onClose, onSuccess, initialData }:
                                     {availableTerms.map((t: any) => <option key={t.id} value={t.id}>{t.title}</option>)}
                                 </select>
                             </div>
+                            {(userRole === "DOS" || userRole === "SCHOOL_ADMIN") && (
+                                <div className="col-span-2">
+                                    <label className={labelClass}>Assign Teacher <span className="text-red-400">*</span></label>
+                                    <select
+                                        required
+                                        className={inputClass}
+                                        value={formData.teacherId}
+                                        onChange={e => setFormData({ ...formData, teacherId: e.target.value })}
+                                    >
+                                        <option value="">— Select teacher —</option>
+                                        {teachers.map(t => (
+                                            <option key={t.id} value={t.id}>{t.firstName} {t.lastName}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
                             <div>
                                 <label className={labelClass}>Periods / Week</label>
                                 <input type="number" required className={inputClass} value={formData.periodsPerWeek} onChange={e => setFormData({ ...formData, periodsPerWeek: e.target.value })} />

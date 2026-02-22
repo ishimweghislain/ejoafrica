@@ -19,34 +19,62 @@ async function getSession() {
 }
 
 export async function GET() {
+    const session = await getSession();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     try {
+        // Build filter based on role
+        const where: any = {};
+        if (session.role === "TEACHER") {
+            where.teacherId = session.userId as string;
+        }
+        // DOS and SCHOOL_ADMIN see all schemes
+
         const schemes = await prisma.schemeOfWork.findMany({
+            where,
             include: {
-                course: true,
+                course: {
+                    include: {
+                        topics: {
+                            include: {
+                                subtopics: {
+                                    include: { units: true }
+                                }
+                            }
+                        }
+                    }
+                },
                 class: true,
                 academicYear: true,
                 term: true,
+                teacher: { select: { id: true, firstName: true, lastName: true } },
                 _count: { select: { lessons: true } }
             },
             orderBy: { createdAt: 'desc' }
         });
         return NextResponse.json(schemes);
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: "Failed to fetch schemes of work" }, { status: 500 });
     }
 }
 
 export async function POST(request: Request) {
     const session = await getSession();
-    if (!session || (session.role !== "TEACHER" && session.role !== "DOS")) {
+    if (!session || (session.role !== "TEACHER" && session.role !== "DOS" && session.role !== "SCHOOL_ADMIN")) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     try {
         const body = await request.json();
-        const {
-            classId, academicYearId, termId, courseId, periodsPerWeek, reference
-        } = body;
+        const { classId, academicYearId, termId, courseId, periodsPerWeek, reference, teacherId } = body;
+
+        // If a teacher creates it themselves, auto-assign them.
+        // If DOS creates it, they can specify teacherId.
+        const assignedTeacherId =
+            session.role === "TEACHER"
+                ? (session.userId as string)
+                : (teacherId || null);
 
         const scheme = await prisma.schemeOfWork.create({
             data: {
@@ -56,11 +84,13 @@ export async function POST(request: Request) {
                 courseId,
                 periodsPerWeek: parseInt(periodsPerWeek),
                 reference,
+                teacherId: assignedTeacherId,
             },
         });
 
         return NextResponse.json(scheme);
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: "Failed to create scheme of work" }, { status: 500 });
     }
 }
