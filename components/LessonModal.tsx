@@ -112,9 +112,11 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
                 throw new Error(err.error || "Failed to save.");
             }
 
-            toast.success("Lesson saved! ✓", { id: tid, icon: "📓" });
+            const newLesson = await res.json();
+            toast.success("Lesson saved! Now record attendance. ✓", { id: tid, icon: "📓" });
             setFormData({ title: "", unitId: "", startDate: "", endDate: "", teachingMethod: "", resources: "", evaluation: "", observation: "" });
-            onSuccess();
+            // @ts-ignore
+            onSuccess(newLesson);
             onClose();
         } catch (err: any) {
             toast.error(`Error: ${err.message}`, { id: tid });

@@ -72,6 +72,7 @@ export async function POST(request: Request) {
                 resources,
                 observation,
             },
+            include: { unit: true }
         });
 
         return NextResponse.json(lesson);

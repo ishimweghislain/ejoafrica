@@ -24,7 +24,7 @@ export async function GET(
 ) {
     const { id } = await params;
     try {
-        const course = await prisma.course.findUnique({
+        let course = await prisma.course.findUnique({
             where: { id },
             include: {
                 class: true,
@@ -44,6 +44,33 @@ export async function GET(
         });
 
         if (!course) return NextResponse.json({ error: "Course not found" }, { status: 404 });
+
+        if (course.topics.length === 0) {
+            const fallbackCourse = await prisma.course.findFirst({
+                where: {
+                    title: {
+                        equals: course.title,
+                        mode: 'insensitive'
+                    },
+                    topics: { some: {} }
+                },
+                include: {
+                    topics: {
+                        include: {
+                            subtopics: {
+                                include: { units: true }
+                            }
+                        },
+                        orderBy: { createdAt: 'asc' }
+                    }
+                }
+            });
+
+            if (fallbackCourse) {
+                // @ts-ignore - injecting fallback topics
+                course.topics = fallbackCourse.topics;
+            }
+        }
 
         return NextResponse.json(course);
     } catch (error) {

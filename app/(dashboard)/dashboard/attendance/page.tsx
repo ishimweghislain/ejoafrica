@@ -45,6 +45,7 @@ export default function ParentAttendancePage() {
     const [children, setChildren] = useState<Child[]>([]);
     const [selectedChild, setSelectedChild] = useState<Child | null>(null);
     const [attendanceData, setAttendanceData] = useState<LessonAttendance[]>([]);
+    const [progressData, setProgressData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [loadingAttendance, setLoadingAttendance] = useState(false);
     const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
@@ -52,24 +53,17 @@ export default function ParentAttendancePage() {
     useEffect(() => {
         async function init() {
             try {
-                const [meRes, usersRes] = await Promise.all([
-                    fetch("/api/auth/me"),
-                    fetch("/api/auth/me")
-                ]);
+                const meRes = await fetch("/api/auth/me");
                 const me = await meRes.json();
                 setUser(me);
 
                 if (me.role === "PARENT") {
-                    // Fetch linked children
                     const uRes = await fetch(`/api/users/${me.userId}`);
                     const uData = await uRes.json();
                     const kids = uData.children || [];
                     setChildren(kids);
-                    if (kids.length > 0) {
-                        setSelectedChild(kids[0]);
-                    }
+                    if (kids.length > 0) setSelectedChild(kids[0]);
                 } else if (me.role === "STUDENT") {
-                    // Student sees their own attendance
                     setSelectedChild({ id: me.userId, firstName: me.firstName || "You", lastName: "" });
                 }
             } catch (err) {
@@ -85,15 +79,27 @@ export default function ParentAttendancePage() {
         if (!selectedChild) return;
         setLoadingAttendance(true);
         setAttendanceData([]);
+        setProgressData([]);
 
-        fetch(`/api/attendance?studentId=${selectedChild.id}`)
-            .then(r => r.json())
-            .then(data => {
-                if (Array.isArray(data)) setAttendanceData(data);
-                else setAttendanceData([]);
-            })
-            .catch(() => toast.error("Failed to load attendance."))
-            .finally(() => setLoadingAttendance(false));
+        const fetchAll = async () => {
+            try {
+                const [attRes, progRes] = await Promise.all([
+                    fetch(`/api/attendance?studentId=${selectedChild.id}`),
+                    fetch(`/api/progress?studentId=${selectedChild.id}`)
+                ]);
+                const att = await attRes.json();
+                const prog = await progRes.json();
+
+                if (Array.isArray(att)) setAttendanceData(att);
+                if (Array.isArray(prog)) setProgressData(prog);
+            } catch (e) {
+                toast.error("Failed to sync records.");
+            } finally {
+                setLoadingAttendance(false);
+            }
+        };
+
+        fetchAll();
     }, [selectedChild]);
 
     // Group by course
@@ -184,8 +190,8 @@ export default function ParentAttendancePage() {
                             </div>
                             <div className="text-center">
                                 <p className={`text-3xl font-black ${overallPct === null ? "text-slate-400" :
-                                        overallPct >= 75 ? "text-emerald-400" :
-                                            overallPct >= 50 ? "text-amber-400" : "text-red-400"
+                                    overallPct >= 75 ? "text-emerald-400" :
+                                        overallPct >= 50 ? "text-amber-400" : "text-red-400"
                                     }`}>
                                     {overallPct !== null ? `${overallPct}%` : "—"}
                                 </p>
@@ -200,7 +206,7 @@ export default function ParentAttendancePage() {
                             <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                                 <div
                                     className={`h-full rounded-full transition-all ${overallPct >= 75 ? "bg-emerald-400" :
-                                            overallPct >= 50 ? "bg-amber-400" : "bg-red-400"
+                                        overallPct >= 50 ? "bg-amber-400" : "bg-red-400"
                                         }`}
                                     style={{ width: `${overallPct}%` }}
                                 />
@@ -264,20 +270,39 @@ export default function ParentAttendancePage() {
 
                                     <div className="flex items-center gap-6">
                                         {/* Mini stats */}
-                                        <div className="hidden md:flex items-center gap-4">
-                                            <div className="text-center">
-                                                <p className="text-lg font-black text-emerald-600">{presentInCourse}</p>
-                                                <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">Present</p>
-                                            </div>
-                                            <div className="text-center">
-                                                <p className="text-lg font-black text-red-400">{totalInCourse - presentInCourse}</p>
-                                                <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">Absent</p>
-                                            </div>
-                                            <div className={`text-lg font-black px-3 py-1 rounded-xl ${coursePct >= 75 ? "bg-emerald-50 text-emerald-600" :
+                                        <div className="hidden lg:flex items-center gap-8">
+                                            <div className="flex items-center gap-4">
+                                                <div className="text-center">
+                                                    <p className="text-lg font-black text-emerald-600">{presentInCourse}</p>
+                                                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">Present</p>
+                                                </div>
+                                                <div className="text-center">
+                                                    <p className="text-lg font-black text-red-400">{totalInCourse - presentInCourse}</p>
+                                                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">Absent</p>
+                                                </div>
+                                                <div className={`text-lg font-black px-3 py-1 rounded-xl ${coursePct >= 75 ? "bg-emerald-50 text-emerald-600" :
                                                     coursePct >= 50 ? "bg-amber-50 text-amber-600" : "bg-red-50 text-red-500"
-                                                }`}>
-                                                {coursePct}%
+                                                    }`}>
+                                                    {coursePct}% Att.
+                                                </div>
                                             </div>
+
+                                            <div className="h-8 w-px bg-slate-100" />
+
+                                            {/* Syllabus Progress */}
+                                            {progressData.find(p => p.courseTitle === group.courseTitle) && (
+                                                <div className="flex items-center gap-4">
+                                                    <div className="text-center">
+                                                        <p className="text-lg font-black text-blue-600">
+                                                            {progressData.find(p => p.courseTitle === group.courseTitle).taughtUnits}/{progressData.find(p => p.courseTitle === group.courseTitle).totalUnits}
+                                                        </p>
+                                                        <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">Chapters</p>
+                                                    </div>
+                                                    <div className="bg-blue-50 text-blue-600 text-[9px] font-black px-3 py-1 rounded-xl border border-blue-100">
+                                                        {progressData.find(p => p.courseTitle === group.courseTitle).percentage}% Covered
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                         {isExpanded ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
                                     </div>

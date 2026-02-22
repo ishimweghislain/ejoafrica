@@ -108,13 +108,19 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
 
     // Flatten all units from the course
     const allUnits: (Unit & { subtopicTitle: string; topicTitle: string })[] = [];
-    scheme.course.topics.forEach(t => {
-        t.subtopics.forEach(s => {
-            s.units.forEach(u => {
-                allUnits.push({ ...u, subtopicTitle: s.title, topicTitle: t.title });
-            });
+    if (scheme.course && scheme.course.topics) {
+        scheme.course.topics.forEach(t => {
+            if (t.subtopics) {
+                t.subtopics.forEach(s => {
+                    if (s.units) {
+                        s.units.forEach(u => {
+                            allUnits.push({ ...u, subtopicTitle: s.title, topicTitle: t.title });
+                        });
+                    }
+                });
+            }
         });
-    });
+    }
 
     const students = scheme.class.users || [];
     const isTeacher = user?.role === "TEACHER";
@@ -426,9 +432,14 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
             <LessonModal
                 isOpen={isLessonModalOpen}
                 onClose={() => setIsLessonModalOpen(false)}
-                onSuccess={fetchScheme}
+                onSuccess={(newLesson?: Lesson) => {
+                    fetchScheme();
+                    if (newLesson) {
+                        setAttendanceModal({ lesson: newLesson });
+                    }
+                }}
                 schemeId={scheme.id}
-                courseId={scheme.courseId}
+                courseId={scheme.courseId || scheme.course?.id}
             />
 
             <AttendanceModal
