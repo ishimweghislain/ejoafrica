@@ -180,10 +180,10 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                     },
                 ].map(stat => {
                     const styleMap: Record<string, string> = {
-                        emerald: "bg-emerald-50 border-emerald-100 text-emerald-700 label-emerald-500",
-                        blue: "bg-blue-50 border-blue-100 text-blue-700 label-blue-500",
-                        violet: "bg-violet-50 border-violet-100 text-violet-700 label-violet-500",
-                        orange: "bg-orange-50 border-orange-100 text-orange-700 label-orange-500"
+                        emerald: "bg-emerald-50 border-emerald-100 text-emerald-800 label-emerald-700",
+                        blue: "bg-blue-50 border-blue-100 text-blue-800 label-blue-700",
+                        violet: "bg-violet-50 border-violet-100 text-violet-800 label-violet-700",
+                        orange: "bg-orange-50 border-orange-100 text-orange-800 label-orange-700"
                     };
 
                     const style = styleMap[stat.color] || "bg-slate-50 border-slate-100 text-slate-700 label-slate-500";
@@ -192,7 +192,7 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                     return (
                         <div key={stat.label} className={`${bg} border ${border} rounded-[2rem] p-7 shadow-sm transition-all hover:shadow-md`}>
                             <p className={`text-4xl font-black ${text} tracking-tighter`}>{stat.value}</p>
-                            <p className={`text-[10px] font-black uppercase tracking-widest ${label.replace('label-', 'text-')} mt-2 opacity-80`}>{stat.label}</p>
+                            <p className={`text-[10px] font-black uppercase tracking-widest ${label.replace('label-', 'text-')} mt-2`}>{stat.label}</p>
                         </div>
                     );
                 })}
@@ -221,8 +221,8 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                     {activeTab === "lessons" && (
                         <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
                             <div className="p-8 border-b border-slate-50 flex items-center justify-between">
-                                <h3 className="text-lg font-black uppercase tracking-tighter">Lessons Recorded</h3>
-                                <span className="bg-slate-50 text-slate-500 px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-slate-100">
+                                <h3 className="text-lg font-black uppercase tracking-tighter text-slate-900">Lessons Recorded</h3>
+                                <span className="bg-slate-50 text-slate-700 px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-slate-100">
                                     {scheme.lessons.length} total
                                 </span>
                             </div>
@@ -312,7 +312,7 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                     {activeTab === "units" && (
                         <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
                             <div className="p-8 border-b border-slate-50 flex items-center justify-between">
-                                <h3 className="text-lg font-black uppercase tracking-tighter">Syllabus Units (from DOS)</h3>
+                                <h3 className="text-lg font-black uppercase tracking-tighter text-slate-900">Syllabus Units (from DOS)</h3>
                                 <span className="bg-blue-50 text-blue-600 px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-blue-100">
                                     {allUnits.length} units
                                 </span>
@@ -323,7 +323,7 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                                     <Layers className="w-12 h-12 text-slate-200" />
                                     <div>
                                         <p className="font-black text-slate-900 uppercase tracking-tighter">No Units in Syllabus</p>
-                                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mt-1">
+                                        <p className="text-[10px] font-black uppercase text-slate-600 tracking-widest mt-1">
                                             The DOS must add units to this course's syllabus first.
                                         </p>
                                     </div>
@@ -332,12 +332,12 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                                 <div className="p-6 space-y-4">
                                     {scheme.course.topics.map(topic => (
                                         <div key={topic.id} className="space-y-2">
-                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-2">
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-600 px-2">
                                                 📚 {topic.title}
                                             </p>
                                             {topic.subtopics.map(sub => (
                                                 <div key={sub.id} className="pl-4 space-y-1.5">
-                                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-300 px-2">
+                                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 px-2">
                                                         › {sub.title}
                                                     </p>
                                                     {sub.units.map(unit => {
@@ -349,9 +349,9 @@ export default function SchemeDetailPage({ params }: { params: Promise<{ id: str
                                                                 }`}>
                                                                 <div className={`w-2 h-2 rounded-full ${taughtCount > 0 ? "bg-emerald-500" : "bg-slate-300"}`} />
                                                                 <span className="flex-grow text-xs font-bold text-slate-700">{unit.title}</span>
-                                                                <span className="text-[9px] font-black text-slate-400">{unit.periods}p</span>
+                                                                <span className="text-[9px] font-black text-slate-600">{unit.periods}p</span>
                                                                 {taughtCount > 0 && (
-                                                                    <span className="text-[9px] font-black text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">
+                                                                    <span className="text-[9px] font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
                                                                         {taughtCount} lesson{taughtCount !== 1 ? "s" : ""}
                                                                     </span>
                                                                 )}
