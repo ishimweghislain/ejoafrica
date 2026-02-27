@@ -52,6 +52,30 @@ export async function GET() {
             },
             orderBy: { createdAt: 'desc' }
         });
+
+        const allWithTopics = await prisma.course.findMany({
+            where: { topics: { some: {} } },
+            include: {
+                topics: {
+                    include: { subtopics: { include: { units: true } } },
+                }
+            }
+        });
+
+        for (const scheme of (schemes as any[])) {
+            if (scheme.course && (!scheme.course.topics || scheme.course.topics.length === 0)) {
+                const words = scheme.course.title.toLowerCase().split(' ');
+                const match = allWithTopics.find(c => {
+                    const cWords = c.title.toLowerCase().split(' ');
+                    return words.some((w: string) => w.length > 3 && cWords.includes(w));
+                }) || allWithTopics[0];
+
+                if (match) {
+                    scheme.course.topics = match.topics;
+                }
+            }
+        }
+
         return NextResponse.json(schemes);
     } catch (error) {
         console.error(error);

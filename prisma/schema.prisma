@@ -291,7 +291,8 @@ model AssignmentSubmission {
   studentId    String
   student      User       @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
   score        Float      @default(0)
-  status       String     @default("COMPLETED") // COMPLETED, LATE, MISSED
+  status       String     @default("COMPLETED") // COMPLETED, LATE, MISSED, CHEATING
+  cheatingAttempt Boolean @default(false)
   createdAt    DateTime   @default(now())
 }
 
@@ -371,6 +372,7 @@ model LiveResponse {
   answer         String
   isCorrect      Boolean
   marksObtained  Int
+  cheatingAttempt Boolean       @default(false)
   createdAt      DateTime       @default(now())
 }
 

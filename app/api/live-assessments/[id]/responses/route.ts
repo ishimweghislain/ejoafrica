@@ -31,7 +31,7 @@ export async function POST(
 
     try {
         const body = await request.json();
-        const { questionId, answer } = body;
+        const { questionId, answer, cheatingAttempt } = body;
 
         const assessment = await prisma.liveAssessment.findUnique({
             where: { id: assessmentId },
@@ -63,15 +63,33 @@ export async function POST(
         const isCorrect = answer === question.correctAnswer;
         const marksObtained = isCorrect ? question.marks : 0;
 
-        const response = await prisma.liveResponse.create({
-            data: {
-                assessmentId,
-                studentId: session.userId as string,
-                questionId,
-                answer,
-                isCorrect,
-                marksObtained
+        const response = await prisma.$transaction(async (tx) => {
+            const res = await tx.liveResponse.create({
+                data: {
+                    assessmentId,
+                    studentId: session.userId as string,
+                    questionId,
+                    answer: answer || "CHEATED_AUTO_SUBMIT",
+                    isCorrect: !!isCorrect,
+                    marksObtained: Number(marksObtained),
+                    // @ts-ignore - Prisma client out of sync
+                    cheatingAttempt: !!cheatingAttempt
+                }
+            });
+
+            if (cheatingAttempt) {
+                const student = await tx.user.findUnique({ where: { id: session.userId as string } });
+                await tx.notification.create({
+                    data: {
+                        userId: assessment.teacherId,
+                        title: "🚨 Live Assessment Cheating",
+                        message: `${student?.firstName} ${student?.lastName} tried to switch tabs during '${assessment.title}'. System flagged the session.`,
+                        type: "ALARM"
+                    }
+                });
             }
+
+            return res;
         });
 
         return NextResponse.json(response);

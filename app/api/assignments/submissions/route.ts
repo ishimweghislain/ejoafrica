@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     try {
         const body = await request.json();
-        const { assignmentId, answers } = body; // answers: { questionId: string, answer: string }[]
+        const { assignmentId, answers, cheatingAttempt } = body; // answers: { questionId: string, answer: string }[]
 
         const assignment = await prisma.assignment.findUnique({
             where: { id: assignmentId },
@@ -52,8 +52,9 @@ export async function POST(request: Request) {
             });
         }
 
-        // Check if late
-        const status = (assignment.deadline && new Date() > assignment.deadline) ? "LATE" : "COMPLETED";
+        // Determine status
+        let status = (assignment.deadline && new Date() > assignment.deadline) ? "LATE" : "COMPLETED";
+        if (cheatingAttempt) status = "CHEATING";
 
         // Save everything in a transaction
         const submission = await prisma.$transaction(async (tx) => {
@@ -68,7 +69,9 @@ export async function POST(request: Request) {
                     assignmentId,
                     studentId: session.userId as string,
                     score: totalScore,
-                    status
+                    status,
+                    // @ts-ignore - Prisma client out of sync
+                    cheatingAttempt: !!cheatingAttempt
                 }
             });
 
@@ -77,9 +80,11 @@ export async function POST(request: Request) {
             await tx.notification.create({
                 data: {
                     userId: assignment.teacherId,
-                    title: "New Assignment Submission",
-                    message: `${student?.firstName} ${student?.lastName} completed '${assignment.title}'. Score: ${totalScore}`,
-                    type: "SUCCESS"
+                    title: cheatingAttempt ? "🚨 Cheating Attempt Alert" : "New Assignment Submission",
+                    message: cheatingAttempt
+                        ? `${student?.firstName} ${student?.lastName} tried to switch tabs during '${assignment.title}'. The assignment was auto-submitted.`
+                        : `${student?.firstName} ${student?.lastName} completed '${assignment.title}'. Score: ${totalScore}`,
+                    type: cheatingAttempt ? "ALARM" : "SUCCESS"
                 }
             });
 

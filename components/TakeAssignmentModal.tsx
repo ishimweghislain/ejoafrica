@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { X, Clock, Play, CheckCircle2, Loader2, AlertCircle, ChevronRight, Award, ClipboardList } from "lucide-react";
 import { toast } from "react-hot-toast";
@@ -23,9 +23,46 @@ export default function TakeAssignmentModal({ isOpen, onClose, assignment, onCom
     const [isFinished, setIsFinished] = useState(false);
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<any>(null);
+    const [violations, setViolations] = useState(0);
 
     const questions = assignment?.questions || [];
     const currentQuestion = questions[currentQuestionIdx];
+
+    const violationsRef = useRef(0);
+    const toastIdRef = useRef<string | null>(null);
+
+    const finishAssignment = async (cheating: boolean = false) => {
+        if (isFinished) return;
+        setIsFinished(true); // Immediate state change to stop listeners
+        setLoading(true);
+
+        if (toastIdRef.current) toast.dismiss(toastIdRef.current);
+
+        try {
+            const res = await fetch("/api/assignments/submissions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    assignmentId: assignment.id,
+                    answers,
+                    cheatingAttempt: cheating
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setResult(data);
+                if (cheating) {
+                    toast.error("UMENYAWE! Ibisubizo byawe byiromete kubera kuriganya.", { duration: 10000 });
+                } else {
+                    toast.success("Assignment submitted successfully.");
+                }
+            }
+        } catch (err) {
+            console.error("Submission failed:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const nextQuestion = useCallback(() => {
         if (currentQuestionIdx < questions.length - 1) {
@@ -34,7 +71,7 @@ export default function TakeAssignmentModal({ isOpen, onClose, assignment, onCom
         } else {
             finishAssignment();
         }
-    }, [currentQuestionIdx, questions]);
+    }, [currentQuestionIdx, questions, answers, isFinished]);
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
@@ -64,31 +101,53 @@ export default function TakeAssignmentModal({ isOpen, onClose, assignment, onCom
         setAnswers(newAnswers);
     };
 
-    const finishAssignment = async () => {
-        setIsFinished(true);
-        setLoading(true);
-        try {
-            const res = await fetch("/api/assignments/submissions", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    assignmentId: assignment.id,
-                    answers
-                })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                setResult(data);
-                toast.success("Assignment submitted successfully.");
-            } else {
-                toast.error(data.error);
+    // Cheating detection
+    useEffect(() => {
+        if (!isStarted || isFinished) return;
+
+        const handleViolation = () => {
+            if (isFinished) return;
+            violationsRef.current += 1;
+
+            if (violationsRef.current === 1) {
+                // Show a persistent warning
+                if (toastIdRef.current) toast.dismiss(toastIdRef.current);
+                toastIdRef.current = toast("Niwongera birahita byirometa directe aho ugeze attention petit fre. NTUBAKE vubaha!", {
+                    icon: '🚫',
+                    duration: Infinity, // Stay until dismissed or auto-submitted
+                    style: {
+                        background: '#991b1b',
+                        color: '#ffffff',
+                        border: '2px solid #f87171',
+                        fontWeight: '900',
+                        fontSize: '14px',
+                        padding: '20px'
+                    }
+                });
+            } else if (violationsRef.current >= 2) {
+                finishAssignment(true);
             }
-        } catch (err) {
-            toast.error("Failed to submit. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
+        };
+
+        const handleVisibility = () => {
+            if (document.visibilityState === 'hidden') {
+                handleViolation();
+            }
+        };
+
+        const handleBlur = () => {
+            handleViolation();
+        };
+
+        document.addEventListener('visibilitychange', handleVisibility);
+        window.addEventListener('blur', handleBlur);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibility);
+            window.removeEventListener('blur', handleBlur);
+            if (toastIdRef.current) toast.dismiss(toastIdRef.current);
+        };
+    }, [isStarted, isFinished, answers, assignment.id]);
 
     if (!isOpen || !mounted) return null;
 

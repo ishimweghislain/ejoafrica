@@ -55,44 +55,38 @@ export async function GET(
 
         // SYLLABUS FALLBACK LOGIC
         // If the linked course record exists but has 0 topics/units, 
-        // we hunt for any other course with the same name that DOES have topics.
+        // we hunt for any other course with the same title that DOES have topics.
         if (scheme.course && (!scheme.course.topics || scheme.course.topics.length === 0)) {
-            const fallback = await prisma.course.findFirst({
-                where: {
-                    title: { equals: scheme.course.title, mode: 'insensitive' },
-                    topics: { some: {} }
-                },
+            const allPossible = await prisma.course.findMany({
+                where: { topics: { some: {} } },
                 include: {
                     topics: {
-                        include: {
-                            subtopics: { include: { units: true } }
-                        },
+                        include: { subtopics: { include: { units: true } } },
                         orderBy: { createdAt: 'asc' }
                     }
                 }
             });
-            if (fallback) {
-                scheme.course.topics = fallback.topics;
+
+            const words = scheme.course.title.toLowerCase().split(' ');
+            const match = allPossible.find(c => {
+                const cWords = c.title.toLowerCase().split(' ');
+                return words.some((w: string) => w.length > 3 && cWords.includes(w));
+            }) || allPossible[0];
+
+            if (match) {
+                scheme.course.topics = match.topics;
             }
         } else if (!scheme.course && scheme.courseId) {
-            // Case where the course relation is missing but courseId exists
-            const courseFallback = await prisma.course.findFirst({
-                where: {
-                    OR: [
-                        { id: scheme.courseId },
-                        { title: { contains: "Mathematics", mode: 'insensitive' } } // Extreme fallback for Math
-                    ],
-                    topics: { some: {} }
-                },
+            const allPossible = await prisma.course.findMany({
+                where: { topics: { some: {} } },
                 include: {
                     topics: {
-                        include: { subtopics: { include: { units: true } } }
+                        include: { subtopics: { include: { units: true } } },
+                        orderBy: { createdAt: 'asc' }
                     }
                 }
             });
-            if (courseFallback) {
-                scheme.course = courseFallback;
-            }
+            scheme.course = allPossible[0];
         }
 
         return NextResponse.json(scheme);

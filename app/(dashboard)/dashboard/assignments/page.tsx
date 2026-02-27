@@ -70,7 +70,9 @@ export default function AssignmentsPage() {
             <tr style="border-bottom: 1px solid #eee;">
                 <td style="padding: 12px; font-size: 14px;">${s.student.firstName} ${s.student.lastName}</td>
                 <td style="padding: 12px; font-size: 14px;">${s.score} / ${assignment.questions.reduce((acc: number, q: any) => acc + q.marks, 0)}</td>
-                <td style="padding: 12px; font-size: 14px; font-weight: bold; color: ${s.status === 'LATE' ? 'red' : 'green'}">${s.status}</td>
+                <td style="padding: 12px; font-size: 14px; font-weight: bold; color: ${s.status === 'CHEATING' ? 'darkred' : s.status === 'LATE' ? 'red' : 'green'}">
+                    ${s.status === 'CHEATING' ? '⚠️ CHEATED' : s.status}
+                </td>
                 <td style="padding: 12px; font-size: 12px; color: #666;">${new Date(s.createdAt).toLocaleDateString()}</td>
             </tr>
         `).join('');
@@ -313,7 +315,7 @@ export default function AssignmentsPage() {
                                                     </div>
                                                     <div className="flex flex-col items-end">
                                                         <span className="text-[8px] font-black uppercase text-slate-400">Status</span>
-                                                        <span className={`text-[10px] font-black uppercase italic ${studentSubmission.status === 'LATE' ? 'text-red-500' : 'text-emerald-600'}`}>{studentSubmission.status}</span>
+                                                        <span className={`text-[10px] font-black uppercase italic ${studentSubmission.status === 'LATE' ? 'text-red-500' : 'text-emerald-600'}`}>{studentSubmission.status === 'CHEATING' ? '🚩 CHEATED' : studentSubmission.status}</span>
                                                     </div>
                                                 </div>
                                             ) : isExpired ? (

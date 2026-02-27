@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     X, Radio, CheckCircle2, Loader2, Zap,
     Clock, Play, Trophy, AlertCircle, Send, RefreshCcw
@@ -87,31 +87,84 @@ export default function StudentLiveSession({ assessment: initialAssessment, onEx
         return () => clearInterval(interval);
     }, [assessment.id, assessment.currentQuestionIndex]);
 
-    const submitAnswer = async (ansOverride?: string) => {
+    const violationsRef = useRef(0);
+    const toastIdRef = useRef<string | null>(null);
+
+    const submitAnswer = async (ansOverride?: string, cheating: boolean = false) => {
         const answerToSubmit = ansOverride || selectedAnswer;
-        if (!answerToSubmit || submitting) return;
+        if ((!answerToSubmit && !cheating) || submitting) return;
         setSubmitting(true);
+
+        if (toastIdRef.current) toast.dismiss(toastIdRef.current);
+
         try {
             const res = await fetch(`/api/live-assessments/${assessment.id}/responses`, {
                 method: "POST",
                 body: JSON.stringify({
                     questionId: currentQuestion.id,
-                    answer: answerToSubmit
+                    answer: answerToSubmit || "CHEATED_AUTO_SUBMIT",
+                    cheatingAttempt: cheating
                 })
             });
             if (res.ok) {
-                toast.success("Answer sent!");
+                if (cheating) {
+                    toast.error("UMENYAWE! Ibisubizo byawe byiromete kubera kuriganya.", { duration: 10000 });
+                } else {
+                    toast.success("Answer sent!");
+                }
                 fetchStatus();
-            } else {
-                const err = await res.json();
-                toast.error(err.error || "Failed to submit");
             }
         } catch (err) {
-            toast.error("Network error");
+            console.error("Live submit error:", err);
         } finally {
             setSubmitting(false);
         }
     };
+
+    // Cheating detection
+    useEffect(() => {
+        if (assessment.status !== "LIVE" || !currentQuestion || hasAnsweredCurrent) return;
+
+        const handleViolation = () => {
+            if (hasAnsweredCurrent) return;
+            violationsRef.current += 1;
+
+            if (violationsRef.current === 1) {
+                if (toastIdRef.current) toast.dismiss(toastIdRef.current);
+                toastIdRef.current = toast("Niwongera birahita byirometa directe aho ugeze attention petit fre. NTUBAKE vubaha!", {
+                    icon: '🚫',
+                    duration: Infinity,
+                    style: {
+                        background: '#991b1b',
+                        color: '#ffffff',
+                        border: '2px solid #f87171',
+                        fontWeight: '900',
+                        fontSize: '14px',
+                        padding: '20px'
+                    }
+                });
+            } else if (violationsRef.current >= 2) {
+                submitAnswer(selectedAnswer || "CHEATED_AUTO_SUBMIT", true);
+            }
+        };
+
+        const handleVisibility = () => {
+            if (document.visibilityState === 'hidden') handleViolation();
+        };
+
+        const handleBlur = () => {
+            handleViolation();
+        };
+
+        document.addEventListener('visibilitychange', handleVisibility);
+        window.addEventListener('blur', handleBlur);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibility);
+            window.removeEventListener('blur', handleBlur);
+            if (toastIdRef.current) toast.dismiss(toastIdRef.current);
+        };
+    }, [assessment.status, currentQuestion?.id, hasAnsweredCurrent, selectedAnswer]);
 
     if (assessment.status === "COMPLETED") {
         const totalScore = myResponses.reduce((acc, r) => acc + r.marksObtained, 0);

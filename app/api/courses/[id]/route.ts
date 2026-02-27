@@ -46,29 +46,27 @@ export async function GET(
         if (!course) return NextResponse.json({ error: "Course not found" }, { status: 404 });
 
         if (course.topics.length === 0) {
-            const fallbackCourse = await prisma.course.findFirst({
-                where: {
-                    title: {
-                        equals: course.title,
-                        mode: 'insensitive'
-                    },
-                    topics: { some: {} }
-                },
+            // Find ALL courses with topics to find a match
+            const allPossible = await prisma.course.findMany({
+                where: { topics: { some: {} } },
                 include: {
                     topics: {
-                        include: {
-                            subtopics: {
-                                include: { units: true }
-                            }
-                        },
+                        include: { subtopics: { include: { units: true } } },
                         orderBy: { createdAt: 'asc' }
                     }
                 }
             });
 
-            if (fallbackCourse) {
-                // @ts-ignore - injecting fallback topics
-                course.topics = fallbackCourse.topics;
+            // Try to find the best match by title overlap
+            const words = course.title.toLowerCase().split(' ');
+            const match = allPossible.find(c => {
+                const cWords = c.title.toLowerCase().split(' ');
+                return words.some(w => w.length > 3 && cWords.includes(w));
+            }) || allPossible[0]; // Take anything if no match found, so teacher sees SOMETHING
+
+            if (match) {
+                // @ts-ignore
+                course.topics = match.topics;
             }
         }
 
