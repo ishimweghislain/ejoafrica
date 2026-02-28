@@ -162,7 +162,7 @@ export default function HomePage() {
                     className="bg-emerald-600 rounded-[3rem] p-16 text-center text-white relative overflow-hidden shadow-2xl"
                 >
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                    <h2 className="text-2xl md:text-5xl font-black italic uppercase mb-8 tracking-tighter">Powered by eShuri</h2>
+                    <h2 className="text-2xl md:text-5xl font-black italic uppercase mb-8 tracking-tighter">Powered by Fullstack</h2>
                     <p className="text-sm font-black uppercase tracking-[0.3em] mb-10 opacity-70">Transform your school's digital experience today with eShuri.</p>
                     <Link href="/login" className="inline-flex items-center gap-4 bg-slate-900 text-white px-12 py-5 rounded-xl font-black uppercase text-xs tracking-[0.3em] hover:bg-black transition-all hover:scale-105 shadow-2xl italic group">
                         Enter System Portal <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-all" />
