@@ -140,7 +140,7 @@ export default function CoursesPage() {
                                     <div className="bg-white p-2 rounded-lg text-emerald-500 shadow-sm">
                                         <Layout className="w-3.5 h-3.5" />
                                     </div>
-                                    <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">{course._count.topics} Units</span>
+                                    <span className="text-[9px] font-black uppercase text-slate-500 tracking-widest">{course._count.topics} Topics</span>
                                 </div>
                                 <div className="bg-slate-50/50 p-3.5 rounded-2xl flex items-center gap-3 border border-slate-100/50">
                                     <div className="bg-white p-2 rounded-lg text-blue-500 shadow-sm">

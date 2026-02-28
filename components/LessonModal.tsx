@@ -43,8 +43,12 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
 
     useEffect(() => {
         if (!isOpen) return;
-        if (!courseId) {
-            setFetchError("No course linked to this scheme. Please contact the DOS.");
+
+        const actualCourseId = courseId;
+
+        if (!actualCourseId || actualCourseId === "undefined") {
+            setFetchError("The current plan does not have a valid course linkage. Please ask the DOS to re-link this scheme to a course.");
+            setFetching(false);
             return;
         }
 
@@ -54,43 +58,58 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
 
         async function fetchUnits() {
             try {
-                const res = await fetch(`/api/courses/${courseId}`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const res = await fetch(`/api/courses/${actualCourseId}`);
+                if (!res.ok) throw new Error(`Status ${res.status}`);
                 const data = await res.json();
+
                 if (data.error) throw new Error(data.error);
 
                 const allUnits: Unit[] = [];
-                (data.topics || []).forEach((t: any) => {
-                    (t.subtopics || []).forEach((s: any) => {
-                        (s.units || []).forEach((u: any) => {
+                const topics = data.topics || [];
+
+                if (topics.length === 0) {
+                    // Diagnostic: check if it's the right object
+                    if (data.title) {
+                        setFetchError(`Found course "${data.title}" but it has no topics defined in the syllabus yet.`);
+                    } else {
+                        setFetchError("Found the course linkage, but its syllabus is empty. Ask the DOS to add topics.");
+                    }
+                    return;
+                }
+
+                topics.forEach((t: any) => {
+                    const subtopics = t.subtopics || [];
+                    subtopics.forEach((s: any) => {
+                        const units = s.units || [];
+                        units.forEach((u: any) => {
                             allUnits.push({
                                 id: u.id,
                                 title: u.title,
                                 periods: u.periods,
-                                subtopicTitle: s.title,
-                                topicTitle: t.title,
+                                subtopicTitle: s.title || "No Subtopic",
+                                topicTitle: t.title || "No Topic",
                             });
                         });
                     });
                 });
 
                 if (allUnits.length === 0) {
-                    setFetchError("The DOS has not added any units to this course syllabus yet. Ask them to add units first.");
+                    setFetchError(`The syllabus for "${data.title}" has topics but no specific units defined yet.`);
                 } else {
                     setUnits(allUnits);
                     setFetchError(null);
                 }
             } catch (err: any) {
                 console.error("Unit fetch error:", err);
-                setFetchError("Failed to load units: " + err.message);
-                toast.error("Could not load units from course.");
+                setFetchError("Service failure: " + err.message);
+                toast.error("Could not sync syllabus data.");
             } finally {
                 setFetching(false);
             }
         }
 
         fetchUnits();
-    }, [isOpen, courseId]);
+    }, [isOpen, courseId, schemeId]);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -170,11 +189,13 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
                 )}
 
                 {!fetching && units.length > 0 && (
-                    <div className="bg-emerald-50 border border-emerald-100 rounded-2xl px-4 py-3 mb-6 flex items-center gap-2">
-                        <Layers className="w-4 h-4 text-emerald-600 shrink-0" />
-                        <p className="text-[10px] font-black uppercase tracking-widest text-emerald-700">
-                            {units.length} unit{units.length !== 1 ? "s" : ""} available from DOS syllabus
-                        </p>
+                    <div className="bg-emerald-50 border border-emerald-100 rounded-2xl px-4 py-3 mb-6 flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                            <Layers className="w-4 h-4 text-emerald-600 shrink-0" />
+                            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-700">
+                                {units.length} lesson unit{units.length !== 1 ? "s" : ""} available
+                            </p>
+                        </div>
                     </div>
                 )}
 

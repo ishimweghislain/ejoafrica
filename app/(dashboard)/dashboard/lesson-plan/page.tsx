@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, BookOpen, Calendar, Clock, MapPin, CheckCircle2, MoreVertical, Search, Loader2, ArrowRight, Book, Layers, Trash2, Edit } from "lucide-react";
+import { Plus, BookOpen, Calendar, Clock, MapPin, CheckCircle2, MoreVertical, Search, Loader2, ArrowRight, Book, Layers, Trash2, Edit, AlertCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
 import LessonModal from "@/components/LessonModal";
 
@@ -47,9 +47,15 @@ export default function LessonPlanPage() {
             setLessons(Array.isArray(lData) ? lData : []);
             setUser(uData);
 
-            const teacherSchemes = Array.isArray(sData) ? sData.filter((s: any) => s.teacherId === uData.userId || uData.role === "DOS") : [];
+            const teacherSchemes = Array.isArray(sData)
+                ? sData.filter((s: any) => s.teacherId === uData.id || uData.role === "DOS")
+                : [];
             setSchemes(teacherSchemes);
-            if (teacherSchemes.length > 0) setSelectedScheme(teacherSchemes[0]);
+
+            // Default to first scheme
+            if (teacherSchemes.length > 0) {
+                setSelectedScheme(teacherSchemes[0]);
+            }
         } catch (err) {
             toast.error("Failed to load data.");
         } finally {
@@ -71,56 +77,93 @@ export default function LessonPlanPage() {
 
                 {user?.role === "TEACHER" && (
                     <div className="flex gap-4">
-                        {schemes.length > 0 && (
+                        {schemes.length > 0 ? (
                             <div className="flex flex-col">
                                 <label className="text-[8px] font-black uppercase text-slate-400 mb-1 ml-2">Target Scheme</label>
                                 <select
                                     className="bg-white border border-slate-100 rounded-2xl px-6 py-3 text-[10px] font-black uppercase tracking-widest outline-none shadow-sm"
                                     value={selectedScheme?.id || ""}
-                                    onChange={(e) => setSelectedScheme(schemes.find(s => s.id === e.target.value))}
+                                    onChange={(e) => {
+                                        const found = schemes.find(s => s.id === e.target.value);
+                                        setSelectedScheme(found || null);
+                                    }}
                                 >
+                                    <option value="">— Choose a class/subject —</option>
                                     {schemes.map(s => (
-                                        <option key={s.id} value={s.id}>{s.course.title} - {s.class.name}</option>
+                                        <option key={s.id} value={s.id}>{s.course?.title || 'Unknown Course'} - {s.class?.name || 'Unknown Class'}</option>
                                     ))}
                                 </select>
                             </div>
+                        ) : (
+                            <div className="bg-amber-50 border border-amber-100 rounded-2xl px-6 py-3 flex items-center gap-3">
+                                <AlertCircle className="w-4 h-4 text-amber-600" />
+                                <p className="text-[9px] font-black uppercase tracking-widest text-amber-700">No schemes assigned to you yet. Please contact the DOS.</p>
+                            </div>
                         )}
-                        <button
-                            onClick={() => setIsModalOpen(true)}
-                            className="bg-slate-900 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-slate-900/10 hover:bg-emerald-600 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 self-end"
-                        >
-                            <Plus className="w-5 h-5" />
-                            <span>Add Lesson</span>
-                        </button>
+                        {schemes.length > 0 && (
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="bg-slate-900 text-white rounded-2xl px-8 py-4 font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-slate-900/10 hover:bg-emerald-600 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 self-end"
+                            >
+                                <Plus className="w-5 h-5" />
+                                <span>Add Lesson</span>
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left sidebar — scheme summary card */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-emerald-600 rounded-[2.5rem] p-8 text-white relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
-                        <div className="relative z-10 space-y-6">
-                            <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center">
-                                <CheckCircle2 className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-bold tracking-tight uppercase">Today's Progress</h3>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-100">Tasks for today</p>
-                            </div>
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between text-[11px] font-bold">
-                                    <span>Plan Completion</span>
-                                    <span>85%</span>
+                    {selectedScheme ? (() => {
+                        let unitCount = 0;
+                        let topicCount = 0;
+                        (selectedScheme.course?.topics || []).forEach((t: any) => {
+                            topicCount++;
+                            (t.subtopics || []).forEach((s: any) => {
+                                unitCount += s.units?.length || 0;
+                            });
+                        });
+                        return (
+                            <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm space-y-5">
+                                <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center">
+                                    <BookOpen className="w-6 h-6 text-white" />
                                 </div>
-                                <div className="h-1.5 w-full bg-white/20 rounded-full overflow-hidden">
-                                    <div className="h-full bg-white w-[85%]"></div>
+                                <div>
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Active Scheme</p>
+                                    <h3 className="text-lg font-black text-slate-900 uppercase tracking-tighter">{selectedScheme.course?.title}</h3>
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-emerald-600">{selectedScheme.class?.name}</p>
                                 </div>
+                                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-50">
+                                    <div className="bg-slate-50 rounded-xl p-3">
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Topics</p>
+                                        <p className="text-xl font-black text-slate-900">{topicCount}</p>
+                                    </div>
+                                    <div className={`rounded-xl p-3 ${unitCount > 0 ? 'bg-emerald-50' : 'bg-amber-50'}`}>
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Lesson Units</p>
+                                        <p className={`text-xl font-black ${unitCount > 0 ? 'text-emerald-600' : 'text-amber-600'}`}>{unitCount}</p>
+                                    </div>
+                                </div>
+                                {unitCount === 0 && (
+                                    <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 flex items-start gap-3">
+                                        <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-amber-700 leading-relaxed">
+                                            The DOS has added topics but no lesson units yet. Ask the DOS to open the course syllabus and add subtopics and units inside each topic.
+                                        </p>
+                                    </div>
+                                )}
                             </div>
+                        );
+                    })() : (
+                        <div className="bg-slate-50 rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-center gap-4 border border-dashed border-slate-200 min-h-[200px]">
+                            <Layers className="w-8 h-8 text-slate-300" />
+                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Select a scheme above to see details</p>
                         </div>
-                    </div>
+                    )}
                 </div>
 
+                {/* Right — lessons list */}
                 <div className="lg:col-span-2 space-y-6">
                     {loading ? (
                         <div className="py-20 flex flex-col items-center gap-4">
@@ -170,7 +213,9 @@ export default function LessonPlanPage() {
                             <BookOpen className="w-16 h-16 text-slate-200" />
                             <div className="text-center space-y-2">
                                 <p className="font-black text-slate-900 uppercase tracking-tighter text-xl">No Lessons Found</p>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Create a lesson plan to get started.</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                    {selectedScheme ? "Use the Add Lesson button above to record a lesson." : "Select a scheme above to get started."}
+                                </p>
                             </div>
                         </div>
                     )}
@@ -182,7 +227,7 @@ export default function LessonPlanPage() {
                 onClose={() => setIsModalOpen(false)}
                 onSuccess={fetchData}
                 schemeId={selectedScheme?.id}
-                courseId={selectedScheme?.courseId}
+                courseId={selectedScheme?.courseId || selectedScheme?.course?.id}
             />
         </div>
     );
