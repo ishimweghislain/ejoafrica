@@ -23,7 +23,6 @@ export async function GET(request: Request) {
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     try {
-        // @ts-ignore
         const notifications = await prisma.notification.findMany({
             where: { userId: session.userId as string },
             orderBy: { createdAt: 'desc' },
