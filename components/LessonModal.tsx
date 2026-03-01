@@ -19,11 +19,14 @@ interface LessonModalProps {
     onSuccess: () => void;
     schemeId?: string;
     courseId?: string;
+    initialData?: any; // null = create, object = edit
 }
 
-export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, courseId }: LessonModalProps) {
+export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, courseId, initialData }: LessonModalProps) {
     const [mounted, setMounted] = useState(false);
     useEffect(() => { setMounted(true); }, []);
+
+    const isEditing = !!initialData;
 
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
@@ -40,6 +43,25 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
         evaluation: "",
         observation: "",
     });
+
+    // Pre-fill form when editing
+    useEffect(() => {
+        if (isOpen && initialData) {
+            const fmt = (d: string) => d ? new Date(d).toISOString().slice(0, 16) : "";
+            setFormData({
+                title: initialData.title || "",
+                unitId: initialData.unit?.id || initialData.unitId || "",
+                startDate: fmt(initialData.startDate),
+                endDate: fmt(initialData.endDate),
+                teachingMethod: initialData.teachingMethod || "",
+                resources: initialData.resources || "",
+                evaluation: initialData.evaluation || "",
+                observation: initialData.observation || "",
+            });
+        } else if (isOpen && !initialData) {
+            setFormData({ title: "", unitId: "", startDate: "", endDate: "", teachingMethod: "", resources: "", evaluation: "", observation: "" });
+        }
+    }, [isOpen, initialData]);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -113,15 +135,17 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        if (!schemeId) { toast.error("No scheme selected."); return; }
+        if (!isEditing && !schemeId) { toast.error("No scheme selected."); return; }
         if (!formData.unitId) { toast.error("Please select a unit."); return; }
 
         setLoading(true);
-        const tid = toast.loading("Saving lesson...");
+        const tid = toast.loading(isEditing ? "Updating lesson..." : "Saving lesson...");
 
         try {
-            const res = await fetch("/api/lessons", {
-                method: "POST",
+            const url = isEditing ? `/api/lessons/${initialData.id}` : "/api/lessons";
+            const method = isEditing ? "PATCH" : "POST";
+            const res = await fetch(url, {
+                method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ...formData, schemeId }),
             });
@@ -131,11 +155,10 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
                 throw new Error(err.error || "Failed to save.");
             }
 
-            const newLesson = await res.json();
-            toast.success("Lesson saved! Now record attendance. ✓", { id: tid, icon: "📓" });
+            const result = await res.json();
+            toast.success(isEditing ? "Lesson updated! ✓" : "Lesson saved! Now record attendance. ✓", { id: tid, icon: "📓" });
             setFormData({ title: "", unitId: "", startDate: "", endDate: "", teachingMethod: "", resources: "", evaluation: "", observation: "" });
-            // @ts-ignore
-            onSuccess(newLesson);
+            onSuccess();
             onClose();
         } catch (err: any) {
             toast.error(`Error: ${err.message}`, { id: tid });
@@ -161,8 +184,12 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
                             <BookOpen className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-black uppercase tracking-tighter text-slate-900">Add Lesson</h3>
-                            <p className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Record what you taught today</p>
+                            <h3 className="text-xl font-black uppercase tracking-tighter text-slate-900">
+                                {isEditing ? "Edit Lesson" : "Add Lesson"}
+                            </h3>
+                            <p className="text-[9px] font-black uppercase tracking-widest text-emerald-600">
+                                {isEditing ? "Update lesson details" : "Record what you taught today"}
+                            </p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-3 hover:bg-slate-100 rounded-2xl transition-all">
@@ -310,13 +337,13 @@ export default function LessonModal({ isOpen, onClose, onSuccess, schemeId, cour
 
                     <button
                         type="submit"
-                        disabled={loading || fetching || !!fetchError}
+                        disabled={loading || fetching || (!isEditing && !!fetchError)}
                         className="w-full bg-slate-900 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all shadow-xl disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                     >
                         {loading ? (
-                            <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
+                            <><Loader2 className="w-4 h-4 animate-spin" /> {isEditing ? "Updating..." : "Saving..."}</>
                         ) : (
-                            <><BookOpen className="w-4 h-4" /> Save Lesson</>
+                            <><BookOpen className="w-4 h-4" /> {isEditing ? "Update Lesson" : "Save Lesson"}</>
                         )}
                     </button>
                 </form>
