@@ -61,7 +61,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
         { icon: <Calendar className="w-5 h-5" />, label: "Timetable", href: "/dashboard/timetable", roles: ["TEACHER", "STUDENT", "PARENT", "DOS", "SCHOOL_ADMIN"] },
         { icon: <FileSpreadsheet className="w-5 h-5" />, label: "Scheme of Work", href: "/dashboard/scheme-of-work", roles: ["TEACHER", "DOS"] },
         { icon: <BookMarked className="w-5 h-5" />, label: "Lesson Plan", href: "/dashboard/lesson-plan", roles: ["TEACHER"] },
-        { icon: <UserCheck className="w-5 h-5" />, label: "Attendance Tracker", href: "/dashboard/attendance", roles: ["PARENT", "STUDENT", "TEACHER"] },
+        { icon: <UserCheck className="w-5 h-5" />, label: "Attendance Tracker", href: "/dashboard/attendance", roles: ["PARENT", "STUDENT", "TEACHER", "DOS", "SCHOOL_ADMIN", "DOD"] },
 
         // Results & Progress
         { icon: <ClipboardList className="w-5 h-5" />, label: "Assignments", href: "/dashboard/assignments", roles: ["TEACHER", "STUDENT", "PARENT"] },
@@ -73,6 +73,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
 
         // Parent specific
         { icon: <Users className="w-5 h-5" />, label: "My Children", href: "/dashboard/children", roles: ["PARENT"] },
+        { icon: <MessageCircle className="w-5 h-5" />, label: "Messages from School", href: "/dashboard/parent-messages", roles: ["PARENT"] },
 
         { icon: <Settings className="w-5 h-5" />, label: "Settings", href: "/dashboard/settings", roles: ["ALL"] },
     ];
